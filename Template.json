@@ -1,0 +1,4812 @@
+﻿{
+  "rms": [
+    {
+      "NatAuth": "ISR",
+      "BIN": "SAILNOTBD",
+      "CertNo": "DDMMYY",
+      "RefNo": "XXXXXXXXXXXX",
+      "SailNo": "ISR XXX",
+      "YachtName": "NAMETBD",
+      "Class": "CLASS",
+      "Builder": "",
+      "Designer": "",
+      "Address3": "ISRAEL",
+      "C_Type": "CLUB",
+      "Family": "ORC",
+      "Division": "R",
+      "IssueDate": "YYYY-MM-DDT00:00:00.000Z",
+      "Dspl_Sailing": 1,
+      "WSS": 1,
+      "Area_Main": 1,
+      "Area_Jib": 1,
+      "Area_Sym": 0,
+      "Area_Asym": 0,
+      "Age_Year": 1900,
+      "CrewWT": 1,
+      "LOA": 10,
+      "IMSL": 10,
+      "Draft": 1,
+      "MB": 1,
+      "Dspl_Measurement": 1,
+      "Stability_Index": 100,
+      "Dynamic_Allowance": 0,
+      "GPH": 500,
+      "CDL": 1,
+      "ILCWA": 1,
+      "TMF_Inshore": 1.0,
+      "APHD": 1,
+      "APHT": 1.0,
+      "OSN": 1,
+      "TMF_Offshore": 1.0,
+      "GPH": 1,
+      "TND_Offshore_Low": 1,
+      "TN_Offshore_Low": 1.0,
+      "TND_Offshore_Medium": 1,
+      "TN_Offshore_Medium": 1.0,
+      "TND_Offshore_High": 1.0,
+      "TN_Offshore_High": 1.0,
+      "TND_Inshore_Low": 1,
+      "TN_Inshore_Low": 1.0,
+      "TND_Inshore_Medium": 1,
+      "TN_Inshore_Medium": 1.0,
+      "TND_Inshore_High": 1.0,
+      "TN_Inshore_High": 1.0,
+      "Pred_Up_TOD": 1,
+      "Pred_Up_TOT": 1.0,
+      "Pred_Down_TOD": 1.0,
+      "Pred_Down_TOT": 1.0,
+      "US_PREDUP_L_TOD": 1.0,
+      "US_PREDUP_L_TOT": 1.0,
+      "US_PREDUP_M_TOD": 1.0,
+      "US_PREDUP_M_TOT": 1.0,
+      "US_PREDUP_H_TOD": 1,
+      "US_PREDUP_H_TOT": 1.0,
+      "US_PREDDN_L_TOD": 1.0,
+      "US_PREDDN_L_TOT": 1.0,
+      "US_PREDDN_M_TOD": 500.0,
+      "US_PREDDN_M_TOT": 1.0,
+      "US_PREDDN_H_TOD": 500.0,
+      "US_PREDDN_H_TOT": 1.0,
+      "US_CHIMAC_UP_TOT": 1.0,
+      "US_CHIMAC_AP_TOT": 1.0,
+      "US_CHIMAC_DN_TOT": 1.0,
+      "US_BAYMAC_CV_TOT": 1.0,
+      "US_BAYMAC_SH_TOT": 1.0,
+      "US_HARVMOON_TOD": 500,
+      "US_HARVMOON_TOT": 1.0,
+      "US_VICMAUI_TOT": 1.0,
+      "KR_PREDR_TOD": 500.0,
+      "RSA_CD_INS_TOD": 500,
+      "RSA_CD_INS_TOT": 1.0,
+      "RSA_CD_OFF_TOD": 500.0,
+      "RSA_CD_OFF_TOT": 1.0,
+      "Allowances": {
+        "WindSpeeds": [
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          20
+        ],
+        "WindAngles": [
+          52,
+          60,
+          75,
+          90,
+          110,
+          120,
+          135,
+          150
+        ],
+        "R52": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "R60": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "R75": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "R90": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "R110": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "R120": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "R135": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "R150": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "Beat": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "Run": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "BeatAngle": [
+          35.0,
+          35.0,
+          35.0,
+          35.0,
+          35.0,
+          35.0,
+          35.0
+        ],
+        "GybeAngle": [
+          150,
+          150,
+          150,
+          150,
+          150,
+          150,
+          150
+        ],
+        "WL": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "CR": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "OC": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ]
+      }
+    }
+  ],
+  "Countries": [
+    {
+      "CountryId": "ORC",
+      "Name": "Offshore Racing Congress"
+    },
+    {
+      "CountryId": "AUS",
+      "Name": "Australia"
+    },
+    {
+      "CountryId": "AUT",
+      "Name": "Austria"
+    },
+    {
+      "CountryId": "BRA",
+      "Name": "Brazil"
+    },
+    {
+      "CountryId": "BUL",
+      "Name": "Bulgaria"
+    },
+    {
+      "CountryId": "CAN",
+      "Name": "Canada"
+    },
+    {
+      "CountryId": "CYP",
+      "Name": "Cyprus"
+    },
+    {
+      "CountryId": "DEN",
+      "Name": "Denmark"
+    },
+    {
+      "CountryId": "ESP",
+      "Name": "Spain"
+    },
+    {
+      "CountryId": "EST",
+      "Name": "Estonia"
+    },
+    {
+      "CountryId": "FIN",
+      "Name": "Finland"
+    },
+    {
+      "CountryId": "FRA",
+      "Name": "France"
+    },
+    {
+      "CountryId": "GER",
+      "Name": "Germany"
+    },
+    {
+      "CountryId": "GRE",
+      "Name": "Greece"
+    },
+    {
+      "CountryId": "HUN",
+      "Name": "Hungary"
+    },
+    {
+      "CountryId": "ISR",
+      "Name": "Israel"
+    },
+    {
+      "CountryId": "ITA",
+      "Name": "Italy"
+    },
+    {
+      "CountryId": "JPN",
+      "Name": "Japan"
+    },
+    {
+      "CountryId": "KOR",
+      "Name": "Korea"
+    },
+    {
+      "CountryId": "LTU",
+      "Name": "Lithuania"
+    },
+    {
+      "CountryId": "NED",
+      "Name": "Netherlands"
+    },
+    {
+      "CountryId": "NOR",
+      "Name": "Norway"
+    },
+    {
+      "CountryId": "POR",
+      "Name": "Portugal"
+    },
+    {
+      "CountryId": "RUS",
+      "Name": "Russia"
+    },
+    {
+      "CountryId": "RSA",
+      "Name": "South Africa"
+    },
+    {
+      "CountryId": "SLO",
+      "Name": "Slovenia"
+    },
+    {
+      "CountryId": "SUI",
+      "Name": "Switzerland"
+    },
+    {
+      "CountryId": "SWE",
+      "Name": "Sweden"
+    },
+    {
+      "CountryId": "UKR",
+      "Name": "Ukraine"
+    },
+    {
+      "CountryId": "USA",
+      "Name": "United States of America"
+    }
+  ],
+  "ScoringOptions": [
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "Mu",
+        "NS"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "APHD",
+      "Name": "All Purpose"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "Mu",
+        "NS"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "APHT",
+      "Name": "All Purpose"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "Mu",
+        "NS"
+      ],
+      "CountryId": "ORC",
+      "Kind": "PCS",
+      "Fieldname": "CR",
+      "Name": "All Purpose"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "Mu",
+        "NS"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "ILCWA",
+      "Name": "Windward\/Leeward"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "Mu",
+        "NS"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Inshore",
+      "Name": "Windward\/Leeward"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "Mu",
+        "NS"
+      ],
+      "CountryId": "ORC",
+      "Kind": "PCS",
+      "Fieldname": "WL",
+      "Name": "Windward\/Leeward"
+    },
+    {
+      "Families": [
+        "Mu"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "MHRD",
+      "Name": "Multihull Rating"
+    },
+    {
+      "Families": [
+        "Mu"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "MHRT",
+      "Name": "Multihull Rating"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "SY_DL",
+      "Name": "Light"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "SY_TL",
+      "Name": "Light"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "SY_DLM",
+      "Name": "Light-Moderate"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "SY_TLM",
+      "Name": "Light-Moderate"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "SY_DM",
+      "Name": "Moderate"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "SY_TM",
+      "Name": "Moderate"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "SY_DMS",
+      "Name": "Moderate-Strong"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "SY_TMS",
+      "Name": "Moderate-Strong"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOD",
+      "Fieldname": "SY_DS",
+      "Name": "Strong"
+    },
+    {
+      "Families": [
+        "SY"
+      ],
+      "CountryId": "ORC",
+      "Kind": "TOT",
+      "Fieldname": "SY_TS",
+      "Name": "Strong"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUS",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "AUT",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BRA",
+      "Kind": "TOT",
+      "Fieldname": "BRA_ALL_UP_TOT",
+      "Name": "Upwind \"bolina\""
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BRA",
+      "Kind": "TOT",
+      "Fieldname": "BRA_ALL_DN_TOT",
+      "Name": "Downwind \"popa\""
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BRA",
+      "Kind": "TOT",
+      "Fieldname": "BRA_7030_TOT",
+      "Name": "70% up, 30% down \"Ilhabela\""
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BRA",
+      "Kind": "TOT",
+      "Fieldname": "BRA_3070_TOT",
+      "Name": "30% up, 70% down \"Ilhabela-inverso\""
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Up_TOD",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Up_TOT",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Down_TOD",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "BUL",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Down_TOT",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number All Purpose Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number All Purpose Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number All Purpose Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number All Purpose Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number All Purpose High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number All Purpose High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Up_TOD",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Up_TOT",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Down_TOD",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Down_TOT",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDUP_L_TOD",
+      "Name": "Predominantly Upwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDUP_L_TOT",
+      "Name": "Predominantly Upwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDUP_M_TOD",
+      "Name": "Predominantly Upwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDUP_M_TOT",
+      "Name": "Predominantly Upwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDUP_H_TOD",
+      "Name": "Predominantly Upwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDUP_H_TOT",
+      "Name": "Predominantly Upwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDDN_L_TOD",
+      "Name": "Predominantly Downwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDDN_L_TOT",
+      "Name": "Predominantly Downwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDDN_M_TOD",
+      "Name": "Predominantly Downwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDDN_M_TOT",
+      "Name": "Predominantly Downwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDDN_H_TOD",
+      "Name": "Predominantly Downwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDDN_H_TOT",
+      "Name": "Predominantly Downwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_CHIMAC_UP_TOT",
+      "Name": "Chicago-Mac Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_CHIMAC_AP_TOT",
+      "Name": "Chicago-Mac All Purpose"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_CHIMAC_DN_TOT",
+      "Name": "Chicago-Mac Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_BAYMAC_CV_TOT",
+      "Name": "Bayview-Mac Cove Island"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_BAYMAC_SH_TOT",
+      "Name": "Bayview-Mac Shore"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CAN",
+      "Kind": "TOT",
+      "Fieldname": "US_VICMAUI_TOT",
+      "Name": "Victoria-Maui"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "CYP",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "DEN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ESP",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "EST",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "FinRating (Coastal\/Long Distance)"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "FinRating (Coastal\/Long Distance)"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FIN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "FRA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GER",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GER",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GER",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GER",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GER",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GER",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GER",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "GRE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "HUN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ISR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "ITA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "JPN",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "JPN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "JPN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "JPN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "JPN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "JPN",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "JPN",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Up_TOD",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Down_TOD",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "KOR",
+      "Kind": "TOD",
+      "Fieldname": "KR_PREDR_TOD",
+      "Name": "Predominantly Reaching"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "LTU",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Up_TOT",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NED",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Down_TOT",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Distanseseilas"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Distanseseilas (NOR-rating ett tall)"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Tretall Distanseseilas Lite vind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Tretall Distanseseilas Mellomvind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Tretall Distanseseilas Mye vind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Tretall P\u00F8lsebane Lite vind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Tretall P\u00F8lsebane Mellomvind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "NOR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Tretall P\u00F8lsebane Mye vind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "POR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "RSA_CD_INS_TOD",
+      "Name": "Cape Doctor Inshore"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "RSA_CD_INS_TOT",
+      "Name": "Cape Doctor Inshore"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "RSA_CD_OFF_TOD",
+      "Name": "Cape Doctor Coastal"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "RSA_CD_OFF_TOT",
+      "Name": "Cape Doctor Coastal"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RSA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RUS",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Up_TOD",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RUS",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Up_TOT",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RUS",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Down_TOD",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "RUS",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Down_TOT",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SLO",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SLO",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SLO",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SLO",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SLO",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SLO",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SUI",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SUI",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SUI",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SUI",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SUI",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SUI",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Up_TOD",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Up_TOT",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Down_TOD",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "SWE",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Down_TOT",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOD",
+      "Fieldname": "OSN",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOT",
+      "Fieldname": "TMF_Offshore",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "SY",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "PCS",
+      "Fieldname": "OC",
+      "Name": "Coastal\/Long Distance"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number Coastal\/Long Distance Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number Coastal\/Long Distance Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number Coastal\/Long Distance High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "UKR",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Low",
+      "Name": "Triple Number All Purpose Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Low",
+      "Name": "Triple Number All Purpose Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_Medium",
+      "Name": "Triple Number All Purpose Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_Medium",
+      "Name": "Triple Number All Purpose Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Offshore_High",
+      "Name": "Triple Number All Purpose High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Offshore_High",
+      "Name": "Triple Number All Purpose High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Low",
+      "Name": "Triple Number Windward\/Leeward Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_Medium",
+      "Name": "Triple Number Windward\/Leeward Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "TND_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "TN_Inshore_High",
+      "Name": "Triple Number Windward\/Leeward High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Up_TOD",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Up_TOT",
+      "Name": "Predominantly Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "Pred_Down_TOD",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "Pred_Down_TOT",
+      "Name": "Predominantly Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDUP_L_TOD",
+      "Name": "Predominantly Upwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDUP_L_TOT",
+      "Name": "Predominantly Upwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDUP_M_TOD",
+      "Name": "Predominantly Upwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDUP_M_TOT",
+      "Name": "Predominantly Upwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDUP_H_TOD",
+      "Name": "Predominantly Upwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDUP_H_TOT",
+      "Name": "Predominantly Upwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDDN_L_TOD",
+      "Name": "Predominantly Downwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDDN_L_TOT",
+      "Name": "Predominantly Downwind Low"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDDN_M_TOD",
+      "Name": "Predominantly Downwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDDN_M_TOT",
+      "Name": "Predominantly Downwind Medium"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "US_PREDDN_H_TOD",
+      "Name": "Predominantly Downwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_PREDDN_H_TOT",
+      "Name": "Predominantly Downwind High"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_CHIMAC_UP_TOT",
+      "Name": "Chicago-Mac Upwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_CHIMAC_AP_TOT",
+      "Name": "Chicago-Mac All Purpose"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_CHIMAC_DN_TOT",
+      "Name": "Chicago-Mac Downwind"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_BAYMAC_CV_TOT",
+      "Name": "Bayview-Mac Cove Island"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_BAYMAC_SH_TOT",
+      "Name": "Bayview-Mac Shore"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOD",
+      "Fieldname": "US_HARVMOON_TOD",
+      "Name": "Harvest Moon Regatta"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_HARVMOON_TOT",
+      "Name": "Harvest Moon Regatta"
+    },
+    {
+      "Families": [
+        "ORC",
+        "DH",
+        "NS"
+      ],
+      "CountryId": "USA",
+      "Kind": "TOT",
+      "Fieldname": "US_VICMAUI_TOT",
+      "Name": "Victoria-Maui"
+    }
+  ]
+}
