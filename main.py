@@ -4,27 +4,28 @@ import xlsxwriter
 import orc
 from utils import create_folder
 
-####################SETTINGS##################################
+########################SETTINGS##################################
 json_files = ['ISR_ORC.json', 'ISR_NS.json']
 L1_dist_interval = 0.1
 L1_min_dist = 0.4
 L1_max_dist = 2
-selected_boats = ["Bellendaine", "Blanc Bleu", "Karakahia", "Mermaid of Delaware", "Fury",
-                  "Cyclop", "YOLO", "Mina", "Semiramis", "Shayna", "Lou of Ixopo", "Oran Almog",
-                  "Tamar"]
+selected_boats = {"Bellendaine": "O2", "Blanc Bleu": "O1", "Mermaid of Delaware": "O2", "Hope": "O1", "SLYD": "O1",
+                  "Cyclop": "O1", "YOLO": "O2", "Mina": "O2", "Semiramis": "O2", "Oran Almog": "O2",
+                  "Tamar": "O2"}
+classes = {"O1": "fffa73", "O2": "4afff1"}
 course_types = {
     'T1':
         {
             'Beat': 1,
             'R135': 2 / math.sqrt(2)
         },
-    'T1-2':
+    'T2':
         {
             'Beat': 1.5,
             'R135': 2 / math.sqrt(2),
             'Run': 0.5
         },
-    # 'T2':
+    # 'T3':
     #     {
     #         'Beat': 2,
     #         'R135': 4 / math.sqrt(2)
@@ -34,12 +35,12 @@ course_types = {
             'Beat': 1,
             'Run': 1
         },
-    'W1-2':
+    'W2':
         {
             'Beat': 1.5,
             'Run': 1.5
         },
-    # 'W2':
+    # 'W3':
     #     {
     #         'Beat': 2,
     #         'Run': 2
@@ -47,9 +48,9 @@ course_types = {
 }
 
 
-##############################################################
+##################################################################
 
-def generate_boatsheet(name):
+def generate_boatsheet(boat_rows, name):
     global row, c, idx
     worksheet = workbook.add_worksheet(name)
     worksheet.write(0, 0, name)
@@ -86,9 +87,12 @@ def generate_boatsheet(name):
 
 def generate_rankingsheet(sorted_lengths):
     worksheet = workbook.add_worksheet('_Ranking')
-    cell_format = workbook.add_format({
-        'border': 1,
-        'valign': 'vcenter'})
+    cell_formats = {}
+    for name, color in classes.items():
+        cell_formats[name] = workbook.add_format({
+            'border': 1,
+            'valign': 'vcenter',
+            'bg_color': color})
     bold_format = workbook.add_format({
         'bold': 1,
         'border': 1,
@@ -104,7 +108,8 @@ def generate_rankingsheet(sorted_lengths):
         for c, speed in enumerate(wind_speeds):
             worksheet.write(r * (len(wind_speeds) + 1) + c + 2, 0, speed)
             for col, boat in enumerate(sorted_lengths[course][speed]):
-                worksheet.write(r * (len(wind_speeds) + 1) + c + 2, col + 1, boat[0], cell_format)
+                worksheet.write(r * (len(wind_speeds) + 1) + c + 2, col + 1, boat[0],
+                                cell_formats[selected_boats[boat[0]]])
 
     worksheet.merge_range(0, 0, 0, boats_number,
                           'Race Course competitors arranged from Fastest to slowest (By wind speed)', merge_format)
@@ -119,14 +124,15 @@ courseLengths = {}
 filename = f'boats/timetables.xlsx'
 create_folder(filename)
 workbook = xlsxwriter.Workbook(filename)
-
 wind_speeds = rms[1]['Allowances']['WindSpeeds']
+
+boats_rows = {}
 for boat in rms:
-    boat_rows = []
     allowances = boat['Allowances']
     boat_name = boat['YachtName']
-    if boat_name not in selected_boats and len(selected_boats) != 0:
-        continue  # Skip in boat not selected and selected_boats list is not empty
+    boats_rows[boat_name] = []
+    if boat_name not in selected_boats.keys() and len(selected_boats) != 0:
+        continue  # Skip if boat not selected and selected_boats list is not empty
     courseLengths[boat_name] = {}
 
     for course in course_types:
@@ -145,12 +151,12 @@ for boat in rms:
                 distances.append(f'{total_time / 60:.0f}')
                 courseLengths[boat_name][course][spd] = total_time / 60
             course_rows.append(distances)
-        if not boat_rows:
-            boat_rows = course_rows
+        if not boats_rows[boat_name]:
+            boats_rows[boat_name] = course_rows
         else:
-            for idx, row in enumerate(boat_rows):
-                boat_rows[idx] = boat_rows[idx] + [' '] + course_rows[idx]
-    generate_boatsheet(boat_name)
+            for idx, row in enumerate(boats_rows[boat_name]):
+                boats_rows[boat_name][idx] = boats_rows[boat_name][idx] + [' '] + course_rows[idx]
+
 sorted_lengths = {}
 for c in course_types:
     sorted_lengths[c] = {}
@@ -162,6 +168,8 @@ for c in course_types:
         boats_number = len(courseLengths)
 
 generate_rankingsheet(sorted_lengths)
+for boat in selected_boats.keys():
+    generate_boatsheet(boats_rows[boat], boat)
 workbook.close()
 
 pass
