@@ -1,16 +1,19 @@
 # ORC RMS Parser
 
-This is a small python project to generate target time tables according to a course layout and ORC certificates of specific boats.
+A small python project to generate target timetables according to a course layout and ORC certificates of specific boats.
 
 ## Installation
 
-TBD
+Add dependencies to your project with: 
+
+`pip install -r requirements.txt`
 
 ## Usage
+Download the latest ORC certificates from [ORC](https://orc.org/index.asp?id=44) in json 
+format into same folder as `main.py`.
+Update settings in the `settings.py` file.
 
-```python
-TBD
-```
+Run `python main.py`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

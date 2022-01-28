@@ -1,62 +1,22 @@
-import math
 import xlsxwriter
 
 import orc
-from utils import create_folder
-
-########################SETTINGS##################################
-json_files = ['ISR_ORC.json', 'ISR_NS.json']
-L1_dist_interval = 0.1
-L1_min_dist = 0.4
-L1_max_dist = 2
-selected_boats = {"Bellendaine": "O2", "Blanc Bleu": "O1", "Mermaid of Delaware": "O2", "Hope": "O1", "SLYD": "O1",
-                  "Cyclop": "O1", "YOLO": "O2", "Mina": "O2", "Semiramis": "O2", "Oran Almog": "O2",
-                  "Tamar": "O2"}
-classes = {"O1": "fffa73", "O2": "4afff1"}
-course_types = {
-    'T1':
-        {
-            'Beat': 1,
-            'R135': 2 / math.sqrt(2)
-        },
-    'T2':
-        {
-            'Beat': 1.5,
-            'R135': 2 / math.sqrt(2),
-            'Run': 0.5
-        },
-    # 'T3':
-    #     {
-    #         'Beat': 2,
-    #         'R135': 4 / math.sqrt(2)
-    #     },
-    'W1':
-        {
-            'Beat': 1,
-            'Run': 1
-        },
-    'W2':
-        {
-            'Beat': 1.5,
-            'Run': 1.5
-        },
-    # 'W3':
-    #     {
-    #         'Beat': 2,
-    #         'Run': 2
-    #     }
-}
+from settings import json_files, L1_dist_interval, L1_min_dist, L1_max_dist, selected_boats, classes, course_types, \
+    target_time, target_time_margin
+from utils import create_folder, is_int
 
 
-##################################################################
-
-def generate_boatsheet(boat_rows, name):
+def generate_boat_sheet(boat_rows, name):
     global row, c, idx
     worksheet = workbook.add_worksheet(name)
     worksheet.write(0, 0, name)
     cell_format = workbook.add_format({
         'border': 1,
         'valign': 'vcenter'})
+    target_time_cell_format = workbook.add_format({
+        'border': 1,
+        'valign': 'vcenter',
+        'bg_color': '#FFFA73'})
     bold_format = workbook.add_format({
         'bold': 1,
         'border': 1,
@@ -68,13 +28,20 @@ def generate_boatsheet(boat_rows, name):
             elif (c + 1) % 9 == 0:
                 worksheet.write(r + 1, c, col)
             else:
-                worksheet.write(r + 1, c, col, cell_format)
+                if is_int(col) and (int(col) < target_time + target_time_margin) and (int(col) > target_time - target_time_margin):
+                    worksheet.write(r + 1, c, col, target_time_cell_format)
+                else:
+                    worksheet.write(r + 1, c, col, cell_format)
     merge_format = workbook.add_format({
         'bold': 1,
         'border': 1,
         'align': 'center',
-        'valign': 'vcenter'})
-    worksheet.merge_range(0, 0, 0, (len(wind_speeds) + 2) * (len(course_types)) - 2, boat_name, merge_format)
+        'valign': 'vcenter',
+        'text_wrap': True})
+    headline = name + "\n(L1 is distance from start line to 1st mark in nautical miles, wind speeds in knots, " \
+                      "time in minutes) "
+    worksheet.merge_range(0, 0, 0, (len(wind_speeds) + 2) * (len(course_types)) - 2, headline, merge_format)
+    worksheet.set_row(0, 32)
     for idx, c in enumerate(course_types):
         worksheet.merge_range(1, idx * (len(wind_speeds) + 1) + idx, 1,
                               idx + idx * (len(wind_speeds) + 1) + len(wind_speeds), c, merge_format)
@@ -85,7 +52,7 @@ def generate_boatsheet(boat_rows, name):
     worksheet.fit_to_pages(1, 1)
 
 
-def generate_rankingsheet(sorted_lengths):
+def generate_ranking_sheet(lengths):
     worksheet = workbook.add_worksheet('_Ranking')
     cell_formats = {}
     for name, color in classes.items():
@@ -106,8 +73,8 @@ def generate_rankingsheet(sorted_lengths):
         worksheet.merge_range(r * (len(wind_speeds) + 1) + 1, 0, r * (len(wind_speeds) + 1) + 1,
                               boats_number, course, merge_format)
         for c, speed in enumerate(wind_speeds):
-            worksheet.write(r * (len(wind_speeds) + 1) + c + 2, 0, speed)
-            for col, boat in enumerate(sorted_lengths[course][speed]):
+            worksheet.write(r * (len(wind_speeds) + 1) + c + 2, 0, speed, bold_format)
+            for col, boat in enumerate(lengths[course][speed]):
                 worksheet.write(r * (len(wind_speeds) + 1) + c + 2, col + 1, boat[0],
                                 cell_formats[selected_boats[boat[0]]])
 
@@ -141,13 +108,13 @@ for boat in rms:
         course_rows.append(['L1'] + ([str(x) for x in allowances['WindSpeeds']]))
         lengths = [x * L1_dist_interval for x in
                    range(int(L1_min_dist * (1 / L1_dist_interval)), int(1 / L1_dist_interval * L1_max_dist + 1))]
-        for l in lengths:
-            distances = [f'{l:.1f}']
+        for length in lengths:
+            distances = [f'{length:.1f}']
             for idx, spd in enumerate(allowances['WindSpeeds']):
                 spd = int(spd)
                 total_time = 0
                 for leg in course_types[course]:
-                    total_time += l * course_types[course][leg] * allowances[leg][idx]
+                    total_time += length * course_types[course][leg] * allowances[leg][idx]
                 distances.append(f'{total_time / 60:.0f}')
                 courseLengths[boat_name][course][spd] = total_time / 60
             course_rows.append(distances)
@@ -167,9 +134,9 @@ for c in course_types:
         sorted_lengths[c][s] = sorted(sorted_lengths[c][s], key=lambda k: k[1])
         boats_number = len(courseLengths)
 
-generate_rankingsheet(sorted_lengths)
+generate_ranking_sheet(sorted_lengths)
 for boat in selected_boats.keys():
-    generate_boatsheet(boats_rows[boat], boat)
+    generate_boat_sheet(boats_rows[boat], boat)
 workbook.close()
 
 pass
