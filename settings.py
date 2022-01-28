@@ -1,5 +1,6 @@
 import math
 
+year = 2021
 json_files = ['ISR_ORC.json', 'ISR_NS.json']  # List of Certificate JSON files
 L1_dist_interval = 0.1  # Distance interval expressed in length of first leg to be calculated. in Nautical Miles
 L1_min_dist = 0.2  # Minimal distance expressed in length of first leg to be calculated. in Nautical Miles
