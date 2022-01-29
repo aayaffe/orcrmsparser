@@ -12,7 +12,7 @@ args = parser.parse_args()
 if args.download:
     download_certs(year)
 elif args.generate:
-    generate_target_time_file()
+    generate_target_time_file(f'boats/timetables.xlsx')
 else:
     print("No arguments provided")
 

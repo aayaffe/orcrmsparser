@@ -5,6 +5,7 @@ from settings import json_files, L1_dist_interval, L1_min_dist, L1_max_dist, sel
     target_time, target_time_margin
 from utils import create_folder, is_int
 
+
 def generate_boat_sheet(workbook, wind_speeds, boat_rows, name):
     global row, c, idx
     worksheet = workbook.add_worksheet(name)
@@ -86,10 +87,9 @@ def generate_ranking_sheet(workbook, wind_speeds, boats_number, lengths):
     worksheet.fit_to_pages(1, 1)
 
 
-def generate_target_time_file():
-    rms = orc.load_json_files(json_files)
+def generate_target_time_file(filename, jsons=json_files):
+    rms = orc.load_json_files(jsons)
     courseLengths = {}
-    filename = f'boats/timetables.xlsx'
     create_folder(filename)
     workbook = xlsxwriter.Workbook(filename)
     wind_speeds = rms[1]['Allowances']['WindSpeeds']
@@ -139,4 +139,4 @@ def generate_target_time_file():
     for boat in selected_boats.keys():
         generate_boat_sheet(workbook, wind_speeds, boats_rows[boat], boat)
     workbook.close()
-    print (f"Target time file generated: {filename}")
+    print(f"Target time file generated: {filename}")
