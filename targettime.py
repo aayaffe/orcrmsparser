@@ -1,9 +1,13 @@
+import os
+
 import xlsxwriter
 
 import orc
-from settings import json_files, L1_dist_interval, L1_min_dist, L1_max_dist, selected_boats, classes, course_types, \
-    target_time, target_time_margin
+import settings
+from settings import L1_dist_interval, L1_min_dist, L1_max_dist, selected_boats, classes, course_types, \
+    target_time, target_time_margin, target_time_allowance
 from utils import create_folder, is_int
+from prompt_toolkit import print_formatted_text, HTML
 
 
 def generate_boat_sheet(workbook, wind_speeds, boat_rows, name):
@@ -39,8 +43,8 @@ def generate_boat_sheet(workbook, wind_speeds, boat_rows, name):
         'align': 'center',
         'valign': 'vcenter',
         'text_wrap': True})
-    headline = name + "\n(L1 is distance from start line to 1st mark in nautical miles, wind speeds in knots, " \
-                      "time in minutes) "
+    headline = name + f"\n(L1 is distance from start line to 1st mark in nautical miles, wind speeds in knots, " \
+                      f"time in minutes). Added {(settings.target_time_allowance * 100):.0f}% to target time."
     worksheet.merge_range(0, 0, 0, (len(wind_speeds) + 2) * (len(course_types)) - 2, headline, merge_format)
     worksheet.set_row(0, 32)
     for idx, c in enumerate(course_types):
@@ -87,12 +91,18 @@ def generate_ranking_sheet(workbook, wind_speeds, boats_number, lengths):
     worksheet.fit_to_pages(1, 1)
 
 
-def generate_target_time_file(filename, jsons=json_files):
+def generate_target_time_file(filename, jsons=[], countries=[], path=f'jsons/'):
+    if len(countries) > 0:
+        for file in os.scandir(path):
+            for country in countries:
+                if file.is_file() and country in file.name:
+                    jsons.append(file)
+
     rms = orc.load_json_files(jsons)
     courseLengths = {}
     create_folder(filename)
     workbook = xlsxwriter.Workbook(filename)
-    wind_speeds = rms[1]['Allowances']['WindSpeeds']
+    wind_speeds = rms[0]['Allowances']['WindSpeeds']
 
     boats_rows = {}
     for boat in rms:
@@ -116,6 +126,7 @@ def generate_target_time_file(filename, jsons=json_files):
                     total_time = 0
                     for leg in course_types[course]:
                         total_time += length * course_types[course][leg] * allowances[leg][idx]
+                    total_time *= 1 + target_time_allowance  # Add Allowance % for target time
                     distances.append(f'{total_time / 60:.0f}')
                     courseLengths[boat_name][course][spd] = total_time / 60
                 course_rows.append(distances)
@@ -137,6 +148,11 @@ def generate_target_time_file(filename, jsons=json_files):
 
     generate_ranking_sheet(workbook, wind_speeds, boats_number, sorted_lengths)
     for boat in selected_boats.keys():
-        generate_boat_sheet(workbook, wind_speeds, boats_rows[boat], boat)
+        if boat in boats_rows:
+            generate_boat_sheet(workbook, wind_speeds, boats_rows[boat], boat)
+        else:
+            print_formatted_text(
+                HTML('<ansired>' + f'{boat} not found in json files' + '</ansired>'))
     workbook.close()
-    print(f"Target time file generated: {filename}")
+    print_formatted_text(
+        HTML('<ansigreen>' + f"Target time file generated: {filename}" + '</ansigreen>'))

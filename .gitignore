@@ -87,3 +87,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 /boats/
 /website/db.sqlite3
+jsons/
+jsons_history/
+website/orccerts/Files/target_time.xlsx
+small_boat_rms.csv

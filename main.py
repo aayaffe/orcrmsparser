@@ -1,4 +1,4 @@
-from downloader import download_certs
+from certs_downloader import download_certs
 from settings import year
 from targettime import generate_target_time_file
 import argparse
@@ -12,10 +12,6 @@ args = parser.parse_args()
 if args.download:
     download_certs(year)
 elif args.generate:
-    generate_target_time_file(f'boats/timetables.xlsx')
+    generate_target_time_file(f'boats/timetables.xlsx', [], ['ISR'], 'jsons/')
 else:
     print("No arguments provided")
-
-
-
-

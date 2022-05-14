@@ -7,18 +7,17 @@ import string
 
 from utils import create_folder
 
-####################SETTINGS##################################
-json_output = 'smallboats.json'
+# ###################SETTINGS##################################
+json_output = f'boats/' + 'smallboats.json'
 json_template = 'Template.json'
 csv_file = 'small_boat_rms.csv'
 
-##############################################################
+# #############################################################
 
 j = json.load(io.open(json_template, 'r', encoding='utf-8-sig'))
 rms = copy.deepcopy(j['rms'][0])
 del j['rms'][0]
-filename = f'boats/'+'smallboats.json'
-create_folder(filename)
+create_folder(json_output)
 
 with open(csv_file, newline='') as csvfile:
     reader = csv.DictReader(csvfile)
@@ -29,7 +28,7 @@ with open(csv_file, newline='') as csvfile:
         rms['SailNo'] = row['SAILNUMB'].rstrip()
         rms['YachtName'] = row['NAME'].rstrip()
         rms['Class'] = row['TYPE'].rstrip()
-        rms['Owner']  = row['OWNER'].rstrip()
+        rms['Owner'] = row['OWNER'].rstrip()
         rms['IssueDate'] = '2021-08-28T00:00:00.000Z'
         j['rms'].append(copy.deepcopy(rms))
 with open(json_output, 'w', encoding='utf-8') as f:

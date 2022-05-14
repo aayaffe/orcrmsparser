@@ -6,5 +6,8 @@ def load_json_files(files):
     ret = []
     for file in files:
         j = json.load(io.open(file, 'r', encoding='utf-8-sig'))
-        ret += j['rms']
+        if 'rms' in j:
+            ret += j['rms']
+        else:
+            ret += j
     return ret
