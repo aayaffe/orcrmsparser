@@ -1,0 +1,24 @@
+﻿{
+  "rms": [
+    {
+      "NatAuth": "ISR",
+      "BIN": "SAILNOTBD",
+      "CertNo": "",
+      "RefNo": "",
+      "SailNo": "",
+      "YachtName": "NAMETBD",
+      "Class": "CLASS",
+      "Builder": "",
+      "Designer": "",
+      "C_Type": "ONEDESIGN",
+      "Division": "R",
+      "IssueDate": "YYYY-MM-DDT00:00:00.000Z",
+      "LOA": 10,
+      "Owner": "",
+      "TMF_Inshore": 1.0,
+      "TMF_Offshore": 1.0,
+      "Allowances": {
+      }
+    }
+  ]
+}

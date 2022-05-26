@@ -11,7 +11,7 @@ classes = {"O1": "fffa73", "O2": "4afff1"}  # List of classes and colors to be e
 target_time = 60  # Target time in minutes
 target_time_margin = 10  # Target time plus/minus margin in minutes to highlight in excel
 target_time_allowance = 0.1 # The amount in percent (0.1 = 10%) to add to calculated target time.
-course_types = {  # List of course types and their definitions express in percentage of first leg (start line to
+course_types = {  # List of course types and their definitions expressed in percentage of first leg (start line to
     # first mark)
     'W1':
         {
