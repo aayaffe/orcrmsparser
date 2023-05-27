@@ -1,11 +1,11 @@
 import math
 
-year = 2022
+year = 2023
 L1_dist_interval = 0.1  # Distance interval expressed in length of first leg to be calculated. in Nautical Miles
 L1_min_dist = 0.2  # Minimal distance expressed in length of first leg to be calculated. in Nautical Miles
 L1_max_dist = 1.5  # Maximum distance expressed in length of first leg to be calculated. in Nautical Miles
 selected_boats = {"Bellendaine": "O2", "Blanc Bleu": "O1", "Mermaid of Delaware": "O2", "Hope": "O1", "SLYD": "O1",
-                  "Cyclop": "O1", "YOLO": "O2", "Mina": "O2", "Semiramis": "O2", "Oran Almog": "O2",
+                  "Cyclop": "O1", "Mina": "O2", "Semiramis": "O2", "Oran Almog": "O2",
                   "Tamar": "O2"}  # List of boats and classes to be calculated
 classes = {"O1": "fffa73", "O2": "4afff1"}  # List of classes and colors to be expressed (in the worksheet)
 target_time = 60  # Target time in minutes
@@ -23,11 +23,11 @@ course_types = {  # List of course types and their definitions expressed in perc
             'Beat': 3,
             'Run': 3
         },
-    # 'W3':
-    #     {
-    #         'Beat': 2,
-    #         'Run': 2
-    #     },
+    'W3':
+        {
+            'Beat': 4,
+            'Run': 4
+        },
     'T1':
         {
             'Beat': 2,
