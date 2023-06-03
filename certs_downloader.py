@@ -5,14 +5,14 @@ from datetime import datetime
 import aiohttp
 import asyncio
 import time
-# import requests
+import requests
+import xml.etree.ElementTree as ET
 
 from utils import create_folder
 
 families = {1: 'STD', 3: 'DH', 5: 'NS'}
 
 URL = "http://data.orc.org/public/WPub.dll?action=DownRMS&ext=json&CountryId="
-countries = "AHO ARG AUS AUT BRA BUL CAN CRO CYP DEN ECU ESP EST FIN FRA GBR GER GRE HKG HUN ISR ITA JPN KOR LAT LTU MLT MNE NED NLS NOR PER POL POR ROU RSA RUS SLO SUI SWE TUR UKR USA".split()
 headers = {'Connection': 'keep-alive', 'Accept-Encoding': 'gzip, deflate, sdch',
            'Referer': 'https://data.orc.org/public/WPub.dll'}
 
@@ -40,9 +40,10 @@ async def download_certs_async(year, path, backup):
     async with aiohttp.ClientSession(connector=connector) as session:
 
         tasks = []
-        for country in countries:
+        for country in get_countries():
             for family, family_name in families.items():
-                tasks.append(asyncio.ensure_future(get_certs(session, year, country, family, family_name, date_time, path)))
+                tasks.append(
+                    asyncio.ensure_future(get_certs(session, year, country, family, family_name, date_time, path)))
 
         await asyncio.gather(*tasks)
 
@@ -57,3 +58,17 @@ def download_certs(year, path=f'jsons/', backup=True):
             shutil.move(os.path.join(source_dir, file_name), target_dir)
     asyncio.run(download_certs_async(year, path, backup))
     print("--- %s seconds ---" % (time.time() - start_time))
+
+
+def get_countries():
+    url = f"https://data.orc.org/public/WPub.dll"
+    request = requests.get(url)
+    tree = ET.ElementTree(ET.fromstring(request.content))
+    available_countries = []
+    for item in tree.getroot().findall('./DATA/ROW'):
+        for child in item:
+            if child.tag == 'CountryId':
+                available_countries.append((child.text.encode('utf8')).decode('utf-8'))
+    available_countries = set(available_countries)
+    return list(available_countries)
+
