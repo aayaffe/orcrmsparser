@@ -14,10 +14,14 @@ from utils import create_folder
 json_template = 'Template_short.json'
 classes = ['Amami', 'Snonit', 'Snonit Small Rig', 'Sayfan', 'Livyatanit']
 
+"""
+A script used to generate Json files of one design boats to be used for simple import in ORC scorer
+"""
+
 
 def fix_bins(json_file):
     """
-    Fixes BIN numbers in the JSON file.
+    Fixes Duplicate BIN numbers in the JSON file.
     """
     iojson = json.load(io.open(json_file, 'r', encoding='utf-8-sig'))
     print('Number of boats: ' + str(len(iojson['rms'])))
@@ -73,5 +77,4 @@ def add_boats_to_json(json_file):
         json.dump(iojson, f, ensure_ascii=False, indent=4)
 
 
-# fix_bins("boats/Israel Small sailing vessels.json")
 add_boats_to_json("boats/Israel Small sailing vessels.json")
