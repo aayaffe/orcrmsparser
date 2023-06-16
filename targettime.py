@@ -99,7 +99,7 @@ def generate_target_time_file(filename, jsons=[], countries=[], path=f'jsons/'):
                     jsons.append(file)
 
     rms = orc.load_json_files(jsons)
-    courseLengths = {}
+    course_lengths = {}
     create_folder(filename)
     workbook = xlsxwriter.Workbook(filename)
     wind_speeds = rms[0]['Allowances']['WindSpeeds']
@@ -111,11 +111,11 @@ def generate_target_time_file(filename, jsons=[], countries=[], path=f'jsons/'):
         boats_rows[boat_name] = []
         if boat_name not in selected_boats.keys() and len(selected_boats) != 0:
             continue  # Skip if boat not selected and selected_boats list is not empty
-        courseLengths[boat_name] = {}
+        course_lengths[boat_name] = {}
 
         for course in course_types:
             course_rows = [[course] + [' ' for x in range(len(allowances['WindSpeeds']))]]
-            courseLengths[boat_name][course] = {}
+            course_lengths[boat_name][course] = {}
             course_rows.append(['L1'] + ([str(x) for x in allowances['WindSpeeds']]))
             lengths = [x * L1_dist_interval for x in
                        range(int(L1_min_dist * (1 / L1_dist_interval)), int(1 / L1_dist_interval * L1_max_dist + 1))]
@@ -128,7 +128,7 @@ def generate_target_time_file(filename, jsons=[], countries=[], path=f'jsons/'):
                         total_time += length * course_types[course][leg] * allowances[leg][idx]
                     total_time *= 1 + target_time_allowance  # Add Allowance % for target time
                     distances.append(f'{total_time / 60:.0f}')
-                    courseLengths[boat_name][course][spd] = total_time / 60
+                    course_lengths[boat_name][course][spd] = total_time / 60
                 course_rows.append(distances)
             if not boats_rows[boat_name]:
                 boats_rows[boat_name] = course_rows
@@ -141,10 +141,10 @@ def generate_target_time_file(filename, jsons=[], countries=[], path=f'jsons/'):
         sorted_lengths[c] = {}
         for s in rms[1]['Allowances']['WindSpeeds']:
             sorted_lengths[c][s] = []
-            for boat in courseLengths:
-                sorted_lengths[c][s].append((boat, courseLengths[boat][c][s]))
+            for boat in course_lengths:
+                sorted_lengths[c][s].append((boat, course_lengths[boat][c][s]))
             sorted_lengths[c][s] = sorted(sorted_lengths[c][s], key=lambda k: k[1])
-            boats_number = len(courseLengths)
+            boats_number = len(course_lengths)
 
     generate_ranking_sheet(workbook, wind_speeds, boats_number, sorted_lengths)
     for boat in selected_boats.keys():
