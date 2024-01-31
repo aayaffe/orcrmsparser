@@ -22,5 +22,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('orccerts/', include('orccerts.urls')),
     path('admin/', admin.site.urls),
-
+    path("select2/", include("django_select2.urls")),
 ]
