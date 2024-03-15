@@ -1,4 +1,6 @@
 from dataclasses import dataclass, field
+
+from orcsc.model.class_enum import YachtClass
 from orcsc.model.xml_element import XmlElement
 
 
@@ -14,5 +16,10 @@ class ClsRow(XmlElement):
     EnableA9: str = None
     HeatState: str = None
     DayNo: str = None
+    _class_enum: YachtClass = None
 
+
+
+    def get_yacht_class(self):
+        return self._class_enum
 

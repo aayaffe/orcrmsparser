@@ -1,0 +1,30 @@
+<report name="TEntryList" id="" title="Entry List class {ClassName}">
+      <column fieldname="__LineNo" title="#" alignment="1" visible="true"/>
+      <column fieldname="Nation" title="Nation" alignment="0" visible="true"/>
+      <column fieldname="YachtName" title="Yacht Name" alignment="0" visible="true"/>
+      <column fieldname="SailNo" title="Sail No" alignment="0" visible="true"/>
+      <column fieldname="BowNo" title="Bow" alignment="0" visible="false"/>
+      <column fieldname="YClass" title="Type" alignment="0" visible="true"/>
+      <column fieldname="Owner" title="Owner" alignment="0" visible="false"/>
+      <column fieldname="Skipper" title="Skipper" alignment="0" visible="false"/>
+      <column fieldname="Club" title="Club" alignment="0" visible="false"/>
+      <column fieldname="ClassId" title="Class" alignment="2" visible="false"/>
+      <column fieldname="DivId" title="Division" alignment="2" visible="false"/>
+      <column fieldname="CDL" title="CDL" alignment="1" visible="true"/>
+      <column fieldname="GPH" title="GPH" alignment="1" visible="false"/>
+      <column fieldname="LOA" title="LOA" alignment="1" visible="false"/>
+      <column fieldname="Draft" title="Draft" alignment="1" visible="false"/>
+      <column fieldname="APHD" title="APHD" alignment="1" visible="false"/>
+      <column fieldname="APHT" title="APHT" alignment="1" visible="false"/>
+      <column fieldname="ILCWA" title="W/L&#xA;TOD" alignment="1" visible="false"/>
+      <column fieldname="TMF_Inshore" title="W/L&#xA;TOT" alignment="1" visible="false"/>
+      <column fieldname="CTOD" title="Custom TOD" alignment="1" visible="false"/>
+      <column fieldname="CTOT" title="Custom TOT" alignment="1" visible="false"/>
+      <column fieldname="EMail" title="EMail" alignment="0" visible="false"/>
+      <column fieldname="Phone" title="Phone" alignment="0" visible="false"/>
+      <column fieldname="CertType" title="Certificate&#xA;Type" alignment="0" visible="false"/>
+      <column fieldname="IssueDate" title="Issue&#xA;Date" alignment="2" visible="false"/>
+      <column fieldname="NatAuth" title="Rating&#xA;Office" alignment="0" visible="false"/>
+      <column fieldname="BIN" title="Filename" alignment="0" visible="false"/>
+      <column fieldname="RefNo" title="Reference#" alignment="2" visible="false"/>
+    </report>

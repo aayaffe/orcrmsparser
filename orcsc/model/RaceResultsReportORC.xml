@@ -1,0 +1,38 @@
+<report name="TRaceResults" id="" title="Race Results" customscoringname="">
+      <column fieldname="PosOvl" title="Overall Pos" alignment="1" visible="true"/>
+      <column fieldname="Nation" title="Nation" alignment="0" visible="true"/>
+      <column fieldname="YachtName" title="Yacht Name" alignment="0" visible="true"/>
+      <column fieldname="SailNo" title="Sail No" alignment="0" visible="true"/>
+      <column fieldname="BowNo" title="Bow" alignment="0" visible="false"/>
+      <column fieldname="YClass" title="Type" alignment="0" visible="true"/>
+      <column fieldname="Owner" title="Owner" alignment="0" visible="false"/>
+      <column fieldname="Skipper" title="Skipper" alignment="0" visible="false"/>
+      <column fieldname="DivId" title="Division" alignment="2" visible="false"/>
+      <column fieldname="StartOffset" title="Start Offset" alignment="2" visible="false"/>
+      <column fieldname="StartTime" title="Start Time" alignment="2" visible="false"/>
+      <column fieldname="FinishTime" title="Finish Time" alignment="2" visible="true"/>
+      <column fieldname="ElapsedSecs" title="Elapsed" alignment="2" visible="true"/>
+      <column fieldname="CorrectedSeconds" title="Corrected" alignment="2" visible="true"/>
+      <column fieldname="CorrDelay" title="Delta" alignment="2" visible="true"/>
+      <column fieldname="CorrDelay1" title="Delta 1" alignment="2" visible="false"/>
+      <column fieldname="CorrectedSeconds1" title="Corrected 1" alignment="2" visible="false"/>
+      <column fieldname="CorrDelay2" title="Delta 2" alignment="2" visible="false"/>
+      <column fieldname="CorrectedSeconds2" title="Corrected 2" alignment="2" visible="false"/>
+      <column fieldname="Penalty" title="Penalty" alignment="1" visible="false"/>
+      <column fieldname="Penalty_ET" title="Elapsed Time Penalty" alignment="2" visible="false"/>
+      <column fieldname="PtsOvl" title="Overall Pts" alignment="1" visible="true"/>
+      <column fieldname="Club" title="Club" alignment="0" visible="false"/>
+      <column fieldname="TOD" title="TOD" alignment="1" visible="false"/>
+      <column fieldname="TOT" title="TOT" alignment="1" visible="false"/>
+      <column fieldname="TOD2" title="TOD2" alignment="1" visible="false"/>
+      <column fieldname="TOT2" title="TOT2" alignment="1" visible="false"/>
+      <column fieldname="Finish" title="Finish" alignment="2" visible="false"/>
+      <column fieldname="PosCls" title="Division Pos" alignment="1" visible="false"/>
+      <column fieldname="PtsCls" title="Division Pts" alignment="1" visible="false"/>
+      <column fieldname="IW" title="IW" alignment="1" visible="false"/>
+      <column fieldname="IW2" title="IW2" alignment="1" visible="false"/>
+      <column fieldname="Pts1" title="Pts1" alignment="1" visible="false"/>
+      <column fieldname="Pts2" title="Pts2" alignment="1" visible="false"/>
+      <column fieldname="PtsDS" title="PtsDS" alignment="1" visible="false"/>
+      <column fieldname="Remarks" title="Remarks" alignment="0" visible="false"/>
+    </report>

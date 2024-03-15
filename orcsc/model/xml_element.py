@@ -35,7 +35,8 @@ class XmlElement:
                 el.text = to_xml_str(val)
         attributes = [a for a in dir(type(self)) if a.startswith('_') and not a.startswith('__')
                       and not a == "_text_val" and not callable(getattr(type(self), a))
-                      and not '__elem_name' in a]
+                      and not '__elem_name'
+                      and not '_class_enum' in a]
         for attr in attributes:
             val = getattr(self, attr)
             if val is not None:

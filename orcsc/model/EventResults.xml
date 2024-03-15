@@ -1,0 +1,13 @@
+<report name="TEventResults" id="" title="Series Results class {ClassName}">
+      <column fieldname="Position" title="Rank" alignment="1" visible="true"/>
+      <column fieldname="Nation" title="Nation" alignment="0" visible="true"/>
+      <column fieldname="YachtName" title="Yacht Name" alignment="0" visible="true"/>
+      <column fieldname="SailNo" title="Sail No" alignment="0" visible="true"/>
+      <column fieldname="BowNo" title="Bow" alignment="0" visible="false"/>
+      <column fieldname="YClass" title="Type" alignment="0" visible="true"/>
+      <column fieldname="Owner" title="Owner" alignment="0" visible="false"/>
+      <column fieldname="Skipper" title="Skipper" alignment="0" visible="false"/>
+      <column fieldname="Club" title="Club" alignment="0" visible="false"/>
+      <column fieldname="ClassId" title="Class" alignment="2" visible="false"/>
+      <column fieldname="DivId" title="Division" alignment="2" visible="false"/>
+    </report>
