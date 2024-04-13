@@ -1,12 +1,20 @@
 import os
+import time
+
 import prompt_toolkit
-from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter, FuzzyWordCompleter
 from prompt_toolkit.validation import ValidationError, Validator
 
 
 def create_folder(filename):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+
+def backup_file(file, file_ext=".bak"):
+    timestamp_int = str(int(time.time()))
+    with open(file, "r", encoding='utf-8') as f:
+        with open(file + timestamp_int + file_ext, "w", encoding='utf-8') as f2:
+            f2.write(f.read())
 
 
 def is_int(s):

@@ -12,16 +12,46 @@ def parse_orcsc_file(file):
         xml = cls_row.to_element()
 
 
+def remove_namespace(doc, namespace):
+    """Remove namespace in the passed document in place."""
+    ns = f'{{{namespace}}}' # namespace as {namespace}
+    for elem in doc.iter():
+        if elem.tag.startswith(ns):
+            elem.tag = elem.tag[len(ns):] # strip ns
+
+
 def add_classes(input_file, output_file, classes: List[ClsRow]):
     tree = ET.parse(input_file)
     Cls = tree.getroot().find('./Cls')
     for cls_row in classes:
         Cls.append(cls_row.to_element())
-    # Add report printing directives
+    # add_reports(classes, tree)
+    ET.indent(tree, space="\t", level=0)
+    tree.write(output_file, encoding='utf-8', xml_declaration=False)
+
+
+def add_reports(input_file, output_file, classes: List[ClsRow]):
+    tree = ET.parse(input_file)
     reports = tree.getroot().find('./reports')
+    # Add Event results
+    preexisting_report = reports.find(f".//report[@name='TEventResults']")
+    if preexisting_report is not None:
+        reports.remove(preexisting_report)
+    event_results_report = ET.parse("model/EventResults.xml")
+    reports.append(event_results_report.getroot())
+
+    #Add Scratch Sheet
+    preexisting_report = reports.find(f".//report[@name='TScratchSheet']")
+    if preexisting_report is not None:
+        reports.remove(preexisting_report)
+    scratch_sheet_report = ET.parse("model/ScratchSheetReport.xml")
+    reports.append(scratch_sheet_report.getroot())
+
     # add entry list report printing
-    #TODO: Check if not preexisting reports in XML file
     for cls_row in classes:
+        preexisting_report = reports.find(f".//report[@name='TEntryList'][@id='{cls_row.ClassId}']")
+        if preexisting_report is not None:
+            reports.remove(preexisting_report)
         if cls_row.get_yacht_class() == YachtClass.ORC:
             entry_list_orc = ET.parse("model/EntryListReportORC.xml")
             entry_list_orc.getroot().set('id', cls_row.ClassId)
@@ -32,6 +62,9 @@ def add_classes(input_file, output_file, classes: List[ClsRow]):
             reports.append(entry_list_one_design.getroot())
     # add race results report printing
     for cls_row in classes:
+        preexisting_report = reports.find(f".//report[@name='TRaceResults'][@id='{cls_row.ClassId}']")
+        if preexisting_report is not None:
+            reports.remove(preexisting_report)
         if cls_row.get_yacht_class() == YachtClass.ORC:
             race_results_orc = ET.parse("model/RaceResultsReportORC.xml")
             race_results_orc.getroot().set('id', cls_row.ClassId)
@@ -41,6 +74,7 @@ def add_classes(input_file, output_file, classes: List[ClsRow]):
             race_results_one_design.getroot().set('id', cls_row.ClassId)
             reports.append(race_results_one_design.getroot())
     ET.indent(tree, space="\t", level=0)
+    remove_namespace(tree, "http://www.topografix.com/GPX/1/1")
     tree.write(output_file, encoding='utf-8', xml_declaration=False)
 
 
