@@ -1,4 +1,4 @@
-<event filename="C:\programing\orcrmsparser\orcsc\test.orcsc" applicationversion="1.8.7.106" start_gap="0" start_rounding="1" start_type="0">
+<event filename="C:\programing\orcrmsparser\orcsc\test_files\template.orcsc" applicationversion="1.9.0.130" start_gap="0" start_rounding="1" start_type="0">
   <Event>
     <ROW>
       <EventName/>
@@ -13,7 +13,7 @@
       <AlternativeRMS>false</AlternativeRMS>
       <TZAbbr>GMT+03</TZAbbr>
       <UTCOffset>10800</UTCOffset>
-      <EventTitle>Test</EventTitle>
+      <EventTitle/>
       <EventCode/>
       <DSFormula>CorrDelay1+CorrDelay2</DSFormula>
     </ROW>
@@ -31,4 +31,10 @@
     <logo name="center" filename="" mediatype="image/"></logo>
     <logo name="right" filename="" mediatype="image/"></logo>
   </reports>
+  <routes/>
+  <tracks version="1.1" creator="ORC Scorer - https://orc.org" xmlns:orc="https://orc.org/xmlschemas" xmlns="http://www.topografix.com/GPX/1/1">
+    <metadata xmlns="">
+      <time>2024-05-26T17:50:27.583Z</time>
+    </metadata>
+  </tracks>
 </event>

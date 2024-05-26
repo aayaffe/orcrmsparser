@@ -3,6 +3,8 @@ from typing import List
 
 from orcsc.model.class_enum import YachtClass
 from orcsc.model.cls_row import ClsRow
+from orcsc.model.event_row import EventRow
+from orcsc.model.fleet_row import FleetRow
 
 
 def parse_orcsc_file(file):
@@ -14,10 +16,24 @@ def parse_orcsc_file(file):
 
 def remove_namespace(doc, namespace):
     """Remove namespace in the passed document in place."""
-    ns = f'{{{namespace}}}' # namespace as {namespace}
+    ns = f'{{{namespace}}}'  # namespace as {namespace}
     for elem in doc.iter():
         if elem.tag.startswith(ns):
-            elem.tag = elem.tag[len(ns):] # strip ns
+            elem.tag = elem.tag[len(ns):]  # strip ns
+
+
+def add_event(input_file, output_file, event_title, start_date, end_date, venue, organizer):
+    tree = ET.parse(input_file)
+    Event = tree.getroot().find('./Event')
+    # Remove existing event
+    for item in Event.findall('./ROW'):
+        Event.remove(item)
+    event_row = EventRow("ROW", EventTitle=event_title, StartDate=start_date, EndDate=end_date, Venue=venue,
+                         Organizer=organizer)
+
+    Event.append(event_row.to_element())
+    ET.indent(tree, space="\t", level=0)
+    tree.write(output_file, encoding='utf-8', xml_declaration=False)
 
 
 def add_classes(input_file, output_file, classes: List[ClsRow]):
@@ -113,11 +129,31 @@ def add_races(input_file, output_file, races):
     tree.write(output_file, encoding='utf-8', xml_declaration=False)
 
 
-def add_fleets(input_file, output_file, fleets):
+# TODO: Convert to a function that gets names, class_id, Yacht class, sail number, and skipper name
+def add_fleets(input_file, output_file, new_fleets):
     tree = ET.parse(input_file)
     Fleet = tree.getroot().find('./Fleet')
-    for fleet_row in fleets:
+    yids = get_yids(get_fleets(input_file))
+    max_yid = 0
+    if len(yids) > 0:
+        max_yid = max(yids)
+    for fleet_row in new_fleets:
+        max_yid = max_yid + 1
+        fleet_row.yid = max_yid
         Fleet.append(fleet_row.to_element())
     ET.indent(tree, space="\t", level=0)
     tree.write(output_file, encoding='utf-8', xml_declaration=False)
     pass
+
+
+def get_fleets(input_file):
+    tree = ET.parse(input_file)
+    fleets = tree.getroot().find('./Fleet')
+    fleet_rows = []
+    for fleet in fleets:
+        fleet_rows.append(FleetRow.from_element(fleet))
+    return fleet_rows
+
+
+def get_yids(fleets):
+    return [int(fleet.YID) for fleet in fleets]
