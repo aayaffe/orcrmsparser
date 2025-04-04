@@ -129,7 +129,6 @@ def add_races(input_file, output_file, races):
     tree.write(output_file, encoding='utf-8', xml_declaration=False)
 
 
-# TODO: Convert to a function that gets names, class_id, Yacht class, sail number, and skipper name
 def add_fleets(input_file, output_file, new_fleets):
     tree = ET.parse(input_file)
     Fleet = tree.getroot().find('./Fleet')
@@ -139,7 +138,7 @@ def add_fleets(input_file, output_file, new_fleets):
         max_yid = max(yids)
     for fleet_row in new_fleets:
         max_yid = max_yid + 1
-        fleet_row.yid = max_yid
+        fleet_row.YID = max_yid
         Fleet.append(fleet_row.to_element())
     ET.indent(tree, space="\t", level=0)
     tree.write(output_file, encoding='utf-8', xml_declaration=False)
