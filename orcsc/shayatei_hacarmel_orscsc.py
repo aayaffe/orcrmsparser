@@ -4,28 +4,42 @@ from orcsc.model.fleet_row import FleetRow
 from orcsc.model.logo import logo
 from orcsc.model.race_row import RaceRow
 from orcsc.model.scoring_codes_enum import ScoringCode
-from orcsc.orcsc_file_editor import add_classes, add_logos, add_races, add_fleets, add_reports, add_event
-from utils import backup_file, create_folder
+from orcsc.orcsc_file_editor import add_classes, add_logos, add_races, add_fleets, add_reports, add_event, get_races, \
+    get_race_names
+from utils import backup_file, create_folder, default_input
+from prompt_toolkit import print_formatted_text as print, HTML
 
 scoring_file = "F:\odrive\Google Drive\שיט\קהילת שייטים כרמל\שיוטים ואירועים\\2025\ליגת החורף 2025\\results.orcsc"
 
-start_time = datetime(2025, 4, 5, 10, 30, 0)
-scoring_code = ScoringCode.TOT_Triple_Number_Windward_Leeward_Medium
+test_file = r"test_files\test.orcsc"
+
+start_time = datetime(2025, 4, 5, 10, 35, 0)
+scoring_code = ScoringCode.TOT_Triple_Number_Windward_Leeward_High
 race_name = "Race"
 races = [
     RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="O1", ScoringType=scoring_code.value),
     RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="O2", ScoringType=scoring_code.value),
     RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="O3", ScoringType=scoring_code.value),
-    RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SN", ScoringType=ScoringCode.TOT_Custom.value),
-    RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SE", ScoringType=ScoringCode.TOT_Custom.value),
-    RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SF", ScoringType=ScoringCode.TOT_Custom.value),
+    # RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SN", ScoringType=ScoringCode.TOT_Custom.value),
+    # RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SE", ScoringType=ScoringCode.TOT_Custom.value),
+    # RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SF", ScoringType=ScoringCode.TOT_Custom.value),
     RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="Z", ScoringType=ScoringCode.TOT_Custom.value)
 ]
 
 def add_races_existing_file(scoring_file, races):
     backup_file(scoring_file)
-    add_races(scoring_file, scoring_file, races)
+    print(HTML("<ansigreen>Current races in file:</ansigreen>"))
+    print("\n".join(str(race) for race in get_race_names(scoring_file)))
+    print(HTML("<ansigreen>Races to add:</ansigreen>"))
+    print("\n".join(f"{race.ClassId}, {race.RaceName}" for race in races))
+    response = default_input("Do you want to add these races?",'n',['y','n'],True)
+    if response == 'y':
+        add_races(scoring_file, scoring_file, races)
+        print("Races added successfully.")
+    else:
+        print("No races were added.")
 
+# add_races_existing_file(test_file, races)
 
 def get_boats_from_registration_csv(csv_file, class_id, class_name=None, class_column="class",
                                     yacht_name_column="סירה", sail_number_column=None):
@@ -42,9 +56,8 @@ def get_boats_from_registration_csv(csv_file, class_id, class_name=None, class_c
     return boats
 
 
-csv_file = r"C:\Users\aayaffe\Downloads\!temp\רישום לשיוט אמיר רוסו 2025.csv"
-boats = get_boats_from_registration_csv(csv_file, "Z",
-                                        yacht_name_column='boat-name')
+# csv_file = r"C:\Users\aayaffe\Downloads\!temp\רישום לשיוט אמיר רוסו 2025.csv"
+# boats = get_boats_from_registration_csv(csv_file, "Z", yacht_name_column='boat-name')
 
 
 #TODO: Add ORC from list

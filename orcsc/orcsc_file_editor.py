@@ -115,6 +115,10 @@ def get_race_ids(input_file):
     races = get_races(input_file)
     return [int(race.find('RaceId').text) for race in races]
 
+def get_race_names(input_file):
+    races = get_races(input_file)
+    return [f"{int(race.find('RaceId').text)}: {race.find('ClassId').text}, {race.find('RaceName').text}" for race in races]
+
 
 def add_races(input_file, output_file, races):
     tree = ET.parse(input_file)
