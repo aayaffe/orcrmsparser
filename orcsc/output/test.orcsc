@@ -1,0 +1,164 @@
+<event xmlns:ns0="http://www.topografix.com/GPX/1/1" filename="C:\programing\orcrmsparser\orcsc\test_files\test.orcsc" applicationversion="1.9.0.130" start_gap="0" start_rounding="1" start_type="0">
+	<Event>
+		<ROW>
+			<EventName />
+			<EventFolder />
+			<EventId />
+			<Status />
+			<StartDate />
+			<EndDate />
+			<Venue />
+			<Organizer />
+			<DoubleScoring>false</DoubleScoring>
+			<AlternativeRMS>false</AlternativeRMS>
+			<TZAbbr>GMT+03</TZAbbr>
+			<UTCOffset>10800</UTCOffset>
+			<EventTitle />
+			<EventCode />
+			<DSFormula>CorrDelay1+CorrDelay2</DSFormula>
+		</ROW>
+	</Event>
+	<Fleet />
+	<Cls>
+		<ROW>
+			<ClassId>11</ClassId>
+			<ClassName>11</ClassName>
+			<Discards>0</Discards>
+			<DivFromOverall>false</DivFromOverall>
+			<TimeLimitFormulae />
+			<ResultScoring>0</ResultScoring>
+			<UseBoatIW>false</UseBoatIW>
+			<EnableA9 />
+			<HeatState />
+			<DayNo />
+		</ROW>
+	</Cls>
+	<Divs />
+	<Legs />
+	<Course />
+	<Race>
+		<ROW>
+			<RaceId>1</RaceId>
+			<RaceName />
+			<StartTime>2024-04-13T12:00:00.000Z</StartTime>
+			<ClassId>11</ClassId>
+			<Distance />
+			<CourseId />
+			<Provisional>true</Provisional>
+			<CountryId>USA</CountryId>
+			<ScoringType>US_TNAP_H_TOT</ScoringType>
+			<Discardable>true</Discardable>
+			<Coeff>1</Coeff>
+			<CountryId2>ORC</CountryId2>
+			<ScoringType2>0</ScoringType2>
+			<RaceNo />
+			<HeatNo>0</HeatNo>
+			<DayNo>0</DayNo>
+			<HeatState>0</HeatState>
+			<BoatIWUsed />
+			<FinishOffset />
+			<Lat />
+			<Lon />
+			<RouteId />
+			<LowPolarWS />
+			<LowPolarWSOrigin />
+		</ROW>
+		<ROW>
+			<BoatIWUsed>false</BoatIWUsed>
+			<ClassId>O1</ClassId>
+			<Coeff>1</Coeff>
+			<CountryId />
+			<CountryId2 />
+			<CourseId />
+			<DayNo>0</DayNo>
+			<Discardable>true</Discardable>
+			<Distance />
+			<FinishOffset />
+			<HeatNo>0</HeatNo>
+			<HeatStat>0</HeatStat>
+			<Provisional>true</Provisional>
+			<RaceId>2</RaceId>
+			<RaceName>Race</RaceName>
+			<RaceNo />
+			<ScoringType>TN_Inshore_High</ScoringType>
+			<ScoringType2>0</ScoringType2>
+			<StartTime>2025-04-05T10:35:00.000000Z</StartTime>
+		</ROW>
+		<ROW>
+			<BoatIWUsed>false</BoatIWUsed>
+			<ClassId>O2</ClassId>
+			<Coeff>1</Coeff>
+			<CountryId />
+			<CountryId2 />
+			<CourseId />
+			<DayNo>0</DayNo>
+			<Discardable>true</Discardable>
+			<Distance />
+			<FinishOffset />
+			<HeatNo>0</HeatNo>
+			<HeatStat>0</HeatStat>
+			<Provisional>true</Provisional>
+			<RaceId>3</RaceId>
+			<RaceName>Race</RaceName>
+			<RaceNo />
+			<ScoringType>TN_Inshore_High</ScoringType>
+			<ScoringType2>0</ScoringType2>
+			<StartTime>2025-04-05T10:35:00.000000Z</StartTime>
+		</ROW>
+		<ROW>
+			<BoatIWUsed>false</BoatIWUsed>
+			<ClassId>O3</ClassId>
+			<Coeff>1</Coeff>
+			<CountryId />
+			<CountryId2 />
+			<CourseId />
+			<DayNo>0</DayNo>
+			<Discardable>true</Discardable>
+			<Distance />
+			<FinishOffset />
+			<HeatNo>0</HeatNo>
+			<HeatStat>0</HeatStat>
+			<Provisional>true</Provisional>
+			<RaceId>4</RaceId>
+			<RaceName>Race</RaceName>
+			<RaceNo />
+			<ScoringType>TN_Inshore_High</ScoringType>
+			<ScoringType2>0</ScoringType2>
+			<StartTime>2025-04-05T10:35:00.000000Z</StartTime>
+		</ROW>
+		<ROW>
+			<BoatIWUsed>false</BoatIWUsed>
+			<ClassId>Z</ClassId>
+			<Coeff>1</Coeff>
+			<CountryId />
+			<CountryId2 />
+			<CourseId />
+			<DayNo>0</DayNo>
+			<Discardable>true</Discardable>
+			<Distance />
+			<FinishOffset />
+			<HeatNo>0</HeatNo>
+			<HeatStat>0</HeatStat>
+			<Provisional>true</Provisional>
+			<RaceId>5</RaceId>
+			<RaceName>Race</RaceName>
+			<RaceNo />
+			<ScoringType>CTOT</ScoringType>
+			<ScoringType2>0</ScoringType2>
+			<StartTime>2025-04-05T10:35:00.000000Z</StartTime>
+		</ROW>
+	</Race>
+	<Rslt />
+	<Heats />
+	<reports>
+		<logo name="left" filename="" mediatype="image/" />
+		<logo name="center" filename="" mediatype="image/" />
+		<logo name="right" filename="" mediatype="image/" />
+	</reports>
+	<routes />
+	<ns0:tracks version="1.1" creator="ORC Scorer - https://orc.org">
+		<metadata>
+			<time>2024-04-13T09:15:04.056Z</time>
+		</metadata>
+	</ns0:tracks>
+</event>

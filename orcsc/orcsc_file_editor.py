@@ -1,10 +1,15 @@
 import xml.etree.ElementTree as ET
+from datetime import datetime
 from typing import List
+
+from prompt_toolkit import print_formatted_text as print, HTML
 
 from orcsc.model.class_enum import YachtClass
 from orcsc.model.cls_row import ClsRow
 from orcsc.model.event_row import EventRow
 from orcsc.model.fleet_row import FleetRow
+from orcsc.model.logo import logo
+from utils import backup_file, default_input, create_folder
 
 
 def parse_orcsc_file(file):
@@ -160,3 +165,53 @@ def get_fleets(input_file):
 
 def get_yids(fleets):
     return [int(fleet.YID) for fleet in fleets]
+
+
+def add_races_existing_file(scoring_file, races):
+    backup_file(scoring_file)
+    print(HTML("<ansigreen>Current races in file:</ansigreen>"))
+    print("\n".join(str(race) for race in get_race_names(scoring_file)))
+    print(HTML("<ansigreen>Races to add:</ansigreen>"))
+    print("\n".join(f"{race.ClassId}, {race.RaceName}" for race in races))
+    response = default_input("Do you want to add these races?",'n',['y','n'],True)
+    if response == 'y':
+        add_races(scoring_file, scoring_file, races)
+        print("Races added successfully.")
+    else:
+        print("No races were added.")
+
+
+def create_new_scoring_file(event_title, venue= "Haifa Bay", organizer="CYC", output_file=None, start_date=None, end_date=None, classes=None, races=None, boats=None):
+    template_file = "./test_files/template.orcsc"
+    if output_file is None:
+        output_file = f"output/{event_title}.orcsc"
+    create_folder(output_file)
+    print("Creating new output file:", output_file)
+    if start_date is None:
+        start_date = datetime.now()
+        print("Set default start date to today")
+    if end_date is None:
+        end_date = datetime.now()
+        print("Set default end date to today")
+    add_event(template_file, output_file, event_title=event_title, start_date=start_date,
+              end_date=end_date, venue=venue, organizer=organizer)
+    print("Added event to output file")
+    if classes is not None:
+        add_classes(output_file, output_file, classes)
+        add_reports(output_file, output_file, classes)
+    print("Added classes and reports to output file")
+    with open("logo.txt", "r") as logo_file:
+        logo_str = logo_file.read()
+    logos = [
+        logo("logo", _filename="cyc.png", _name="center", _mediatype="image/", _text_val=logo_str),
+        logo("logo", _filename="", _name="right", _mediatype="image/"),
+        logo("logo", _filename="", _name="left", _mediatype="image/")
+    ]
+    add_logos(output_file, output_file, logos)
+    print("Added logos to output file")
+    if races is not None:
+        add_races(output_file, output_file, races)
+        print("Added Races to output file")
+    if boats is not None:
+        add_fleets(output_file, output_file, boats)
+        print("Added boats to output file")
