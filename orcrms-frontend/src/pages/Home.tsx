@@ -9,17 +9,29 @@ import {
     Container,
     List,
     ListItem,
+    ListItemButton,
+    ListItemIcon,
     ListItemText,
     Divider,
     CircularProgress,
     Alert,
     Stack,
     IconButton,
-    InputAdornment
+    InputAdornment,
+    Drawer,
+    AppBar,
+    Toolbar,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions
 } from '@mui/material';
-import { Upload as UploadIcon, Sailing as SailingIcon, Folder as FolderIcon } from '@mui/icons-material';
+import { Upload as UploadIcon, Sailing as SailingIcon, Folder as FolderIcon, Menu as MenuIcon, Download as DownloadIcon, Add as AddIcon } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFileInfo } from '../api/orcscApi';
+import type { ClassRow, RaceRow, FleetRow } from '../types/orcsc';
+
+const drawerWidth = 240;
 
 export const Home: React.FC = () => {
     const [filePath, setFilePath] = useState('');
@@ -27,6 +39,19 @@ export const Home: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<string | null>(null);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+    const [newFileOpen, setNewFileOpen] = useState(false);
+    const [newFileData, setNewFileData] = useState({
+        eventTitle: '',
+        venue: 'Haifa Bay',
+        organizer: 'CYC',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
+        classes: [] as ClassRow[],
+        races: [] as RaceRow[],
+        boats: [] as FleetRow[]
+    });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,17 +86,27 @@ export const Home: React.FC = () => {
 
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (!file) return;
+        if (file) {
+            try {
+                setUploadError(null);
+                const result = await orcscApi.uploadFile(file);
+                await fetchFiles(); // Refresh the file list
+                // Navigate to the uploaded file
+                navigate(`/view/${encodeURIComponent(result.path)}`);
+            } catch (err) {
+                setUploadError('Failed to upload file');
+                console.error('Error uploading file:', err);
+            }
+        }
+    };
 
-        try {
-            setUploadError(null);
-            const result = await orcscApi.uploadFile(file);
-            await fetchFiles(); // Refresh the file list
-            // Navigate to the uploaded file
-            navigate(`/view/${encodeURIComponent(result.path)}`);
-        } catch (err) {
-            setUploadError('Failed to upload file');
-            console.error('Error uploading file:', err);
+    const handleFileDownload = async () => {
+        if (selectedFile) {
+            try {
+                await orcscApi.downloadFile(selectedFile);
+            } catch (error) {
+                console.error('Error downloading file:', error);
+            }
         }
     };
 
@@ -90,162 +125,200 @@ export const Home: React.FC = () => {
         return `${size.toFixed(1)} ${units[unitIndex]}`;
     };
 
+    const handleCreateNewFile = async () => {
+        try {
+            await orcscApi.createNewFile({
+                title: newFileData.eventTitle,
+                startDate: newFileData.startDate,
+                endDate: newFileData.endDate,
+                location: newFileData.venue,
+                organizer: newFileData.organizer,
+                classes: newFileData.classes.map(cls => cls.classId)
+            });
+            setNewFileOpen(false);
+            setNewFileData({
+                eventTitle: '',
+                venue: 'Haifa Bay',
+                organizer: 'CYC',
+                startDate: new Date().toISOString().split('T')[0],
+                endDate: new Date().toISOString().split('T')[0],
+                classes: [],
+                races: [],
+                boats: []
+            });
+            fetchFiles(); // Refresh the file list
+        } catch (error) {
+            console.error('Error creating new file:', error);
+        }
+    };
+
     return (
-        <Container maxWidth="md">
-            <Box sx={{ mt: 4, mb: 4 }}>
-                <Box sx={{ textAlign: 'center', mb: 4 }}>
-                    <SailingIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-                    <Typography variant="h3" component="h1" gutterBottom>
-                        ORCSC File Viewer
+        <Box sx={{ display: 'flex' }}>
+            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+                        sx={{ mr: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" noWrap component="div">
+                        ORCSC Parser
                     </Typography>
-                    <Typography variant="subtitle1" color="text.secondary">
-                        View and manage your sailing race results
-                    </Typography>
+                </Toolbar>
+            </AppBar>
+
+            <Drawer
+                variant="persistent"
+                anchor="left"
+                open={isDrawerOpen}
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        marginTop: '64px'
+                    },
+                }}
+            >
+                <Box sx={{ overflow: 'auto', mt: 2 }}>
+                    <List>
+                        <ListItem disablePadding>
+                            <ListItemButton component="label">
+                                <ListItemIcon>
+                                    <UploadIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Upload File" />
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept=".orcsc"
+                                    onChange={handleFileUpload}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={() => setNewFileOpen(true)}>
+                                <ListItemIcon>
+                                    <AddIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="New File" />
+                            </ListItemButton>
+                        </ListItem>
+
+                        <ListItem disablePadding>
+                            <ListItemButton 
+                                onClick={handleFileDownload}
+                                disabled={!selectedFile}
+                            >
+                                <ListItemIcon>
+                                    <DownloadIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Download File" />
+                            </ListItemButton>
+                        </ListItem>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography variant="subtitle1" sx={{ px: 2, py: 1 }}>
+                            Available Files
+                        </Typography>
+
+                        {files.map((file) => (
+                            <ListItem key={file.path} disablePadding>
+                                <ListItemButton
+                                    selected={selectedFile === file.path}
+                                    onClick={() => handleFileSelect(file.path)}
+                                >
+                                    <ListItemIcon>
+                                        <SailingIcon />
+                                    </ListItemIcon>
+                                    <ListItemText 
+                                        primary={file.name}
+                                        secondary={`Modified: ${formatDate(file.modified)} • Size: ${formatSize(file.size)}`}
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
                 </Box>
+            </Drawer>
 
-                {/* File Upload Section */}
-                <Paper 
-                    elevation={3} 
-                    sx={{ 
-                        p: 4, 
-                        mb: 4,
-                        background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%)',
-                        border: '1px solid rgba(0,0,0,0.1)'
-                    }}
-                >
-                    <Typography variant="h5" gutterBottom sx={{ color: 'primary.main' }}>
-                        Upload ORCSC File
-                    </Typography>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <Button
-                            variant="contained"
-                            component="label"
-                            startIcon={<UploadIcon />}
-                            sx={{ 
-                                background: 'linear-gradient(45deg, #0288d1 30%, #0277bd 90%)',
-                                '&:hover': {
-                                    background: 'linear-gradient(45deg, #0277bd 30%, #01579b 90%)',
-                                }
-                            }}
-                        >
-                            Choose File
-                            <input
-                                type="file"
-                                hidden
-                                accept=".orcsc"
-                                onChange={handleFileUpload}
-                            />
-                        </Button>
-                        {uploadError && (
-                            <Alert severity="error" sx={{ flex: 1 }}>
-                                {uploadError}
-                            </Alert>
-                        )}
-                    </Stack>
-                </Paper>
-
-                {/* Manual Path Entry */}
-                <Paper 
-                    elevation={3} 
-                    sx={{ 
-                        p: 4, 
-                        mb: 4,
-                        background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%)',
-                        border: '1px solid rgba(0,0,0,0.1)'
-                    }}
-                >
-                    <Typography variant="h5" gutterBottom sx={{ color: 'primary.main' }}>
-                        Enter File Path
-                    </Typography>
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            fullWidth
-                            label="ORCSC File Path"
-                            value={filePath}
-                            onChange={(e) => setFilePath(e.target.value)}
-                            placeholder="Enter the path to your ORCSC file"
-                            variant="outlined"
-                            sx={{ mb: 2 }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <FolderIcon color="primary" />
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            disabled={!filePath}
-                            sx={{ 
-                                background: 'linear-gradient(45deg, #1a237e 30%, #000051 90%)',
-                                '&:hover': {
-                                    background: 'linear-gradient(45deg, #000051 30%, #1a237e 90%)',
-                                }
-                            }}
-                        >
-                            View File
-                        </Button>
-                    </form>
-                </Paper>
-
-                {/* Available Files List */}
-                <Paper 
-                    elevation={3} 
-                    sx={{ 
-                        p: 4,
-                        background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%)',
-                        border: '1px solid rgba(0,0,0,0.1)'
-                    }}
-                >
-                    <Typography variant="h5" gutterBottom sx={{ color: 'primary.main' }}>
-                        Available Files
-                    </Typography>
-                    {loading ? (
-                        <Box display="flex" justifyContent="center" p={3}>
-                            <CircularProgress />
-                        </Box>
-                    ) : error ? (
-                        <Alert severity="error">{error}</Alert>
-                    ) : files.length === 0 ? (
-                        <Alert severity="info">No ORCSC files available</Alert>
-                    ) : (
-                        <List>
-                            {files.map((file, index) => (
-                                <React.Fragment key={file.path}>
-                                    <ListItem
-                                        onClick={() => handleFileSelect(file.path)}
-                                        sx={{ 
-                                            cursor: 'pointer',
-                                            '&:hover': {
-                                                background: 'rgba(2, 136, 209, 0.08)',
-                                            },
-                                            transition: 'background-color 0.2s',
-                                        }}
-                                    >
-                                        <ListItemText
-                                            primary={
-                                                <Typography variant="subtitle1" color="primary">
-                                                    {file.name}
-                                                </Typography>
-                                            }
-                                            secondary={
-                                                <Typography variant="body2" color="text.secondary">
-                                                    Modified: {formatDate(file.modified)} • Size: {formatSize(file.size)}
-                                                </Typography>
-                                            }
-                                        />
-                                    </ListItem>
-                                    {index < files.length - 1 && <Divider />}
-                                </React.Fragment>
-                            ))}
-                        </List>
-                    )}
-                </Paper>
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    p: 3,
+                    width: { sm: `calc(100% - ${drawerWidth}px)` },
+                    ml: { sm: `${drawerWidth}px` },
+                    mt: '64px'
+                }}
+            >
+                <Typography variant="h4" gutterBottom>
+                    Welcome to ORCSC Parser
+                </Typography>
+                <Typography variant="body1" paragraph>
+                    Select a file from the menu to view its contents or upload a new file.
+                </Typography>
             </Box>
-        </Container>
+
+            <Dialog open={newFileOpen} onClose={() => setNewFileOpen(false)}>
+                <DialogTitle>Create New Scoring File</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                        <TextField
+                            label="Event Title"
+                            value={newFileData.eventTitle}
+                            onChange={(e) => setNewFileData({ ...newFileData, eventTitle: e.target.value })}
+                            fullWidth
+                            required
+                        />
+                        <TextField
+                            label="Venue"
+                            value={newFileData.venue}
+                            onChange={(e) => setNewFileData({ ...newFileData, venue: e.target.value })}
+                            fullWidth
+                        />
+                        <TextField
+                            label="Organizer"
+                            value={newFileData.organizer}
+                            onChange={(e) => setNewFileData({ ...newFileData, organizer: e.target.value })}
+                            fullWidth
+                        />
+                        <TextField
+                            label="Start Date"
+                            type="date"
+                            value={newFileData.startDate}
+                            onChange={(e) => setNewFileData({ ...newFileData, startDate: e.target.value })}
+                            fullWidth
+                            InputLabelProps={{ shrink: true }}
+                        />
+                        <TextField
+                            label="End Date"
+                            type="date"
+                            value={newFileData.endDate}
+                            onChange={(e) => setNewFileData({ ...newFileData, endDate: e.target.value })}
+                            fullWidth
+                            InputLabelProps={{ shrink: true }}
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setNewFileOpen(false)}>Cancel</Button>
+                    <Button 
+                        onClick={handleCreateNewFile}
+                        variant="contained"
+                        disabled={!newFileData.eventTitle}
+                    >
+                        Create
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
     );
 }; 

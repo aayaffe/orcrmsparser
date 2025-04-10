@@ -7,6 +7,10 @@ import xml.etree.ElementTree as ET
 import os
 import logging
 import shutil
+from orcsc.orcsc_file_editor import add_races as orcsc_add_races
+from orcsc.model.race_row import RaceRow
+from fastapi.responses import FileResponse
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -46,11 +50,19 @@ class RaceData(BaseModel):
     ClassId: str
     ScoringType: str
 
+class AddRacesRequest(BaseModel):
+    races: List[RaceData]
+
 class FleetData(BaseModel):
     YID: Optional[int] = None
     YachtName: str
     SailNo: Optional[str] = None
     ClassId: str
+
+class CreateFileRequest(BaseModel):
+    template_path: str
+    new_file_path: str
+    event_data: Optional[dict] = None
 
 @app.get("/api/files")
 async def list_orcsc_files():
@@ -91,7 +103,7 @@ async def upload_file(file: UploadFile = File(...)):
         logger.error(f"Error uploading file: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/files/{file_path:path}")
+@app.get("/api/files/get/{file_path:path}")
 async def get_orcsc_file(file_path: str):
     try:
         logger.info(f"Received request for file: {file_path}")
@@ -171,6 +183,131 @@ async def get_orcsc_file(file_path: str):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+@app.post("/api/files/{file_path:path}/races")
+async def add_races_to_file(file_path: str, request: AddRacesRequest):
+    """Add races to an existing ORCSC file"""
+    try:
+        logger.info(f"Adding races to file: {file_path}")
+        
+        # Convert the file path to absolute path
+        abs_path = os.path.abspath(file_path)
+        logger.info(f"Absolute path: {abs_path}")
+        
+        # Check if file exists
+        if not os.path.exists(abs_path):
+            logger.error(f"File not found: {abs_path}")
+            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        
+        # Convert races to RaceRow objects
+        races = []
+        for race in request.races:
+            race_row = RaceRow("ROW")
+            race_row.RaceName = race.RaceName
+            race_row.ClassId = race.ClassId
+            race_row.StartTime = race.StartTime
+            race_row.ScoringType = race.ScoringType
+            races.append(race_row)
+        
+        # Add races to the file
+        orcsc_add_races(abs_path, abs_path, races)
+        
+        logger.info(f"Successfully added {len(races)} races to {file_path}")
+        return {"message": f"Successfully added {len(races)} races"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding races: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to add races: {str(e)}")
+
+@app.get("/api/files/download/{filename}")
+async def download_orcsc_file(filename: str):
+    """Download an ORCSC file"""
+    try:
+        logger.info(f"Downloading file: {filename}")
+        
+        # Ensure the filename has the .orcsc extension
+        if not filename.endswith('.orcsc'):
+            filename += '.orcsc'
+            
+        # Construct the full path using the output directory
+        full_path = os.path.join(OUTPUT_DIR, filename)
+        logger.info(f"Full path: {full_path}")
+        
+        # Check if file exists
+        if not os.path.exists(full_path):
+            logger.error(f"File not found: {full_path}")
+            raise HTTPException(status_code=404, detail=f"File not found: {filename}")
+            
+        # Return the file
+        return FileResponse(
+            full_path,
+            media_type="application/xml",
+            filename=filename
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading file: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to download file: {str(e)}")
+
+def get_template_files() -> List[str]:
+    """Get list of available template files."""
+    template_dir = Path("orcsc/templates")
+    if not template_dir.exists():
+        template_dir.mkdir(parents=True, exist_ok=True)
+        return []
+    
+    return [str(f) for f in template_dir.glob("*.orcsc")]
+
+@app.get("/api/templates")
+async def get_templates():
+    """Get list of available template files."""
+    try:
+        templates = get_template_files()
+        return templates
+    except Exception as e:
+        logging.error(f"Error getting templates: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to get templates")
+
+@app.post("/api/files")
+async def create_file_from_template(request: CreateFileRequest):
+    try:
+        # Validate paths
+        if not request.template_path.startswith("orcsc/"):
+            raise HTTPException(status_code=400, detail="Template path must be within orcsc directory")
+        if not request.new_file_path.startswith("orcsc/output/"):
+            raise HTTPException(status_code=400, detail="New file path must be within orcsc/output directory")
+
+        # Create the file from template using create_new_scoring_file
+        from orcsc.orcsc_file_editor import create_new_scoring_file
+        
+        # Extract event data from the request
+        event_data = request.event_data or {}
+        event_title = event_data.get("EventTitle", "New Event")
+        venue = event_data.get("Venue", "Haifa Bay")
+        organizer = event_data.get("Organizer", "CYC")
+        start_date = event_data.get("StartDate")
+        end_date = event_data.get("EndDate")
+        classes = event_data.get("Classes", [])
+        
+        # Create the new file
+        create_new_scoring_file(
+            event_title=event_title,
+            venue=venue,
+            organizer=organizer,
+            output_file=request.new_file_path,
+            start_date=start_date,
+            end_date=end_date,
+            classes=classes
+        )
+        
+        return {"message": f"File created successfully at {request.new_file_path}"}
+    except Exception as e:
+        logger.error(f"Error creating file: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import List
-
+import os
 from prompt_toolkit import print_formatted_text as print, HTML
 
 from orcsc.model.class_enum import YachtClass
@@ -58,14 +58,16 @@ def add_reports(input_file, output_file, classes: List[ClsRow]):
     preexisting_report = reports.find(f".//report[@name='TEventResults']")
     if preexisting_report is not None:
         reports.remove(preexisting_report)
-    event_results_report = ET.parse("model/EventResults.xml")
+    event_results_report = ET.parse(os.path.join(os.path.dirname(__file__), "model", "EventResults.xml"))
+    # event_results_report = ET.parse("model/EventResults.xml")
     reports.append(event_results_report.getroot())
 
     #Add Scratch Sheet
     preexisting_report = reports.find(f".//report[@name='TScratchSheet']")
     if preexisting_report is not None:
         reports.remove(preexisting_report)
-    scratch_sheet_report = ET.parse("model/ScratchSheetReport.xml")
+    scratch_sheet_report = ET.parse(os.path.join(os.path.dirname(__file__), "model", "ScratchSheetReport.xml"))
+    # scratch_sheet_report = ET.parse("model/ScratchSheetReport.xml")
     reports.append(scratch_sheet_report.getroot())
 
     # add entry list report printing
@@ -74,11 +76,13 @@ def add_reports(input_file, output_file, classes: List[ClsRow]):
         if preexisting_report is not None:
             reports.remove(preexisting_report)
         if cls_row.get_yacht_class() == YachtClass.ORC:
-            entry_list_orc = ET.parse("model/EntryListReportORC.xml")
+            entry_list_orc = ET.parse(os.path.join(os.path.dirname(__file__), "model", "EntryListReportORC.xml"))
+            # entry_list_orc = ET.parse("model/EntryListReportORC.xml")
             entry_list_orc.getroot().set('id', cls_row.ClassId)
             reports.append(entry_list_orc.getroot())
         else:
-            entry_list_one_design = ET.parse("model/EntryListReportZ.xml")
+            entry_list_one_design = ET.parse(os.path.join(os.path.dirname(__file__), "model", "EntryListReportZ.xml"))
+            # entry_list_one_design = ET.parse("model/EntryListReportZ.xml")
             entry_list_one_design.getroot().set('id', cls_row.ClassId)
             reports.append(entry_list_one_design.getroot())
     # add race results report printing
@@ -87,11 +91,13 @@ def add_reports(input_file, output_file, classes: List[ClsRow]):
         if preexisting_report is not None:
             reports.remove(preexisting_report)
         if cls_row.get_yacht_class() == YachtClass.ORC:
-            race_results_orc = ET.parse("model/RaceResultsReportORC.xml")
+            race_results_orc = ET.parse(os.path.join(os.path.dirname(__file__), "model", "RaceResultsReportORC.xml"))
+            # race_results_orc = ET.parse("model/RaceResultsReportORC.xml")
             race_results_orc.getroot().set('id', cls_row.ClassId)
             reports.append(race_results_orc.getroot())
         else:
-            race_results_one_design = ET.parse("model/RaceResultsReportZ.xml")
+            race_results_one_design = ET.parse(os.path.join(os.path.dirname(__file__), "model", "RaceResultsReportZ.xml"))
+            # race_results_one_design = ET.parse("model/RaceResultsReportZ.xml")
             race_results_one_design.getroot().set('id', cls_row.ClassId)
             reports.append(race_results_one_design.getroot())
     ET.indent(tree, space="\t", level=0)
@@ -182,7 +188,9 @@ def add_races_existing_file(scoring_file, races):
 
 
 def create_new_scoring_file(event_title, venue= "Haifa Bay", organizer="CYC", output_file=None, start_date=None, end_date=None, classes=None, races=None, boats=None):
-    template_file = "./test_files/template.orcsc"
+    template_file = os.path.join(os.path.dirname(__file__), "templates", "template.orcsc")
+    print(template_file)
+    # template_file = "/templates/template.orcsc"
     if output_file is None:
         output_file = f"output/{event_title}.orcsc"
     create_folder(output_file)
@@ -200,7 +208,7 @@ def create_new_scoring_file(event_title, venue= "Haifa Bay", organizer="CYC", ou
         add_classes(output_file, output_file, classes)
         add_reports(output_file, output_file, classes)
     print("Added classes and reports to output file")
-    with open("logo.txt", "r") as logo_file:
+    with open(os.path.join(os.path.dirname(__file__), "logo.txt"), "r") as logo_file:
         logo_str = logo_file.read()
     logos = [
         logo("logo", _filename="cyc.png", _name="center", _mediatype="image/", _text_val=logo_str),

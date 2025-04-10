@@ -38,10 +38,36 @@ export interface FleetData {
 }
 
 export interface OrcscFile {
-  event: EventData;
-  classes: ClassData[];
-  races: RaceData[];
-  fleet: FleetData[];
+  filePath: string;
+  event: {
+    EventTitle: string;
+    Venue: string;
+    Organizer: string;
+    StartDate: string;
+    EndDate: string;
+  };
+  classes: Array<{
+    ClassId: string;
+    ClassName: string;
+    YachtClass: string;
+  }>;
+  races: Array<{
+    RaceId: string;
+    RaceName: string;
+    ClassId: string;
+    StartTime: string;
+    Status: string;
+    ScoringType: string;
+  }>;
+  fleet: Array<{
+    YID: string;
+    YachtName: string;
+    SailNo: string;
+    ClassId: string;
+    HelmName: string;
+    CrewName: string;
+    ClubName: string;
+  }>;
 }
 
 export interface ClassRow {
