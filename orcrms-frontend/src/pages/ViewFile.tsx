@@ -8,12 +8,6 @@ import {
     Alert,
     Container,
     Button,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Drawer,
     AppBar,
     Toolbar,
     IconButton,
@@ -26,15 +20,12 @@ import {
     Divider
 } from '@mui/material';
 import {
-    Upload as UploadIcon,
-    Download as DownloadIcon,
-    Menu as MenuIcon,
-    Sailing as SailingIcon,
-    Add as AddIcon
+    Menu as MenuIcon
 } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFile, ClassRow, RaceRow, FleetRow } from '../types/orcsc';
 import { AddRacesDialog } from '../components/AddRacesDialog';
+import { SideMenu } from '../components/SideMenu';
 
 const drawerWidth = 240;
 
@@ -225,6 +216,10 @@ export const ViewFile: React.FC = () => {
         }
     };
 
+    const handleHome = () => {
+        navigate('/');
+    };
+
     if (!filePath) {
         return <Alert severity="error">No file path provided</Alert>;
     }
@@ -248,82 +243,17 @@ export const ViewFile: React.FC = () => {
                 </Toolbar>
             </AppBar>
 
-            <Drawer
-                variant="persistent"
-                anchor="left"
+            <SideMenu
                 open={isDrawerOpen}
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: drawerWidth,
-                        boxSizing: 'border-box',
-                        marginTop: '64px'
-                    },
-                }}
-            >
-                <Box sx={{ overflow: 'auto', mt: 2 }}>
-                    <List>
-                        <ListItem disablePadding>
-                            <ListItemButton component="label">
-                                <ListItemIcon>
-                                    <UploadIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Upload File" />
-                                <input
-                                    type="file"
-                                    hidden
-                                    accept=".orcsc"
-                                    onChange={handleFileUpload}
-                                />
-                            </ListItemButton>
-                        </ListItem>
-
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={() => setNewFileOpen(true)}>
-                                <ListItemIcon>
-                                    <AddIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="New File" />
-                            </ListItemButton>
-                        </ListItem>
-
-                        <ListItem disablePadding>
-                            <ListItemButton 
-                                onClick={handleDownload}
-                                disabled={!filePath}
-                            >
-                                <ListItemIcon>
-                                    <DownloadIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Download File" />
-                            </ListItemButton>
-                        </ListItem>
-
-                        <Divider sx={{ my: 2 }} />
-
-                        <Typography variant="subtitle1" sx={{ px: 2, py: 1 }}>
-                            Available Files
-                        </Typography>
-
-                        {files.map((file) => (
-                            <ListItem key={file} disablePadding>
-                                <ListItemButton
-                                    selected={filePath === file}
-                                    onClick={() => handleFileSelect(file)}
-                                >
-                                    <ListItemIcon>
-                                        <SailingIcon />
-                                    </ListItemIcon>
-                                    <ListItemText 
-                                        primary={file.split(/[\\/]/).pop()} 
-                                    />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                </Box>
-            </Drawer>
+                onClose={() => setIsDrawerOpen(false)}
+                onUpload={handleFileUpload}
+                onNewFile={() => setNewFileOpen(true)}
+                onDownload={handleDownload}
+                onFileSelect={handleFileSelect}
+                onHome={handleHome}
+                files={files}
+                selectedFile={filePath}
+            />
 
             <Box
                 component="main"
