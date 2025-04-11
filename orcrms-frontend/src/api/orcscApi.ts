@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { EventData, ClassRow, RaceRow, FleetRow, OrcscFile } from '../types/orcsc';
+import { ClassRow, RaceRow, FleetRow, OrcscFile } from '../types/orcsc';
 
 const API_BASE_URL = 'http://localhost:8000';
 

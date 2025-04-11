@@ -25,7 +25,7 @@ import {
 } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFileInfo } from '../api/orcscApi';
-import type { ClassRow, RaceRow, FleetRow, YachtClass } from '../types/orcsc';
+import type { YachtClass } from '../types/orcsc';
 import { SideMenu } from '../components/SideMenu';
 import { NewFileDialog } from '../components/NewFileDialog';
 
