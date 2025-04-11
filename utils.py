@@ -31,7 +31,6 @@ def in_list(element, list, ignore_case=False):
     else:
         return element in list
 
-
 class YNValidator(Validator):
     def __init__(self, options):
         self.options = options
@@ -55,3 +54,4 @@ def convert_yn_to_bool(yn):
         return True
     else:
         return False
+

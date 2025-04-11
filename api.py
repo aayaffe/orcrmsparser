@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 import os
 import logging
 import shutil
+import re
 from orcsc.orcsc_file_editor import add_races as orcsc_add_races
 from orcsc.model.race_row import RaceRow
 from fastapi.responses import FileResponse
@@ -61,8 +62,11 @@ class FleetData(BaseModel):
 
 class CreateFileRequest(BaseModel):
     template_path: str
-    new_file_path: str
+    new_file_path: Optional[str] = None
     event_data: Optional[dict] = None
+
+class AddClassRequest(BaseModel):
+    class_data: ClassData
 
 @app.get("/api/files")
 async def list_orcsc_files():
@@ -272,17 +276,25 @@ async def get_templates():
         logging.error(f"Error getting templates: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get templates")
 
+def sanitize_filename(filename: str) -> str:
+    """Sanitize a string to be used as a filename."""
+    # Replace invalid characters with underscores
+    sanitized = re.sub(r'[<>:"/\\|?*]', '_', filename)
+    # Remove leading/trailing spaces and dots
+    sanitized = sanitized.strip('. ')
+    # Replace multiple spaces/underscores with a single underscore
+    sanitized = re.sub(r'[ _]+', '_', sanitized)
+    # If the result is empty, use a default name
+    if not sanitized:
+        sanitized = "untitled"
+    return sanitized
+
 @app.post("/api/files")
 async def create_file_from_template(request: CreateFileRequest):
     try:
         # Validate paths
         if not request.template_path.startswith("orcsc/"):
             raise HTTPException(status_code=400, detail="Template path must be within orcsc directory")
-        if not request.new_file_path.startswith("orcsc/output/"):
-            raise HTTPException(status_code=400, detail="New file path must be within orcsc/output directory")
-
-        # Create the file from template using create_new_scoring_file
-        from orcsc.orcsc_file_editor import create_new_scoring_file
         
         # Extract event data from the request
         event_data = request.event_data or {}
@@ -293,21 +305,65 @@ async def create_file_from_template(request: CreateFileRequest):
         end_date = event_data.get("EndDate")
         classes = event_data.get("Classes", [])
         
-        # Create the new file
+        # Sanitize the event title for use as a filename
+        safe_title = sanitize_filename(event_title)
+        
+        # Let create_new_scoring_file generate the output path based on event title
+        output_file = f"orcsc/output/{safe_title}.orcsc"
+        
+        # Create the file from template using create_new_scoring_file
+        from orcsc.orcsc_file_editor import create_new_scoring_file
+        
         create_new_scoring_file(
             event_title=event_title,
             venue=venue,
             organizer=organizer,
-            output_file=request.new_file_path,
+            output_file=output_file,
             start_date=start_date,
             end_date=end_date,
             classes=classes
         )
         
-        return {"message": f"File created successfully at {request.new_file_path}"}
+        return {"file_path": output_file}
     except Exception as e:
         logger.error(f"Error creating file: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/files/{file_path:path}/classes")
+async def add_class_to_file(file_path: str, request: AddClassRequest):
+    """Add a class to an existing ORCSC file"""
+    try:
+        logger.info(f"Adding class to file: {file_path}")
+        
+        # Convert the file path to absolute path
+        abs_path = os.path.abspath(file_path)
+        logger.info(f"Absolute path: {abs_path}")
+        
+        # Check if file exists
+        if not os.path.exists(abs_path):
+            logger.error(f"File not found: {abs_path}")
+            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        
+        # Convert the request class to the format expected by orcsc_file_editor
+        from orcsc.model.cls_row import ClsRow
+        from orcsc.orcsc_file_editor import add_classes
+        
+        cls_row = ClsRow("ROW")
+        cls_row.ClassId = request.class_data.ClassId
+        cls_row.ClassName = request.class_data.ClassName
+        cls_row.YachtClass = request.class_data.YachtClass
+        
+        # Add class to the file
+        add_classes(abs_path, abs_path, [cls_row])
+        
+        logger.info(f"Successfully added class {request.class_data.ClassId} to {file_path}")
+        return {"message": f"Successfully added class {request.class_data.ClassId}"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding class: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to add class: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

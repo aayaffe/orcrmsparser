@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import List
 import os
-from prompt_toolkit import print_formatted_text as print, HTML
+import logging
 
 from orcsc.model.class_enum import YachtClass
 from orcsc.model.cls_row import ClsRow
@@ -175,39 +175,36 @@ def get_yids(fleets):
 
 def add_races_existing_file(scoring_file, races):
     backup_file(scoring_file)
-    print(HTML("<ansigreen>Current races in file:</ansigreen>"))
-    print("\n".join(str(race) for race in get_race_names(scoring_file)))
-    print(HTML("<ansigreen>Races to add:</ansigreen>"))
-    print("\n".join(f"{race.ClassId}, {race.RaceName}" for race in races))
-    response = default_input("Do you want to add these races?",'n',['y','n'],True)
-    if response == 'y':
-        add_races(scoring_file, scoring_file, races)
-        print("Races added successfully.")
-    else:
-        print("No races were added.")
+    logging.info("Current races in file:")
+    logging.info("\n".join(str(race) for race in get_race_names(scoring_file)))
+    logging.info("Races to add:")
+    logging.info("\n".join(f"{race.ClassId}, {race.RaceName}" for race in races))
+    add_races(scoring_file, scoring_file, races)
+    logging.info("Races added successfully.")
 
 
-def create_new_scoring_file(event_title, venue= "Haifa Bay", organizer="CYC", output_file=None, start_date=None, end_date=None, classes=None, races=None, boats=None):
+def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", output_file=None, start_date=None, end_date=None, classes=None, races=None, boats=None):
     template_file = os.path.join(os.path.dirname(__file__), "templates", "template.orcsc")
-    print(template_file)
-    # template_file = "/templates/template.orcsc"
+    logging.info(f"Using template file: {template_file}")
+    
     if output_file is None:
         output_file = f"output/{event_title}.orcsc"
     create_folder(output_file)
-    print("Creating new output file:", output_file)
+    logging.info(f"Creating new output file: {output_file}")
+    
     if start_date is None:
         start_date = datetime.now()
-        print("Set default start date to today")
+        logging.info("Set default start date to today")
     if end_date is None:
         end_date = datetime.now()
-        print("Set default end date to today")
+        logging.info("Set default end date to today")
     add_event(template_file, output_file, event_title=event_title, start_date=start_date,
               end_date=end_date, venue=venue, organizer=organizer)
-    print("Added event to output file")
+    logging.info("Added event to output file")
     if classes is not None:
         add_classes(output_file, output_file, classes)
         add_reports(output_file, output_file, classes)
-    print("Added classes and reports to output file")
+    logging.info("Added classes and reports to output file")
     with open(os.path.join(os.path.dirname(__file__), "logo.txt"), "r") as logo_file:
         logo_str = logo_file.read()
     logos = [
@@ -216,10 +213,10 @@ def create_new_scoring_file(event_title, venue= "Haifa Bay", organizer="CYC", ou
         logo("logo", _filename="", _name="left", _mediatype="image/")
     ]
     add_logos(output_file, output_file, logos)
-    print("Added logos to output file")
+    logging.info("Added logos to output file")
     if races is not None:
         add_races(output_file, output_file, races)
-        print("Added Races to output file")
+        logging.info("Added Races to output file")
     if boats is not None:
         add_fleets(output_file, output_file, boats)
-        print("Added boats to output file")
+        logging.info("Added boats to output file")

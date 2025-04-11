@@ -25,7 +25,6 @@ export const orcscApi = {
   }) => {
     const response = await api.post('/api/files', {
       template_path: "orcsc/template.orcsc",
-      new_file_path: `orcsc/output/${data.title}.orcsc`,
       event_data: {
         EventTitle: data.title,
         StartDate: data.startDate,
@@ -81,6 +80,21 @@ export const orcscApi = {
 
   addBoats: async (fileId: string, boats: FleetRow[]) => {
     const response = await api.post(`/api/files/${fileId}/boats`, { boats });
+    return response.data;
+  },
+
+  addClass: async (filePath: string, classData: {
+    ClassId: string;
+    ClassName: string;
+    YachtClass: string;
+  }) => {
+    if (!filePath) {
+      throw new Error('File path is required');
+    }
+    const response = await api.post(
+      `/api/files/${encodeURIComponent(filePath)}/classes`,
+      { class_data: classData }
+    );
     return response.data;
   },
 

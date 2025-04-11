@@ -13,13 +13,21 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions
+    DialogActions,
+    CircularProgress,
+    Alert,
+    Stack
 } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import {
+    Menu as MenuIcon,
+    Add as AddIcon,
+    Upload as UploadIcon
+} from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFileInfo } from '../api/orcscApi';
-import type { ClassRow, RaceRow, FleetRow } from '../types/orcsc';
+import type { ClassRow, RaceRow, FleetRow, YachtClass } from '../types/orcsc';
 import { SideMenu } from '../components/SideMenu';
+import { NewFileDialog } from '../components/NewFileDialog';
 
 const drawerWidth = 240;
 
@@ -32,16 +40,6 @@ export const Home: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(true);
     const [newFileOpen, setNewFileOpen] = useState(false);
-    const [newFileData, setNewFileData] = useState({
-        eventTitle: '',
-        venue: 'Haifa Bay',
-        organizer: 'CYC',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date().toISOString().split('T')[0],
-        classes: [] as ClassRow[],
-        races: [] as RaceRow[],
-        boats: [] as FleetRow[]
-    });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -115,31 +113,9 @@ export const Home: React.FC = () => {
         return `${size.toFixed(1)} ${units[unitIndex]}`;
     };
 
-    const handleCreateNewFile = async () => {
-        try {
-            await orcscApi.createNewFile({
-                title: newFileData.eventTitle,
-                startDate: newFileData.startDate,
-                endDate: newFileData.endDate,
-                location: newFileData.venue,
-                organizer: newFileData.organizer,
-                classes: newFileData.classes.map(cls => cls.classId)
-            });
-            setNewFileOpen(false);
-            setNewFileData({
-                eventTitle: '',
-                venue: 'Haifa Bay',
-                organizer: 'CYC',
-                startDate: new Date().toISOString().split('T')[0],
-                endDate: new Date().toISOString().split('T')[0],
-                classes: [],
-                races: [],
-                boats: []
-            });
-            fetchFiles(); // Refresh the file list
-        } catch (error) {
-            console.error('Error creating new file:', error);
-        }
+    const handleNewFileSuccess = (filePath: string) => {
+        setNewFileOpen(false);
+        navigate(`/view/${encodeURIComponent(filePath)}`);
     };
 
     return (
@@ -169,7 +145,13 @@ export const Home: React.FC = () => {
                 onDownload={handleFileDownload}
                 onFileSelect={handleFileSelect}
                 files={files.map(file => file.path)}
-                selectedFile={selectedFile}
+                selectedFile={selectedFile || undefined}
+            />
+
+            <NewFileDialog
+                open={newFileOpen}
+                onClose={() => setNewFileOpen(false)}
+                onSuccess={handleNewFileSuccess}
             />
 
             <Box
@@ -190,58 +172,6 @@ export const Home: React.FC = () => {
                 </Typography>
             </Box>
 
-            <Dialog open={newFileOpen} onClose={() => setNewFileOpen(false)}>
-                <DialogTitle>Create New Scoring File</DialogTitle>
-                <DialogContent>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-                        <TextField
-                            label="Event Title"
-                            value={newFileData.eventTitle}
-                            onChange={(e) => setNewFileData({ ...newFileData, eventTitle: e.target.value })}
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            label="Venue"
-                            value={newFileData.venue}
-                            onChange={(e) => setNewFileData({ ...newFileData, venue: e.target.value })}
-                            fullWidth
-                        />
-                        <TextField
-                            label="Organizer"
-                            value={newFileData.organizer}
-                            onChange={(e) => setNewFileData({ ...newFileData, organizer: e.target.value })}
-                            fullWidth
-                        />
-                        <TextField
-                            label="Start Date"
-                            type="date"
-                            value={newFileData.startDate}
-                            onChange={(e) => setNewFileData({ ...newFileData, startDate: e.target.value })}
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
-                        />
-                        <TextField
-                            label="End Date"
-                            type="date"
-                            value={newFileData.endDate}
-                            onChange={(e) => setNewFileData({ ...newFileData, endDate: e.target.value })}
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setNewFileOpen(false)}>Cancel</Button>
-                    <Button 
-                        onClick={handleCreateNewFile}
-                        variant="contained"
-                        disabled={!newFileData.eventTitle}
-                    >
-                        Create
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </Box>
     );
 }; 

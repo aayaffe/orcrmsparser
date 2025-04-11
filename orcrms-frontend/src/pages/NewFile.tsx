@@ -1,9 +1,6 @@
 import React from 'react';
 import { Box, Stepper, Step, StepLabel, Button, Typography } from '@mui/material';
 import { EventForm } from '../components/FileEditor/EventForm';
-import { ClassesForm } from '../components/FileEditor/ClassesForm';
-import { RacesForm } from '../components/FileEditor/RacesForm';
-import { BoatsForm } from '../components/FileEditor/BoatsForm';
 import { useMutation } from 'react-query';
 import { orcscApi } from '../api/orcscApi';
 
@@ -12,10 +9,12 @@ const steps = ['Event Details', 'Classes', 'Races', 'Boats'];
 export const NewFile: React.FC = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
-    event: null,
-    classes: [],
-    races: [],
-    boats: []
+    title: '',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0],
+    location: 'Haifa Bay',
+    organizer: 'CYC',
+    classes: [] as string[]
   });
 
   const createFileMutation = useMutation(orcscApi.createNewFile);
@@ -33,7 +32,6 @@ export const NewFile: React.FC = () => {
       await createFileMutation.mutateAsync(formData);
       // Handle success (e.g., show success message, redirect)
     } catch (error) {
-      // Handle error
       console.error('Error creating file:', error);
     }
   };
@@ -56,7 +54,14 @@ export const NewFile: React.FC = () => {
         {activeStep === 0 && (
           <EventForm
             onSubmit={(data) => {
-              setFormData(prev => ({ ...prev, event: data }));
+              setFormData(prev => ({
+                ...prev,
+                title: data.title,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                location: data.location,
+                organizer: data.organizer
+              }));
               handleNext();
             }}
           />
@@ -76,7 +81,7 @@ export const NewFile: React.FC = () => {
           <Button
             variant="contained"
             onClick={handleSubmit}
-            disabled={createFileMutation.isLoading}
+            disabled={createFileMutation.isLoading || !formData.title}
           >
             Create File
           </Button>

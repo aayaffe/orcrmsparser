@@ -20,12 +20,15 @@ import {
     Divider
 } from '@mui/material';
 import {
-    Menu as MenuIcon
+    Menu as MenuIcon,
+    Add as AddIcon
 } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
-import type { OrcscFile, ClassRow, RaceRow, FleetRow } from '../types/orcsc';
+import type { OrcscFile, ClassRow, YachtClass } from '../types/orcsc';
 import { AddRacesDialog } from '../components/AddRacesDialog';
 import { SideMenu } from '../components/SideMenu';
+import { AddClassDialog } from '../components/AddClassDialog';
+import { NewFileDialog } from '../components/NewFileDialog';
 
 const drawerWidth = 240;
 
@@ -113,16 +116,7 @@ export const ViewFile: React.FC = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(true);
     const navigate = useNavigate();
     const [newFileOpen, setNewFileOpen] = useState(false);
-    const [newFileData, setNewFileData] = useState({
-        eventTitle: '',
-        venue: 'Haifa Bay',
-        organizer: 'CYC',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date().toISOString().split('T')[0],
-        classes: [] as ClassRow[],
-        races: [] as RaceRow[],
-        boats: [] as FleetRow[]
-    });
+    const [addClassOpen, setAddClassOpen] = useState(false);
 
     useEffect(() => {
         if (filePath) {
@@ -135,11 +129,12 @@ export const ViewFile: React.FC = () => {
         try {
             setLoading(true);
             setError(null);
+            console.log('Fetching file with path:', filePath);
             const data = await orcscApi.getFile(filePath!);
             setFileData(data);
         } catch (err) {
-            setError('Failed to load file');
             console.error('Error fetching file:', err);
+            setError('Failed to load file');
         } finally {
             setLoading(false);
         }
@@ -185,39 +180,28 @@ export const ViewFile: React.FC = () => {
         navigate(`/view/${encodeURIComponent(file)}`);
     };
 
-    const handleCreateNewFile = async () => {
-        try {
-            await orcscApi.createNewFile({
-                event: {
-                    EventTitle: newFileData.eventTitle,
-                    StartDate: newFileData.startDate,
-                    EndDate: newFileData.endDate,
-                    Venue: newFileData.venue,
-                    Organizer: newFileData.organizer
-                },
-                classes: newFileData.classes,
-                races: newFileData.races,
-                boats: newFileData.boats
-            });
-            setNewFileOpen(false);
-            setNewFileData({
-                eventTitle: '',
-                venue: 'Haifa Bay',
-                organizer: 'CYC',
-                startDate: new Date().toISOString().split('T')[0],
-                endDate: new Date().toISOString().split('T')[0],
-                classes: [],
-                races: [],
-                boats: []
-            });
-            fetchFiles(); // Refresh the file list
-        } catch (error) {
-            console.error('Error creating new file:', error);
-        }
+    const handleNewFileSuccess = (filePath: string) => {
+        setNewFileOpen(false);
+        navigate(`/view/${encodeURIComponent(filePath)}`);
     };
 
     const handleHome = () => {
         navigate('/');
+    };
+
+    const handleAddClass = async (classId: string, className: string, yachtClass: YachtClass) => {
+        try {
+            if (filePath && fileData) {
+                await orcscApi.addClass(filePath, {
+                    ClassId: classId,
+                    ClassName: className,
+                    YachtClass: yachtClass
+                });
+                fetchFile(); // Refresh the file data
+            }
+        } catch (error) {
+            console.error('Error adding class:', error);
+        }
     };
 
     if (!filePath) {
@@ -253,6 +237,12 @@ export const ViewFile: React.FC = () => {
                 onHome={handleHome}
                 files={files}
                 selectedFile={filePath}
+            />
+
+            <NewFileDialog
+                open={newFileOpen}
+                onClose={() => setNewFileOpen(false)}
+                onSuccess={handleNewFileSuccess}
             />
 
             <Box
@@ -326,9 +316,18 @@ export const ViewFile: React.FC = () => {
                             </Paper>
 
                             <Paper sx={{ p: 2, mb: 2 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Classes
-                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Classes
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<AddIcon />}
+                                        onClick={() => setAddClassOpen(true)}
+                                    >
+                                        Add Class
+                                    </Button>
+                                </Box>
                                 <Stack spacing={2}>
                                     {fileData.classes.map((cls) => (
                                         <Box key={cls.ClassId} sx={{ display: 'flex', gap: 1 }}>
@@ -399,58 +398,11 @@ export const ViewFile: React.FC = () => {
                 </Container>
             </Box>
 
-            <Dialog open={newFileOpen} onClose={() => setNewFileOpen(false)}>
-                <DialogTitle>Create New Scoring File</DialogTitle>
-                <DialogContent>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-                        <TextField
-                            label="Event Title"
-                            value={newFileData.eventTitle}
-                            onChange={(e) => setNewFileData({ ...newFileData, eventTitle: e.target.value })}
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            label="Venue"
-                            value={newFileData.venue}
-                            onChange={(e) => setNewFileData({ ...newFileData, venue: e.target.value })}
-                            fullWidth
-                        />
-                        <TextField
-                            label="Organizer"
-                            value={newFileData.organizer}
-                            onChange={(e) => setNewFileData({ ...newFileData, organizer: e.target.value })}
-                            fullWidth
-                        />
-                        <TextField
-                            label="Start Date"
-                            type="date"
-                            value={newFileData.startDate}
-                            onChange={(e) => setNewFileData({ ...newFileData, startDate: e.target.value })}
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
-                        />
-                        <TextField
-                            label="End Date"
-                            type="date"
-                            value={newFileData.endDate}
-                            onChange={(e) => setNewFileData({ ...newFileData, endDate: e.target.value })}
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setNewFileOpen(false)}>Cancel</Button>
-                    <Button 
-                        onClick={handleCreateNewFile}
-                        variant="contained"
-                        disabled={!newFileData.eventTitle}
-                    >
-                        Create
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <AddClassDialog
+                open={addClassOpen}
+                onClose={() => setAddClassOpen(false)}
+                onAdd={handleAddClass}
+            />
         </Box>
     );
 }; 
