@@ -46,7 +46,8 @@ def add_classes(input_file, output_file, classes: List[ClsRow]):
     Cls = tree.getroot().find('./Cls')
     for cls_row in classes:
         Cls.append(cls_row.to_element())
-    # add_reports(classes, tree)
+    logging.info(f"Classes added: {classes}")
+    add_reports(input_file, output_file, classes)
     ET.indent(tree, space="\t", level=0)
     tree.write(output_file, encoding='utf-8', xml_declaration=False)
 
@@ -203,7 +204,7 @@ def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", out
     logging.info("Added event to output file")
     if classes is not None:
         add_classes(output_file, output_file, classes)
-        add_reports(output_file, output_file, classes)
+        # add_reports(output_file, output_file, classes)
     logging.info("Added classes and reports to output file")
     with open(os.path.join(os.path.dirname(__file__), "logo.txt"), "r") as logo_file:
         logo_str = logo_file.read()

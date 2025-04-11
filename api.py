@@ -304,6 +304,17 @@ async def create_file_from_template(request: CreateFileRequest):
         start_date = event_data.get("StartDate")
         end_date = event_data.get("EndDate")
         classes = event_data.get("Classes", [])
+        # Convert classes to ClsRow objects
+        from orcsc.model.cls_row import ClsRow
+        class_rows = []
+        for cls in classes:
+            class_row = ClsRow("ROW")
+            class_row.ClassId = cls.get("ClassId")
+            class_row.ClassName = cls.get("ClassName")
+            class_row._class_enum = cls.get("YachtClass")
+            class_rows.append(class_row)
+        classes = class_rows
+        logger.info(f"Creating file from template: {event_title}, {venue}, {organizer}, {start_date}, {end_date}, {classes}")
         
         # Sanitize the event title for use as a filename
         safe_title = sanitize_filename(event_title)
@@ -313,6 +324,8 @@ async def create_file_from_template(request: CreateFileRequest):
         
         # Create the file from template using create_new_scoring_file
         from orcsc.orcsc_file_editor import create_new_scoring_file
+
+        
         
         create_new_scoring_file(
             event_title=event_title,
@@ -351,7 +364,7 @@ async def add_class_to_file(file_path: str, request: AddClassRequest):
         cls_row = ClsRow("ROW")
         cls_row.ClassId = request.class_data.ClassId
         cls_row.ClassName = request.class_data.ClassName
-        cls_row.YachtClass = request.class_data.YachtClass
+        cls_row._class_enum = request.class_data.YachtClass
         
         # Add class to the file
         add_classes(abs_path, abs_path, [cls_row])

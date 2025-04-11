@@ -10,7 +10,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Grid,
+    Stack,
     Box,
     Typography,
     Chip,
@@ -49,10 +49,13 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
                 return;
             }
 
+            // Format the start time to ISO string with milliseconds and Z timezone
+            const formattedStartTime = new Date(startTime).toISOString();
+
             const races = selectedClasses.map(classId => ({
                 RaceName: raceName,
                 ClassId: classId,
-                StartTime: Math.floor(new Date(startTime).getTime() / 1000).toString(),
+                StartTime: formattedStartTime,
                 ScoringType: scoringType,
             }));
 
@@ -69,69 +72,61 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
             <DialogTitle>Add New Races</DialogTitle>
             <DialogContent>
                 <Box sx={{ mt: 2 }}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="Race Name"
-                                value={raceName}
-                                onChange={(e) => setRaceName(e.target.value)}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel>Classes</InputLabel>
-                                <Select
-                                    multiple
-                                    value={selectedClasses}
-                                    onChange={(e) => setSelectedClasses(e.target.value as string[])}
-                                    renderValue={(selected) => (
-                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                            {selected.map((value) => (
-                                                <Chip
-                                                    key={value}
-                                                    label={fileData.classes.find(c => c.ClassId === value)?.ClassName || value}
-                                                />
-                                            ))}
-                                        </Box>
-                                    )}
-                                >
-                                    {fileData.classes.map((cls) => (
-                                        <MenuItem key={cls.ClassId} value={cls.ClassId}>
-                                            {cls.ClassName}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="Start Time"
-                                type="datetime-local"
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel>Scoring Type</InputLabel>
-                                <Select
-                                    value={scoringType}
-                                    onChange={(e) => setScoringType(e.target.value)}
-                                >
-                                    <MenuItem value="LowPoint">Low Point</MenuItem>
-                                    <MenuItem value="HighPoint">High Point</MenuItem>
-                                    <MenuItem value="BonusPoint">Bonus Point</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
+                    <Stack spacing={2}>
+                        <TextField
+                            fullWidth
+                            label="Race Name"
+                            value={raceName}
+                            onChange={(e) => setRaceName(e.target.value)}
+                            required
+                        />
+                        <FormControl fullWidth>
+                            <InputLabel>Classes</InputLabel>
+                            <Select
+                                multiple
+                                value={selectedClasses}
+                                onChange={(e) => setSelectedClasses(e.target.value as string[])}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Chip
+                                                key={value}
+                                                label={fileData.classes.find(c => c.ClassId === value)?.ClassName || value}
+                                            />
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {fileData.classes.map((cls) => (
+                                    <MenuItem key={cls.ClassId} value={cls.ClassId}>
+                                        {cls.ClassName}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            fullWidth
+                            label="Start Time"
+                            type="datetime-local"
+                            value={startTime}
+                            onChange={(e) => setStartTime(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            required
+                        />
+                        <FormControl fullWidth>
+                            <InputLabel>Scoring Type</InputLabel>
+                            <Select
+                                value={scoringType}
+                                onChange={(e) => setScoringType(e.target.value)}
+                            >
+                                <MenuItem value="LowPoint">Low Point</MenuItem>
+                                <MenuItem value="HighPoint">High Point</MenuItem>
+                                <MenuItem value="BonusPoint">Bonus Point</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Stack>
                     {error && (
                         <Typography color="error" sx={{ mt: 2 }}>
                             {error}

@@ -21,7 +21,19 @@ export const orcscApi = {
     endDate: string;
     location: string;
     organizer: string;
-    classes: string[];
+    classes: Array<{
+      ClassId: string;
+      ClassName: string;
+      _class_enum: string;
+      Discards: number;
+      DivFromOverall: boolean;
+      TimeLimitFormulae: null;
+      ResultScoring: number;
+      UseBoatIW: boolean;
+      EnableA9: null;
+      HeatState: null;
+      DayNo: null;
+    }>;
   }) => {
     const response = await api.post('/api/files', {
       template_path: "orcsc/template.orcsc",
@@ -31,18 +43,19 @@ export const orcscApi = {
         EndDate: data.endDate,
         Venue: data.location,
         Organizer: data.organizer,
-        Classes: data.classes.map(classId => ({
-          ClassId: classId,
-          ClassName: classId,
-          YachtClass: "ORC",
-          Discards: 0,
-          DivFromOverall: false,
-          TimeLimitFormulae: null,
-          ResultScoring: 0,
-          UseBoatIW: false,
-          EnableA9: null,
-          HeatState: null,
-          DayNo: null
+        Classes: data.classes.map(cls => ({
+          __elem_name: "ClsRow",
+          ClassId: cls.ClassId,
+          ClassName: cls.ClassName,
+          _class_enum: cls._class_enum,
+          Discards: cls.Discards,
+          DivFromOverall: cls.DivFromOverall,
+          TimeLimitFormulae: cls.TimeLimitFormulae,
+          ResultScoring: cls.ResultScoring,
+          UseBoatIW: cls.UseBoatIW,
+          EnableA9: cls.EnableA9,
+          HeatState: cls.HeatState,
+          DayNo: cls.DayNo
         }))
       }
     });
@@ -54,7 +67,10 @@ export const orcscApi = {
       throw new Error('File path is required');
     }
     const response = await api.get(`/api/files/get/${encodeURIComponent(filePath)}`);
-    return response.data;
+    return {
+      ...response.data,
+      filePath: filePath
+    };
   },
 
   updateFile: async (fileId: string, data: any) => {
