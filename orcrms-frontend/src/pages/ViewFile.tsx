@@ -319,8 +319,9 @@ export const ViewFile: React.FC = () => {
                                         variant="contained"
                                         startIcon={<AddIcon />}
                                         onClick={() => setAddClassOpen(true)}
+                                        size="small"
                                     >
-                                        Add Class
+                                        Add
                                     </Button>
                                 </Box>
                                 <Stack spacing={2}>
@@ -338,9 +339,19 @@ export const ViewFile: React.FC = () => {
                             </Paper>
 
                             <Paper sx={{ p: 2, mb: 2 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Races
-                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Races
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<AddIcon />}
+                                        onClick={() => setAddRacesOpen(true)}
+                                        size="small"
+                                    >
+                                        Add
+                                    </Button>
+                                </Box>
                                 <Stack spacing={2}>
                                     {fileData.races.map((race) => (
                                         <Box key={race.RaceId} sx={{ display: 'flex', gap: 1 }}>
@@ -352,15 +363,6 @@ export const ViewFile: React.FC = () => {
                                             </Typography>
                                         </Box>
                                     ))}
-                                    <Box sx={{ mt: 2 }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={() => setAddRacesOpen(true)}
-                                        >
-                                            Add New Races
-                                        </Button>
-                                    </Box>
                                 </Stack>
                             </Paper>
 

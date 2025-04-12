@@ -63,7 +63,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                     {onHome && (
                         <ListItem disablePadding>
                             <ListItemButton onClick={onHome}>
-                                <ListItemIcon>
+                                <ListItemIcon sx={{ minWidth: '40px' }}>
                                     <HomeIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Home" />
@@ -73,7 +73,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 
                     <ListItem disablePadding>
                         <ListItemButton component="label">
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ minWidth: '40px' }}>
                                 <UploadIcon />
                             </ListItemIcon>
                             <ListItemText primary="Upload File" />
@@ -88,7 +88,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 
                     <ListItem disablePadding>
                         <ListItemButton onClick={onNewFile}>
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ minWidth: '40px' }}>
                                 <AddIcon />
                             </ListItemIcon>
                             <ListItemText primary="New File" />
@@ -101,7 +101,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                                 onClick={onDownload}
                                 disabled={!selectedFile}
                             >
-                                <ListItemIcon>
+                                <ListItemIcon sx={{ minWidth: '40px' }}>
                                     <DownloadIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Download File" />
@@ -121,7 +121,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                                 selected={selectedFile === file}
                                 onClick={() => onFileSelect(file)}
                             >
-                                <ListItemIcon>
+                                <ListItemIcon sx={{ minWidth: '40px' }}>
                                     <SailingIcon />
                                 </ListItemIcon>
                                 <ListItemText 
