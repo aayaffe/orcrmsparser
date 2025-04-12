@@ -137,7 +137,14 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
                         label="Start Date"
                         type="date"
                         value={newFileData.startDate}
-                        onChange={(e) => setNewFileData({ ...newFileData, startDate: e.target.value })}
+                        onChange={(e) => {
+                            const newStartDate = e.target.value;
+                            setNewFileData(prev => ({
+                                ...prev,
+                                startDate: newStartDate,
+                                endDate: newStartDate > prev.endDate ? newStartDate : prev.endDate
+                            }));
+                        }}
                         fullWidth
                         InputLabelProps={{ shrink: true }}
                         size="small"
