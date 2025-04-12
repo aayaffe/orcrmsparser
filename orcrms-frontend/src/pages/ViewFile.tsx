@@ -19,11 +19,12 @@ import {
     Add as AddIcon
 } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
-import type { OrcscFile, ClassRow, YachtClass } from '../types/orcsc';
+import type { OrcscFile, YachtClass } from '../types/orcsc';
 import { AddRacesDialog } from '../components/AddRacesDialog';
 import { SideMenu } from '../components/SideMenu';
 import { AddClassDialog } from '../components/AddClassDialog';
 import { NewFileDialog } from '../components/NewFileDialog';
+import { AddBoatsDialog } from '../components/AddBoatsDialog';
 
 const drawerWidth = 240;
 
@@ -114,6 +115,7 @@ export const ViewFile: React.FC = () => {
     const navigate = useNavigate();
     const [newFileOpen, setNewFileOpen] = useState(false);
     const [addClassOpen, setAddClassOpen] = useState(false);
+    const [addBoatsOpen, setAddBoatsOpen] = useState(false);
 
     useEffect(() => {
         if (filePath) {
@@ -199,6 +201,11 @@ export const ViewFile: React.FC = () => {
         } catch (error) {
             console.error('Error adding class:', error);
         }
+    };
+
+    const handleAddBoatsSuccess = () => {
+        setAddBoatsOpen(false);
+        fetchFile();
     };
 
     if (!filePath) {
@@ -330,10 +337,10 @@ export const ViewFile: React.FC = () => {
                                     {fileData.classes.map((cls) => (
                                         <Box key={cls.ClassId} sx={{ display: 'flex', gap: 1 }}>
                                             <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
-                                                {cls.ClassName}:
+                                                {cls.ClassId}:
                                             </Typography>
                                             <Typography variant="body2">
-                                                {cls.YachtClass}
+                                                {cls.ClassName}
                                             </Typography>
                                         </Box>
                                     ))}
@@ -369,9 +376,19 @@ export const ViewFile: React.FC = () => {
                             </Paper>
 
                             <Paper sx={{ p: 2 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Fleet
-                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Fleet
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<AddIcon />}
+                                        onClick={() => setAddBoatsOpen(true)}
+                                        size="small"
+                                    >
+                                        Add Boats
+                                    </Button>
+                                </Box>
                                 <Stack spacing={2}>
                                     {fileData.fleet.map((boat) => (
                                         <Box key={boat.YID} sx={{ display: 'flex', gap: 1 }}>
@@ -390,6 +407,13 @@ export const ViewFile: React.FC = () => {
                                 open={addRacesOpen}
                                 onClose={() => setAddRacesOpen(false)}
                                 onSuccess={handleAddRacesSuccess}
+                                fileData={fileData}
+                            />
+
+                            <AddBoatsDialog
+                                open={addBoatsOpen}
+                                onClose={() => setAddBoatsOpen(false)}
+                                onSuccess={handleAddBoatsSuccess}
                                 fileData={fileData}
                             />
                         </Box>

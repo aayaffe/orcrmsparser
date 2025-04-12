@@ -8,8 +8,9 @@ import os
 import logging
 import shutil
 import re
-from orcsc.orcsc_file_editor import add_races as orcsc_add_races
+from orcsc.orcsc_file_editor import add_races as orcsc_add_races, add_fleets as orcsc_add_fleets
 from orcsc.model.race_row import RaceRow
+from orcsc.model.fleet_row import FleetRow
 from fastapi.responses import FileResponse
 from pathlib import Path
 
@@ -67,6 +68,9 @@ class CreateFileRequest(BaseModel):
 
 class AddClassRequest(BaseModel):
     class_data: ClassData
+
+class AddBoatsRequest(BaseModel):
+    boats: List[FleetData]
 
 @app.get("/api/files")
 async def list_orcsc_files():
@@ -377,6 +381,43 @@ async def add_class_to_file(file_path: str, request: AddClassRequest):
     except Exception as e:
         logger.error(f"Error adding class: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to add class: {str(e)}")
+
+@app.post("/api/files/{file_path:path}/boats")
+async def add_boats_to_file(file_path: str, request: AddBoatsRequest):
+    """Add boats to an existing ORCSC file"""
+    try:
+        logger.info(f"Adding boats to file: {file_path}")
+        
+        # Convert the file path to absolute path
+        abs_path = os.path.abspath(file_path)
+        logger.info(f"Absolute path: {abs_path}")
+        
+        # Check if file exists
+        if not os.path.exists(abs_path):
+            logger.error(f"File not found: {abs_path}")
+            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        
+        # Convert boats to FleetRow objects
+        fleet_rows = []
+        for boat in request.boats:
+            fleet_row = FleetRow("ROW")
+            fleet_row.YachtName = boat.YachtName
+            fleet_row.SailNo = boat.SailNo
+            fleet_row.ClassId = boat.ClassId
+            fleet_row.CTOT = 1  # Set custom TOT to 1 for manually added boats
+            fleet_rows.append(fleet_row)
+        
+        # Add boats to the file
+        orcsc_add_fleets(abs_path, abs_path, fleet_rows)
+        
+        logger.info(f"Successfully added {len(fleet_rows)} boats to {file_path}")
+        return {"message": f"Successfully added {len(fleet_rows)} boats"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding boats: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to add boats: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

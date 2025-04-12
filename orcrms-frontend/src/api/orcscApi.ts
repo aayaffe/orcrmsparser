@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ClassRow, RaceRow, FleetRow, OrcscFile } from '../types/orcsc';
+import { FleetRow, OrcscFile } from '../types/orcsc';
 
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -95,7 +95,13 @@ export const orcscApi = {
   },
 
   addBoats: async (fileId: string, boats: FleetRow[]) => {
-    const response = await api.post(`/api/files/${fileId}/boats`, { boats });
+    const response = await api.post(`/api/files/${fileId}/boats`, {
+      boats: boats.map(boat => ({
+        YachtName: boat.yachtName,
+        SailNo: boat.sailNo,
+        ClassId: boat.classId
+      }))
+    });
     return response.data;
   },
 
