@@ -17,7 +17,6 @@ import {
     Paper,
     IconButton,
     FormControl,
-    InputLabel,
     Select,
     MenuItem
 } from '@mui/material';
