@@ -49,8 +49,8 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
                 return;
             }
 
-            // Format the start time to ISO string with milliseconds and Z timezone
-            const formattedStartTime = new Date(startTime).toISOString();
+            // Keep the local time without converting to UTC
+            const formattedStartTime = startTime;
 
             const races = selectedClasses.map(classId => ({
                 RaceName: raceName,
