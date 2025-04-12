@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -37,6 +37,31 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
     const [scoringType, setScoringType] = useState('LowPoint');
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        if (open) {
+            // Find the most recent race time
+            const mostRecentRace = fileData.races.reduce((latest, race) => {
+                const raceTime = new Date(race.StartTime).getTime();
+                return raceTime > latest ? raceTime : latest;
+            }, 0);
+
+            // If there are races, use the most recent race time
+            // Otherwise, use the event start date
+            const defaultTime = mostRecentRace > 0 
+                ? new Date(mostRecentRace)
+                : new Date(fileData.event.StartDate);
+
+            // Format the date for the datetime-local input while preserving UTC time
+            const year = defaultTime.getUTCFullYear();
+            const month = String(defaultTime.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(defaultTime.getUTCDate()).padStart(2, '0');
+            const hours = String(defaultTime.getUTCHours()).padStart(2, '0');
+            const minutes = String(defaultTime.getUTCMinutes()).padStart(2, '0');
+
+            setStartTime(`${year}-${month}-${day}T${hours}:${minutes}`);
+        }
+    }, [open, fileData]);
+
     const handleSubmit = async () => {
         try {
             if (!raceName || selectedClasses.length === 0 || !startTime) {
@@ -49,8 +74,8 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
                 return;
             }
 
-            // Keep the local time without converting to UTC
-            const formattedStartTime = startTime;
+            // Format the time to match the backend's expected format
+            const formattedStartTime = `${startTime}:00.000Z`;
 
             const races = selectedClasses.map(classId => ({
                 RaceName: raceName,
