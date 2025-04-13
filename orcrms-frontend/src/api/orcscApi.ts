@@ -14,6 +14,13 @@ export interface OrcscFileInfo {
   modified: number;
 }
 
+export interface BackupInfo {
+  path: string;
+  timestamp: string;
+  filename: string;
+  change_summary: string;
+}
+
 export const orcscApi = {
   createNewFile: async (data: {
     title: string;
@@ -191,5 +198,27 @@ export const orcscApi = {
             'Content-Type': 'application/json'
         }
     });
+  },
+
+  getFileHistory: async (filePath: string): Promise<BackupInfo[]> => {
+    const response = await fetch(`${API_BASE_URL}/api/files/${filePath}/history`);
+    if (!response.ok) {
+      throw new Error(`Failed to get file history: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.backups;
+  },
+
+  restoreFromBackup: async (filePath: string, backupPath: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/api/files/${filePath}/history/restore`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ backup_path: backupPath }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to restore from backup: ${response.statusText}`);
+    }
   }
 }; 

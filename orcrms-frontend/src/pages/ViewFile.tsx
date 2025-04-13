@@ -16,7 +16,8 @@ import {
 } from '@mui/material';
 import {
     Menu as MenuIcon,
-    Add as AddIcon
+    Add as AddIcon,
+    History as HistoryIcon
 } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFile, YachtClass } from '../types/orcsc';
@@ -25,6 +26,7 @@ import { SideMenu } from '../components/SideMenu';
 import { AddClassDialog } from '../components/AddClassDialog';
 import { NewFileDialog } from '../components/NewFileDialog';
 import { AddBoatsDialog } from '../components/AddBoatsDialog';
+import { FileHistoryDialog } from '../components/FileHistoryDialog';
 
 const drawerWidth = 240;
 
@@ -116,6 +118,7 @@ export const ViewFile: React.FC = () => {
     const [newFileOpen, setNewFileOpen] = useState(false);
     const [addClassOpen, setAddClassOpen] = useState(false);
     const [addBoatsOpen, setAddBoatsOpen] = useState(false);
+    const [historyOpen, setHistoryOpen] = useState(false);
 
     useEffect(() => {
         if (filePath) {
@@ -208,6 +211,10 @@ export const ViewFile: React.FC = () => {
         fetchFile();
     };
 
+    const handleRestoreSuccess = () => {
+        fetchFile();
+    };
+
     if (!filePath) {
         return <Alert severity="error">No file path provided</Alert>;
     }
@@ -225,9 +232,16 @@ export const ViewFile: React.FC = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         ORCSC Parser
                     </Typography>
+                    <IconButton
+                        color="inherit"
+                        onClick={() => setHistoryOpen(true)}
+                        sx={{ ml: 2 }}
+                    >
+                        <HistoryIcon />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
 
@@ -247,6 +261,13 @@ export const ViewFile: React.FC = () => {
                 open={newFileOpen}
                 onClose={() => setNewFileOpen(false)}
                 onSuccess={handleNewFileSuccess}
+            />
+
+            <FileHistoryDialog
+                open={historyOpen}
+                onClose={() => setHistoryOpen(false)}
+                filePath={filePath!}
+                onRestore={handleRestoreSuccess}
             />
 
             <Box

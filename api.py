@@ -13,6 +13,7 @@ from orcsc.model.race_row import RaceRow
 from orcsc.model.fleet_row import FleetRow
 from fastapi.responses import FileResponse
 from pathlib import Path
+from orcsc.file_history import FileHistory
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -32,6 +33,9 @@ app.add_middleware(
 # Ensure output directory exists
 OUTPUT_DIR = os.path.join("orcsc", "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Initialize file history
+file_history = FileHistory("orcsc/output")
 
 class EventData(BaseModel):
     EventTitle: str
@@ -72,6 +76,9 @@ class AddClassRequest(BaseModel):
 class AddBoatsRequest(BaseModel):
     boats: List[FleetData]
 
+class RestoreBackupRequest(BaseModel):
+    backup_path: str
+
 @app.get("/api/files")
 async def list_orcsc_files():
     """List all .orcsc files in the output directory"""
@@ -103,6 +110,10 @@ async def upload_file(file: UploadFile = File(...)):
         # Save the uploaded file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        
+        # Create initial backup with summary
+        change_summary = f"Initial file upload: {file.filename}"
+        file_history.create_backup(file_path, change_summary)
             
         return {"filename": file.filename, "path": file_path}
     except HTTPException:
@@ -219,7 +230,11 @@ async def add_races_to_file(file_path: str, request: AddRacesRequest):
         
         # Add races to the file
         orcsc_add_races(abs_path, abs_path, races)
-        
+        # Create backup after  modifying
+        race_names = [race.RaceName for race in request.races]
+        change_summary = f"Added races: {', '.join(race_names)}"
+        file_history.create_backup(abs_path, change_summary)
+
         logger.info(f"Successfully added {len(races)} races to {file_path}")
         return {"message": f"Successfully added {len(races)} races"}
         
@@ -340,6 +355,10 @@ async def create_file_from_template(request: CreateFileRequest):
             end_date=end_date,
             classes=classes
         )
+        change_summary = f"Created from template: {request.template_path}"
+        if request.event_data:
+            change_summary += " with custom event data"
+        file_history.create_backup(output_file, change_summary)
         
         return {"file_path": output_file}
     except Exception as e:
@@ -372,7 +391,10 @@ async def add_class_to_file(file_path: str, request: AddClassRequest):
         
         # Add class to the file
         add_classes(abs_path, abs_path, [cls_row])
-        
+        # Create backup after modifying
+        change_summary = f"Added class: {request.class_data.ClassName} ({request.class_data.ClassId})"
+        file_history.create_backup(abs_path, change_summary)
+
         logger.info(f"Successfully added class {request.class_data.ClassId} to {file_path}")
         return {"message": f"Successfully added class {request.class_data.ClassId}"}
         
@@ -409,6 +431,10 @@ async def add_boats_to_file(file_path: str, request: AddBoatsRequest):
         
         # Add boats to the file
         orcsc_add_fleets(abs_path, abs_path, fleet_rows)
+        # Create backup after modifying
+        boat_names = [boat.YachtName for boat in request.boats]
+        change_summary = f"Added boats: {', '.join(boat_names)}"
+        file_history.create_backup(abs_path, change_summary)
         
         logger.info(f"Successfully added {len(fleet_rows)} boats to {file_path}")
         return {"message": f"Successfully added {len(fleet_rows)} boats"}
@@ -418,6 +444,64 @@ async def add_boats_to_file(file_path: str, request: AddBoatsRequest):
     except Exception as e:
         logger.error(f"Error adding boats: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to add boats: {str(e)}")
+
+@app.get("/api/files/{file_path:path}/history")
+async def get_file_history(file_path: str):
+    """Get the history of backups for a file."""
+    try:
+        logger.info(f"Getting history for file: {file_path}")
+        
+        # Ensure the file path is within the output directory
+        if not file_path.startswith("orcsc/output/"):
+            file_path = os.path.join("orcsc", "output", file_path)
+        
+        # Check if the file exists
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        
+        # Get the backups
+        backups = file_history.list_backups(file_path)
+        
+        if not backups:
+            logger.warning(f"No backups found for file: {file_path}")
+            return {"backups": []}
+            
+        return {"backups": backups}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting file history: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/files/{file_path:path}/history/restore")
+async def restore_from_backup(file_path: str, request: RestoreBackupRequest):
+    """Restore a file from a backup."""
+    try:
+        logger.info(f"Restoring file {file_path} from backup: {request.backup_path}")
+        
+        # Ensure the file path is within the output directory
+        if not file_path.startswith("orcsc/output/"):
+            file_path = os.path.join("orcsc", "output", file_path)
+        
+        # Check if the file exists
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        
+        # Restore from backup
+        restored_path = file_history.restore_backup(request.backup_path)
+        
+        if not restored_path:
+            raise HTTPException(status_code=404, detail="Failed to restore from backup")
+            
+        return {"message": f"File restored from backup: {restored_path}"}
+    except HTTPException:
+        raise
+    except FileNotFoundError as e:
+        logger.error(f"Backup not found: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error restoring from backup: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
