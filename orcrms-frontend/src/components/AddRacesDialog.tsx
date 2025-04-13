@@ -121,7 +121,25 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
                             <Select
                                 multiple
                                 value={selectedClasses}
-                                onChange={(e) => setSelectedClasses(e.target.value as string[])}
+                                onChange={(e) => {
+                                    const value = e.target.value as string[];
+                                    // If "Select All" was clicked and it's not already selected
+                                    if (value.includes('all') && !selectedClasses.includes('all')) {
+                                        setSelectedClasses(fileData.classes.map(cls => cls.ClassId));
+                                    } 
+                                    // If "Select All" was deselected
+                                    else if (!value.includes('all') && selectedClasses.includes('all')) {
+                                        setSelectedClasses([]);
+                                    }
+                                    // If all classes are selected manually, add "Select All"
+                                    else if (value.length === fileData.classes.length) {
+                                        setSelectedClasses(fileData.classes.map(cls => cls.ClassId));
+                                    }
+                                    // Normal selection
+                                    else {
+                                        setSelectedClasses(value);
+                                    }
+                                }}
                                 renderValue={(selected) => (
                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                         {selected.map((value) => (
@@ -133,6 +151,9 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
                                     </Box>
                                 )}
                             >
+                                <MenuItem value="all">
+                                    <em>Select All Classes</em>
+                                </MenuItem>
                                 {fileData.classes.map((cls) => (
                                     <MenuItem key={cls.ClassId} value={cls.ClassId}>
                                         {cls.ClassName}

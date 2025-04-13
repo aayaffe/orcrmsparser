@@ -363,10 +363,23 @@ export const ViewFile: React.FC = () => {
                                 </Box>
                                 <Stack spacing={2}>
                                     {fileData.races.map((race) => (
-                                        <Box key={race.RaceId} sx={{ display: 'flex', gap: 1 }}>
-                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
-                                                {race.RaceName}:
-                                            </Typography>
+                                        <Box key={race.RaceId} sx={{ 
+                                            display: 'flex', 
+                                            gap: 2,
+                                            alignItems: 'center'
+                                        }}>
+                                            <Box sx={{ 
+                                                display: 'flex', 
+                                                gap: 1,
+                                                minWidth: '200px'
+                                            }}>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {race.RaceName}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    ({race.ClassId})
+                                                </Typography>
+                                            </Box>
                                             <Typography variant="body2">
                                                 {formatDate(race.StartTime)}
                                             </Typography>
