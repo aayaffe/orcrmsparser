@@ -41,6 +41,7 @@ export const orcscApi = {
       HeatState: null;
       DayNo: null;
     }>;
+    filename?: string;
   }) => {
     const response = await api.post('/api/files', {
       template_path: "orcsc/template.orcsc",
@@ -64,7 +65,8 @@ export const orcscApi = {
           HeatState: cls.HeatState,
           DayNo: cls.DayNo
         }))
-      }
+      },
+      filename: data.filename
     });
     return response.data;
   },

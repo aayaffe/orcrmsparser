@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import {
     Dialog,
     DialogTitle,
@@ -71,6 +72,7 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
 
     const handleCreateNewFile = async () => {
         try {
+            const uuid = uuidv4();
             const response = await orcscApi.createNewFile({
                 title: newFileData.eventTitle,
                 startDate: newFileData.startDate,
@@ -89,7 +91,8 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
                     EnableA9: null,
                     HeatState: null,
                     DayNo: null
-                }))
+                })),
+                filename: `${uuid}.orcsc`
             });
             onClose();
             setNewFileData({

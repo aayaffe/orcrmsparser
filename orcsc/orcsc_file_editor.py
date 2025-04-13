@@ -189,7 +189,8 @@ def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", out
     logging.info(f"Using template file: {template_file}")
     
     if output_file is None:
-        output_file = f"output/{event_title}.orcsc"
+        raise ValueError("output_file parameter is required")
+    
     create_folder(output_file)
     logging.info(f"Creating new output file: {output_file}")
     

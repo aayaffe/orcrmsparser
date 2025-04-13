@@ -14,6 +14,7 @@ from orcsc.model.fleet_row import FleetRow
 from fastapi.responses import FileResponse
 from pathlib import Path
 from orcsc.file_history import FileHistory
+import uuid
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -105,17 +106,20 @@ async def upload_file(file: UploadFile = File(...)):
         if not file.filename.endswith('.orcsc'):
             raise HTTPException(status_code=400, detail="Only .orcsc files are allowed")
         
-        file_path = os.path.join(OUTPUT_DIR, file.filename)
+        # Generate a new UUID for the filename
+        file_uuid = str(uuid.uuid4())
+        new_filename = f"{file_uuid}.orcsc"
+        file_path = os.path.join(OUTPUT_DIR, new_filename)
         
         # Save the uploaded file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
         # Create initial backup with summary
-        change_summary = f"Initial file upload: {file.filename}"
+        change_summary = f"Initial file upload: {file.filename} (renamed to {new_filename})"
         file_history.create_backup(file_path, change_summary)
             
-        return {"filename": file.filename, "path": file_path}
+        return {"filename": new_filename, "path": file_path}
     except HTTPException:
         raise
     except Exception as e:
@@ -335,16 +339,12 @@ async def create_file_from_template(request: CreateFileRequest):
         classes = class_rows
         logger.info(f"Creating file from template: {event_title}, {venue}, {organizer}, {start_date}, {end_date}, {classes}")
         
-        # Sanitize the event title for use as a filename
-        safe_title = sanitize_filename(event_title)
-        
-        # Let create_new_scoring_file generate the output path based on event title
-        output_file = f"orcsc/output/{safe_title}.orcsc"
+        # Generate a new UUID for the filename
+        file_uuid = str(uuid.uuid4())
+        output_file = f"orcsc/output/{file_uuid}.orcsc"
         
         # Create the file from template using create_new_scoring_file
         from orcsc.orcsc_file_editor import create_new_scoring_file
-
-        
         
         create_new_scoring_file(
             event_title=event_title,
