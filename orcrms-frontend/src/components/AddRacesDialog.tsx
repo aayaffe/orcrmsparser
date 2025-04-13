@@ -18,6 +18,17 @@ import {
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFile } from '../types/orcsc';
 
+// Define the scoring codes enum based on the backend
+enum ScoringCode {
+    TOT_Triple_Number_Windward_Leeward_Low = "TN_Inshore_Low",
+    TOT_Triple_Number_Windward_Leeward_Medium = "TN_Inshore_Medium",
+    TOT_Triple_Number_Windward_Leeward_High = "TN_Inshore_High",
+    TOT_Custom = "CTOT",
+    TOT_Coastal_Long_distance = "TMF_Offshore",
+    TOT_Windward_Leeward = "TMF_Inshore",
+    TOT_All_Purpose = "APHT"
+}
+
 interface AddRacesDialogProps {
     open: boolean;
     onClose: () => void;
@@ -34,7 +45,7 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
     const [raceName, setRaceName] = useState('');
     const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
     const [startTime, setStartTime] = useState('');
-    const [scoringType, setScoringType] = useState('LowPoint');
+    const [scoringType, setScoringType] = useState<ScoringCode>(ScoringCode.TOT_Triple_Number_Windward_Leeward_Low);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -144,11 +155,29 @@ export const AddRacesDialog: React.FC<AddRacesDialogProps> = ({
                             <InputLabel>Scoring Type</InputLabel>
                             <Select
                                 value={scoringType}
-                                onChange={(e) => setScoringType(e.target.value)}
+                                onChange={(e) => setScoringType(e.target.value as ScoringCode)}
                             >
-                                <MenuItem value="LowPoint">Low Point</MenuItem>
-                                <MenuItem value="HighPoint">High Point</MenuItem>
-                                <MenuItem value="BonusPoint">Bonus Point</MenuItem>
+                                <MenuItem value={ScoringCode.TOT_Triple_Number_Windward_Leeward_Low}>
+                                    Triple Number - Windward/Leeward (Low)
+                                </MenuItem>
+                                <MenuItem value={ScoringCode.TOT_Triple_Number_Windward_Leeward_Medium}>
+                                    Triple Number - Windward/Leeward (Medium)
+                                </MenuItem>
+                                <MenuItem value={ScoringCode.TOT_Triple_Number_Windward_Leeward_High}>
+                                    Triple Number - Windward/Leeward (High)
+                                </MenuItem>
+                                <MenuItem value={ScoringCode.TOT_Custom}>
+                                    Custom Time on Time
+                                </MenuItem>
+                                <MenuItem value={ScoringCode.TOT_Coastal_Long_distance}>
+                                    Coastal/Long Distance
+                                </MenuItem>
+                                <MenuItem value={ScoringCode.TOT_Windward_Leeward}>
+                                    Windward/Leeward
+                                </MenuItem>
+                                <MenuItem value={ScoringCode.TOT_All_Purpose}>
+                                    All Purpose
+                                </MenuItem>
                             </Select>
                         </FormControl>
                     </Stack>
