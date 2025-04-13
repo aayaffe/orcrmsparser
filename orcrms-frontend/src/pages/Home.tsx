@@ -2,38 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Box,
-    Button,
-    TextField,
     Typography,
-    Paper,
-    Container,
     AppBar,
     Toolbar,
     IconButton,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    CircularProgress,
-    Alert,
-    Stack
 } from '@mui/material';
-import {
-    Menu as MenuIcon,
-    Add as AddIcon,
-    Upload as UploadIcon
-} from '@mui/icons-material';
+import { Menu as MenuIcon } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
-import type { OrcscFileInfo } from '../api/orcscApi';
-import type { YachtClass } from '../types/orcsc';
 import { SideMenu } from '../components/SideMenu';
 import { NewFileDialog } from '../components/NewFileDialog';
 
-const drawerWidth = 240;
+const DRAWER_WIDTH = 240;
+
+interface FileInfo {
+    path: string;
+    eventName: string;
+}
 
 export const Home: React.FC = () => {
-    const [filePath, setFilePath] = useState('');
-    const [files, setFiles] = useState<OrcscFileInfo[]>([]);
+    const [files, setFiles] = useState<FileInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
@@ -50,7 +37,21 @@ export const Home: React.FC = () => {
         try {
             setLoading(true);
             const fileList = await orcscApi.listFiles();
-            setFiles(fileList);
+            const fileData = await Promise.all(
+                fileList.map(async (file) => {
+                    try {
+                        const data = await orcscApi.getFile(file.path);
+                        return {
+                            path: file.path,
+                            eventName: data.event.EventTitle
+                        };
+                    } catch (err) {
+                        console.error(`Error loading file ${file.path}:`, err);
+                        return null;
+                    }
+                })
+            );
+            setFiles(fileData.filter((file): file is FileInfo => file !== null));
             setError(null);
         } catch (err) {
             setError('Failed to load file list');
@@ -60,57 +61,33 @@ export const Home: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (filePath) {
-            const encodedPath = encodeURIComponent(filePath);
-            navigate(`/view/${encodedPath}`);
-        }
-    };
-
     const handleFileSelect = (path: string) => {
         navigate(`/view/${encodeURIComponent(path)}`);
     };
 
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            try {
-                setUploadError(null);
-                const result = await orcscApi.uploadFile(file);
-                await fetchFiles(); // Refresh the file list
-                // Navigate to the uploaded file
-                navigate(`/view/${encodeURIComponent(result.path)}`);
-            } catch (err) {
-                setUploadError('Failed to upload file');
-                console.error('Error uploading file:', err);
-            }
+        if (!file) return;
+
+        try {
+            setUploadError(null);
+            const result = await orcscApi.uploadFile(file);
+            await fetchFiles();
+            navigate(`/view/${encodeURIComponent(result.path)}`);
+        } catch (err) {
+            setUploadError('Failed to upload file');
+            console.error('Error uploading file:', err);
         }
     };
 
     const handleFileDownload = async () => {
-        if (selectedFile) {
-            try {
-                await orcscApi.downloadFile(selectedFile);
-            } catch (error) {
-                console.error('Error downloading file:', error);
-            }
-        }
-    };
+        if (!selectedFile) return;
 
-    const formatDate = (timestamp: number) => {
-        return new Date(timestamp * 1000).toLocaleString();
-    };
-
-    const formatSize = (bytes: number) => {
-        const units = ['B', 'KB', 'MB', 'GB'];
-        let size = bytes;
-        let unitIndex = 0;
-        while (size >= 1024 && unitIndex < units.length - 1) {
-            size /= 1024;
-            unitIndex++;
+        try {
+            await orcscApi.downloadFile(selectedFile);
+        } catch (error) {
+            console.error('Error downloading file:', error);
         }
-        return `${size.toFixed(1)} ${units[unitIndex]}`;
     };
 
     const handleNewFileSuccess = (filePath: string) => {
@@ -144,7 +121,7 @@ export const Home: React.FC = () => {
                 onNewFile={() => setNewFileOpen(true)}
                 onDownload={handleFileDownload}
                 onFileSelect={handleFileSelect}
-                files={files.map(file => file.path)}
+                files={files}
                 selectedFile={selectedFile || undefined}
             />
 
@@ -159,8 +136,8 @@ export const Home: React.FC = () => {
                 sx={{
                     flexGrow: 1,
                     p: 3,
-                    width: { sm: `calc(100% - ${drawerWidth}px)` },
-                    ml: { sm: `${drawerWidth}px` },
+                    width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+                    ml: { sm: `${DRAWER_WIDTH}px` },
                     mt: '64px'
                 }}
             >
@@ -171,7 +148,6 @@ export const Home: React.FC = () => {
                     Select a file from the menu to view its contents or upload a new file.
                 </Typography>
             </Box>
-
         </Box>
     );
 }; 

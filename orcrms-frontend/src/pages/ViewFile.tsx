@@ -112,7 +112,7 @@ export const ViewFile: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [addRacesOpen, setAddRacesOpen] = useState(false);
-    const [files, setFiles] = useState<string[]>([]);
+    const [files, setFiles] = useState<{ path: string; eventName: string }[]>([]);
     const [isDrawerOpen, setIsDrawerOpen] = useState(true);
     const navigate = useNavigate();
     const [newFileOpen, setNewFileOpen] = useState(false);
@@ -145,7 +145,21 @@ export const ViewFile: React.FC = () => {
     const fetchFiles = async () => {
         try {
             const fileList = await orcscApi.listFiles();
-            setFiles(fileList.map(file => file.path));
+            const fileData = await Promise.all(
+                fileList.map(async (file) => {
+                    try {
+                        const data = await orcscApi.getFile(file.path);
+                        return {
+                            path: file.path,
+                            eventName: data.event.EventTitle
+                        };
+                    } catch (err) {
+                        console.error(`Error loading file ${file.path}:`, err);
+                        return null;
+                    }
+                })
+            );
+            setFiles(fileData.filter((file): file is { path: string; eventName: string } => file !== null));
         } catch (error) {
             console.error('Error fetching files:', error);
         }
