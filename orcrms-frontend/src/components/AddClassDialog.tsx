@@ -8,7 +8,7 @@ import {
     Box
 } from '@mui/material';
 import { useState } from 'react';
-import type { YachtClass } from '../types/orcsc';
+import { YachtClass } from '../types/orcsc';
 
 interface AddClassDialogProps {
     open: boolean;
@@ -21,18 +21,29 @@ export const AddClassDialog: React.FC<AddClassDialogProps> = ({
     onClose,
     onAdd
 }) => {
-    const [classId, setClassId] = useState('');
-    const [className, setClassName] = useState('');
-    const [yachtClass, setYachtClass] = useState<YachtClass>('ORC');
+    const [classData, setClassData] = useState({
+        classId: '',
+        className: '',
+        yachtClass: YachtClass.ORC
+    });
 
     const handleAdd = () => {
-        if (classId && className) {
-            onAdd(classId, className, yachtClass);
-            setClassId('');
-            setClassName('');
-            setYachtClass('ORC');
+        if (classData.classId && classData.className) {
+            onAdd(classData.classId, classData.className, classData.yachtClass);
+            setClassData({
+                classId: '',
+                className: '',
+                yachtClass: YachtClass.ORC
+            });
             onClose();
         }
+    };
+
+    const handleYachtClassChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+        setClassData(prev => ({
+            ...prev,
+            yachtClass: e.target.value as YachtClass
+        }));
     };
 
     return (
@@ -42,30 +53,30 @@ export const AddClassDialog: React.FC<AddClassDialogProps> = ({
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                     <TextField
                         label="Class ID"
-                        value={classId}
-                        onChange={(e) => setClassId(e.target.value)}
+                        value={classData.classId}
+                        onChange={(e) => setClassData(prev => ({ ...prev, classId: e.target.value }))}
                         fullWidth
                         required
                     />
                     <TextField
                         label="Class Name"
-                        value={className}
-                        onChange={(e) => setClassName(e.target.value)}
+                        value={classData.className}
+                        onChange={(e) => setClassData(prev => ({ ...prev, className: e.target.value }))}
                         fullWidth
                         required
                     />
                     <TextField
                         select
                         label="Yacht Class"
-                        value={yachtClass}
-                        onChange={(e) => setYachtClass(e.target.value as YachtClass)}
+                        value={classData.yachtClass}
+                        onChange={handleYachtClassChange}
                         fullWidth
                         SelectProps={{
                             native: true
                         }}
                     >
-                        <option value="ORC">ORC</option>
-                        <option value="OneDesign">One Design</option>
+                        <option value={YachtClass.ORC}>ORC</option>
+                        <option value={YachtClass.OneDesign}>One Design</option>
                     </TextField>
                 </Box>
             </DialogContent>
@@ -74,7 +85,7 @@ export const AddClassDialog: React.FC<AddClassDialogProps> = ({
                 <Button 
                     onClick={handleAdd}
                     variant="contained"
-                    disabled={!classId || !className}
+                    disabled={!classData.classId || !classData.className}
                 >
                     Add
                 </Button>

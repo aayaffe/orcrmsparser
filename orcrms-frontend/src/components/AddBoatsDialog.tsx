@@ -26,13 +26,13 @@ interface AddBoatsDialogProps {
     fileData: OrcscFile;
 }
 
-interface BoatFormData {
+interface BoatData {
     yachtName: string;
     sailNo: string;
     classId: string;
 }
 
-const CustomSelect = React.forwardRef((props: any, ref: any) => {
+const CustomSelect = React.forwardRef<HTMLSelectElement, any>((props: any, ref: any) => {
     const { value, onChange, onKeyDown, classes, ...other } = props;
     const [isOpen, setIsOpen] = useState(false);
 
@@ -62,9 +62,8 @@ const CustomSelect = React.forwardRef((props: any, ref: any) => {
 });
 
 export const AddBoatsDialog: React.FC<AddBoatsDialogProps> = ({ open, onClose, onSuccess, fileData }) => {
-    const [boats, setBoats] = useState<BoatFormData[]>([{ yachtName: '', sailNo: '', classId: '' }]);
+    const [boats, setBoats] = useState<BoatData[]>([{ yachtName: '', sailNo: '', classId: '' }]);
     const [error, setError] = useState<string | null>(null);
-    const [lastSelectedClass, setLastSelectedClass] = useState<string>('');
     const yachtNameRefs = useRef<(HTMLInputElement | null)[]>([]);
     const sailNoRefs = useRef<(HTMLInputElement | null)[]>([]);
     const classRefs = useRef<(HTMLSelectElement | null)[]>([]);
@@ -74,26 +73,21 @@ export const AddBoatsDialog: React.FC<AddBoatsDialogProps> = ({ open, onClose, o
         if (open) {
             setBoats([{ yachtName: '', sailNo: '', classId: '' }]);
             setError(null);
-            setLastSelectedClass('');
         }
     }, [open]);
 
     const handleAddBoat = () => {
-        setBoats([...boats, { yachtName: '', sailNo: '', classId: lastSelectedClass }]);
+        setBoats(prev => [...prev, { yachtName: '', sailNo: '', classId: '' }]);
     };
 
     const handleRemoveBoat = (index: number) => {
-        setBoats(boats.filter((_, i) => i !== index));
+        setBoats(prev => prev.filter((_, i) => i !== index));
     };
 
-    const handleBoatChange = (index: number, field: keyof BoatFormData, value: string) => {
-        const newBoats = [...boats];
-        newBoats[index] = { ...newBoats[index], [field]: value };
-        setBoats(newBoats);
-        
-        if (field === 'classId') {
-            setLastSelectedClass(value);
-        }
+    const handleUpdateBoat = (index: number, field: keyof BoatData, value: string) => {
+        setBoats(prev => prev.map((boat, i) => 
+            i === index ? { ...boat, [field]: value } : boat
+        ));
     };
 
     const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
@@ -142,7 +136,7 @@ export const AddBoatsDialog: React.FC<AddBoatsDialogProps> = ({ open, onClose, o
                                 inputRef={el => yachtNameRefs.current[index] = el}
                                 label="Yacht Name"
                                 value={boat.yachtName}
-                                onChange={(e) => handleBoatChange(index, 'yachtName', e.target.value)}
+                                onChange={(e) => handleUpdateBoat(index, 'yachtName', e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(index, e)}
                                 fullWidth
                                 autoFocus={index === 0}
@@ -151,25 +145,25 @@ export const AddBoatsDialog: React.FC<AddBoatsDialogProps> = ({ open, onClose, o
                                 inputRef={el => sailNoRefs.current[index] = el}
                                 label="Sail Number"
                                 value={boat.sailNo}
-                                onChange={(e) => handleBoatChange(index, 'sailNo', e.target.value)}
+                                onChange={(e) => handleUpdateBoat(index, 'sailNo', e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(index, e)}
                                 fullWidth
                             />
                             <FormControl fullWidth>
                                 <InputLabel>Class</InputLabel>
                                 <CustomSelect
-                                    inputRef={el => classRefs.current[index] = el}
+                                    inputRef={(el: HTMLSelectElement | null) => classRefs.current[index] = el}
                                     value={boat.classId}
                                     label="Class"
-                                    onChange={(e) => handleBoatChange(index, 'classId', e.target.value)}
-                                    onKeyDown={(e) => {
+                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleUpdateBoat(index, 'classId', e.target.value)}
+                                    onKeyDown={(e: React.KeyboardEvent<HTMLSelectElement>) => {
                                         if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
                                             e.preventDefault();
                                             const matchingClass = fileData.classes.find(cls => 
                                                 cls.ClassName.toLowerCase().startsWith(e.key.toLowerCase())
                                             );
                                             if (matchingClass) {
-                                                handleBoatChange(index, 'classId', matchingClass.ClassId);
+                                                handleUpdateBoat(index, 'classId', matchingClass.ClassId);
                                             }
                                         } else {
                                             handleKeyDown(index, e);

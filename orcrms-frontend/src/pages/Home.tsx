@@ -21,10 +21,7 @@ interface FileInfo {
 
 export const Home: React.FC = () => {
     const [files, setFiles] = useState<FileInfo[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [uploadError, setUploadError] = useState<string | null>(null);
-    const [selectedFile, setSelectedFile] = useState<string | null>(null);
+    const [selectedFile, _setSelectedFile] = useState<FileInfo | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(true);
     const [newFileOpen, setNewFileOpen] = useState(false);
     const navigate = useNavigate();
@@ -35,7 +32,6 @@ export const Home: React.FC = () => {
 
     const fetchFiles = async () => {
         try {
-            setLoading(true);
             const fileList = await orcscApi.listFiles();
             const fileData = await Promise.all(
                 fileList.map(async (file) => {
@@ -52,12 +48,8 @@ export const Home: React.FC = () => {
                 })
             );
             setFiles(fileData.filter((file): file is FileInfo => file !== null));
-            setError(null);
         } catch (err) {
-            setError('Failed to load file list');
             console.error('Error fetching files:', err);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -70,21 +62,19 @@ export const Home: React.FC = () => {
         if (!file) return;
 
         try {
-            setUploadError(null);
             const result = await orcscApi.uploadFile(file);
             await fetchFiles();
             navigate(`/view/${encodeURIComponent(result.path)}`);
         } catch (err) {
-            setUploadError('Failed to upload file');
             console.error('Error uploading file:', err);
         }
     };
 
-    const handleFileDownload = async () => {
+    const handleDownload = async () => {
         if (!selectedFile) return;
 
         try {
-            await orcscApi.downloadFile(selectedFile);
+            await orcscApi.downloadFile(selectedFile.path);
         } catch (error) {
             console.error('Error downloading file:', error);
         }
@@ -108,7 +98,7 @@ export const Home: React.FC = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: 'white' }}>
                         ORCSC Parser
                     </Typography>
                 </Toolbar>
@@ -119,10 +109,10 @@ export const Home: React.FC = () => {
                 onClose={() => setIsDrawerOpen(false)}
                 onUpload={handleFileUpload}
                 onNewFile={() => setNewFileOpen(true)}
-                onDownload={handleFileDownload}
+                onDownload={handleDownload}
                 onFileSelect={handleFileSelect}
                 files={files}
-                selectedFile={selectedFile || undefined}
+                selectedFile={selectedFile?.path}
             />
 
             <NewFileDialog
