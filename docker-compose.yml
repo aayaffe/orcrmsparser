@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: orcrmsparser-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./orcsc/output:/app/orcsc/output
+      - ./orcsc/templates:/app/orcsc/templates
+    environment:
+      - CORS_ORIGINS=http://localhost:3000
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./orcrms-frontend
+      dockerfile: Dockerfile
+    container_name: orcrmsparser-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped 
