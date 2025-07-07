@@ -24,7 +24,7 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
         const file = event.target.files?.[0];
         if (!file) return;
         setLoading(true);
-        Papa.parse(file, {
+        Papa.parse<Record<string, string>>(file, {
             header: true,
             encoding: 'UTF-8',
             complete: (results) => {
@@ -48,14 +48,14 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
         setMapping(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleFilterColumnChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    const handleFilterColumnChange = (e: any) => {
         const newFilterColumn = e.target.value as string;
         setFilterColumn(newFilterColumn);
         setFilterValue('');
         setSelectedRows([]);
     };
 
-    const handleFilterValueChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    const handleFilterValueChange = (e: any) => {
         const newFilterValue = e.target.value as string;
         setFilterValue(newFilterValue);
         setSelectedRows([]);
@@ -65,14 +65,14 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
         setSelectedRows(prev => (prev.includes(rowIndex) ? prev.filter(i => i !== rowIndex) : [...prev, rowIndex]));
     };
 
+    const filteredRows = csvData && csvData.data.length > 0 && filterColumn && filterValue
+        ? csvData.data.filter((row) => row[filterColumn] === filterValue)
+        : (csvData ? csvData.data : []);
+
     useEffect(() => {
-        // Compute filteredRows here instead of as a top-level variable
-        const filteredRows = csvData && csvData.data.length > 0 && filterColumn && filterValue
-            ? csvData.data.filter((row, i) => row[filterColumn] === filterValue)
-            : (csvData ? csvData.data : []);
         if (csvData && mapping.yachtName && mapping.classId) {
-            const boats = selectedRows.map(i => {
-                const row = filteredRows[i];
+            const boats = selectedRows.map((i: number) => {
+                const row: Record<string, string> = filteredRows[i];
                 return { yachtName: row[mapping.yachtName], sailNo: mapping.sailNo ? row[mapping.sailNo] : undefined, classId: row[mapping.classId] };
             });
             setImportSummary(boats);
