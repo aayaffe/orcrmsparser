@@ -768,22 +768,17 @@ export const ViewFile: React.FC = () => {
                 onAssign={async (assignments: { [index: number]: string }) => {
                     if (!filePath) return;
                     if (boatsToAssign.length === 1 && boatsToAssign[0].YID) {
-                        // Single boat edit: update class
+                        // Existing boat: update
                         await orcscApi.updateBoat(filePath, {
-                            YID: boatsToAssign[0].YID,
+                            YID: boatsToAssign[0].YID || '',
                             classId: assignments[0] || '',
                             yachtName: boatsToAssign[0].YachtName,
                             sailNo: boatsToAssign[0].SailNo
                         });
                     } else {
-                        // Multi-boat edit: update class for each selected boat
+                        // New boats: add
                         await Promise.all(boatsToAssign.map((boat, i) =>
-                            orcscApi.updateBoat(filePath, {
-                                YID: boat.YID,
-                                classId: assignments[i] || '',
-                                yachtName: boat.YachtName,
-                                sailNo: boat.SailNo
-                            })
+                            orcscApi.addBoatFromOrcJson(filePath, boat, assignments[i] || '')
                         ));
                     }
                     await fetchFile();

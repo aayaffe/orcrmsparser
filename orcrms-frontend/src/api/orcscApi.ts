@@ -233,7 +233,7 @@ export const orcscApi = {
 
   updateBoat: async (filePath: string, boat: { YID: string; classId: string; yachtName: string; sailNo?: string }) => {
     const response = await api.post(`/api/files/${encodeURIComponent(filePath)}/boats/update`, {
-      YID: boat.YID,
+      YID: boat.YID || '',
       ClassId: boat.classId,
       YachtName: boat.yachtName,
       SailNo: boat.sailNo || ''
