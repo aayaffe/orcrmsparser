@@ -11,7 +11,7 @@ import {
     AppBar,
     Toolbar,
     IconButton,
-    
+
     Stack
 } from '@mui/material';
 import {
@@ -27,8 +27,9 @@ import { AddClassDialog } from '../components/AddClassDialog';
 import { NewFileDialog } from '../components/NewFileDialog';
 import { AddBoatsDialog } from '../components/AddBoatsDialog';
 import { FileHistoryDialog } from '../components/FileHistoryDialog';
+import { ImportBoatsWizard } from '../components/ImportBoatsWizard';
 
-const drawerWidth = 240;
+const drawerWidth = 340;
 
 const formatDate = (dateString: string | number): string => {
     try {
@@ -119,6 +120,7 @@ export const ViewFile: React.FC = () => {
     const [addClassOpen, setAddClassOpen] = useState(false);
     const [addBoatsOpen, setAddBoatsOpen] = useState(false);
     const [historyOpen, setHistoryOpen] = useState(false);
+    const [importWizardOpen, setImportWizardOpen] = useState(false);
 
     useEffect(() => {
         if (filePath) {
@@ -307,7 +309,7 @@ export const ViewFile: React.FC = () => {
                                 {fileData.event.EventTitle}
                             </Typography>
                             <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
-                                {fileData.event.Venue} - {fileData.event.Organizer}
+                                {fileData.event.Venue}{(fileData.event.Venue && fileData.event.Organizer)? (" - "):("")}{fileData.event.Organizer}
                             </Typography>
 
                             <Paper sx={{ p: 2, mb: 2 }}>
@@ -398,13 +400,13 @@ export const ViewFile: React.FC = () => {
                                 </Box>
                                 <Stack spacing={2}>
                                     {fileData.races.map((race) => (
-                                        <Box key={race.RaceId} sx={{ 
-                                            display: 'flex', 
+                                        <Box key={race.RaceId} sx={{
+                                            display: 'flex',
                                             gap: 2,
                                             alignItems: 'center'
                                         }}>
-                                            <Box sx={{ 
-                                                display: 'flex', 
+                                            <Box sx={{
+                                                display: 'flex',
                                                 gap: 1,
                                                 minWidth: '200px'
                                             }}>
@@ -428,14 +430,10 @@ export const ViewFile: React.FC = () => {
                                     <Typography variant="h6" gutterBottom>
                                         Fleet
                                     </Typography>
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<AddIcon />}
-                                        onClick={() => setAddBoatsOpen(true)}
-                                        size="small"
-                                    >
-                                        Add Boats
-                                    </Button>
+                                    <Box sx={{ display: 'flex', gap: 1 }}>
+                                        <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setImportWizardOpen(true)} size="small">Import from CSV</Button>
+                                        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAddBoatsOpen(true)} size="small">Add Boats</Button>
+                                    </Box>
                                 </Box>
                                 <Stack spacing={2}>
                                     {fileData.fleet.map((boat) => (
@@ -463,6 +461,12 @@ export const ViewFile: React.FC = () => {
                                 onClose={() => setAddBoatsOpen(false)}
                                 onSuccess={handleAddBoatsSuccess}
                                 fileData={fileData}
+                            />
+
+                            <ImportBoatsWizard
+                                open={importWizardOpen}
+                                onClose={() => setImportWizardOpen(false)}
+                                onImport={(boats) => { orcscApi.addBoats(filePath, boats).then(() => { fetchFile(); setImportWizardOpen(false); }); }}
                             />
                         </Box>
                     ) : null}
