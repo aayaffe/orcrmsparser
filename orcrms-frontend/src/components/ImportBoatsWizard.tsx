@@ -65,10 +65,11 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
         setSelectedRows(prev => (prev.includes(rowIndex) ? prev.filter(i => i !== rowIndex) : [...prev, rowIndex]));
     };
 
-    const filteredRows = csvData && csvData.data.length > 0 && filterColumn && filterValue ? csvData.data.filter((row, i) => row[filterColumn] === filterValue) : (csvData ? csvData.data : []);
-    const filteredIndices = filteredRows.map((_, i) => i);
-
     useEffect(() => {
+        // Compute filteredRows here instead of as a top-level variable
+        const filteredRows = csvData && csvData.data.length > 0 && filterColumn && filterValue
+            ? csvData.data.filter((row, i) => row[filterColumn] === filterValue)
+            : (csvData ? csvData.data : []);
         if (csvData && mapping.yachtName && mapping.classId) {
             const boats = selectedRows.map(i => {
                 const row = filteredRows[i];
@@ -78,7 +79,7 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
         } else {
             setImportSummary([]);
         }
-    }, [csvData, mapping, selectedRows, filteredRows]);
+    }, [csvData, mapping, selectedRows, filterColumn, filterValue]);
 
     return (
         <Dialog open={open} onClose={handleCancel} maxWidth="md" fullWidth>
@@ -207,7 +208,7 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
                                         </TableHead>
                                         <TableBody>
                                             {filteredRows.map((row, i) => (
-                                                filteredIndices.includes(i) && (
+                                                filteredRows.includes(row) && ( // Use filteredRows directly here
                                                     <TableRow key={i} hover>
                                                         <TableCell padding="checkbox">
                                                             <Checkbox checked={selectedRows.includes(i)} onChange={() => handleRowToggle(i)} />

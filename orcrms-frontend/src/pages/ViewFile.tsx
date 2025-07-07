@@ -12,12 +12,29 @@ import {
     Toolbar,
     IconButton,
 
-    Stack
+    Stack,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    TableSortLabel,
+    Checkbox
 } from '@mui/material';
 import {
     Menu as MenuIcon,
     Add as AddIcon,
-    History as HistoryIcon
+    History as HistoryIcon,
+    Description as CsvIcon
 } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFile, YachtClass } from '../types/orcsc';
@@ -28,7 +45,9 @@ import { NewFileDialog } from '../components/NewFileDialog';
 import { AddBoatsDialog } from '../components/AddBoatsDialog';
 import { FileHistoryDialog } from '../components/FileHistoryDialog';
 import { ImportBoatsWizard } from '../components/ImportBoatsWizard';
-
+import { OrcDbDialog } from '../components/OrcDbDialog';
+import OrcLogoImg from '../assets/orc-logo.png';
+    
 const drawerWidth = 340;
 
 const formatDate = (dateString: string | number): string => {
@@ -107,6 +126,81 @@ const formatDateOnly = (dateString: string | number): string => {
     }
 };
 
+// AssignClassesDialog placeholder
+const AssignClassesDialog = ({ open, boats, classes, onAssign, onClose }: any) => {
+    // If multiple boats, use a single class selector
+    const [singleClass, setSingleClass] = useState('');
+    const [assignments, setAssignments] = useState<{ [index: number]: string }>({});
+    useEffect(() => {
+        if (boats.length > 1) setAssignments({});
+    }, [boats.length]);
+    const handleChange = (i: number, classId: string) => {
+        setAssignments(prev => ({ ...prev, [i]: classId }));
+    };
+    const handleAssign = () => {
+        if (boats.length > 1) {
+            // Assign the same class to all
+            const all = Object.fromEntries(boats.map((_: any, i: number) => [i, singleClass]));
+            onAssign(all);
+        } else {
+            onAssign(assignments);
+        }
+    };
+    return (
+        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+            <DialogTitle>Assign Classes to {boats.length > 1 ? 'Selected Boats' : 'Imported Boat'}</DialogTitle>
+            <DialogContent>
+                <Stack spacing={2}>
+                    {boats.length > 1 ? (
+                        <FormControl fullWidth>
+                            <InputLabel>Class</InputLabel>
+                            <Select
+                                value={singleClass}
+                                label="Class"
+                                onChange={e => setSingleClass(e.target.value)}
+                            >
+                                {classes.map((cls: any) => (
+                                    <MenuItem key={cls.ClassId} value={cls.ClassId}>{cls.ClassName}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    ) : (
+                        boats.map((boat: any, i: number) => (
+                            <Box key={i} sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                <Typography sx={{ minWidth: 200 }}>{boat.YachtName} ({boat.SailNo})</Typography>
+                                <FormControl fullWidth>
+                                    <InputLabel>Class</InputLabel>
+                                    <Select
+                                        value={assignments[i] || ''}
+                                        label="Class"
+                                        onChange={e => handleChange(i, e.target.value)}
+                                    >
+                                        {classes.map((cls: any) => (
+                                            <MenuItem key={cls.ClassId} value={cls.ClassId}>{cls.ClassName}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        ))
+                    )}
+                </Stack>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button variant="contained" onClick={handleAssign} disabled={boats.length > 1 && !singleClass}>Assign</Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+
+// Add a placeholder ORC logo SVG component
+const OrcLogo = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle' }}>
+        <circle cx="12" cy="12" r="10" fill="#1976d2" />
+        <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#fff" fontFamily="Arial" fontWeight="bold">ORC</text>
+    </svg>
+);
+
 export const ViewFile: React.FC = () => {
     const { filePath } = useParams<{ filePath: string }>();
     const [fileData, setFileData] = useState<OrcscFile | null>(null);
@@ -121,6 +215,34 @@ export const ViewFile: React.FC = () => {
     const [addBoatsOpen, setAddBoatsOpen] = useState(false);
     const [historyOpen, setHistoryOpen] = useState(false);
     const [importWizardOpen, setImportWizardOpen] = useState(false);
+    const [orcDbDialogOpen, setOrcDbDialogOpen] = useState(false);
+    const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+    const [boatsToAssign, setBoatsToAssign] = useState<any[]>([]);
+    const [editBoatIndex, setEditBoatIndex] = useState<number | null>(null);
+    const [fleetSort, setFleetSort] = useState<'yachtName' | 'sailNo' | 'class'>('yachtName');
+    const [fleetSortDir, setFleetSortDir] = useState<'asc' | 'desc'>('asc');
+    const [selectedBoatIndices, setSelectedBoatIndices] = useState<number[]>([]);
+    const [raceSort, setRaceSort] = useState<'raceName' | 'class' | 'startTime'>('raceName');
+    const [raceSortDir, setRaceSortDir] = useState<'asc' | 'desc'>('asc');
+    const handleRaceSort = (col: 'raceName' | 'class' | 'startTime') => {
+        if (raceSort === col) {
+            setRaceSortDir(d => d === 'asc' ? 'desc' : 'asc');
+        } else {
+            setRaceSort(col);
+            setRaceSortDir('asc');
+        }
+    };
+    const sortedRaces = fileData && fileData.races ? [...fileData.races].sort((a, b) => {
+        let cmp = 0;
+        if (raceSort === 'raceName') {
+            cmp = a.RaceName.localeCompare(b.RaceName);
+        } else if (raceSort === 'class') {
+            cmp = (a.ClassId || '').localeCompare(b.ClassId || '');
+        } else if (raceSort === 'startTime') {
+            cmp = a.StartTime.localeCompare(b.StartTime);
+        }
+        return raceSortDir === 'asc' ? cmp : -cmp;
+    }) : [];
 
     useEffect(() => {
         if (filePath) {
@@ -231,6 +353,39 @@ export const ViewFile: React.FC = () => {
         fetchFile();
     };
 
+    const handleSort = (col: 'yachtName' | 'sailNo' | 'class') => {
+        if (fleetSort === col) {
+            setFleetSortDir(d => d === 'asc' ? 'desc' : 'asc');
+        } else {
+            setFleetSort(col);
+            setFleetSortDir('asc');
+        }
+    };
+
+    const handleSelectBoat = (idx: number) => {
+        setSelectedBoatIndices(prev => prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]);
+    };
+    const handleSelectAllBoats = (checked: boolean) => {
+        if (checked) {
+            setSelectedBoatIndices(sortedFleet.map((_, idx) => idx));
+        } else {
+            setSelectedBoatIndices([]);
+        }
+    };
+
+    const sortedFleet = fileData && fileData.fleet ? [...fileData.fleet].sort((a, b) => {
+        let cmp = 0;
+        if (fleetSort === 'yachtName') {
+            cmp = a.YachtName.localeCompare(b.YachtName);
+        } else if (fleetSort === 'sailNo') {
+            cmp = (a.SailNo || '').localeCompare(b.SailNo || '');
+        } else if (fleetSort === 'class') {
+            cmp = (a.ClassId || '').localeCompare(b.ClassId || '');
+        }
+        return fleetSortDir === 'asc' ? cmp : -cmp;
+    }) : [];
+    const selectedBoats = selectedBoatIndices.map(idx => sortedFleet[idx]);
+
     if (!filePath) {
         return <Alert severity="error">No file path provided</Alert>;
     }
@@ -309,7 +464,7 @@ export const ViewFile: React.FC = () => {
                                 {fileData.event.EventTitle}
                             </Typography>
                             <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
-                                {fileData.event.Venue}{(fileData.event.Venue && fileData.event.Organizer)? (" - "):("")}{fileData.event.Organizer}
+                                {fileData.event.Venue}{(fileData.event.Venue && fileData.event.Organizer) ? (" - ") : ("")}{fileData.event.Organizer}
                             </Typography>
 
                             <Paper sx={{ p: 2, mb: 2 }}>
@@ -398,31 +553,53 @@ export const ViewFile: React.FC = () => {
                                         Add
                                     </Button>
                                 </Box>
-                                <Stack spacing={2}>
-                                    {fileData.races.map((race) => (
-                                        <Box key={race.RaceId} sx={{
-                                            display: 'flex',
-                                            gap: 2,
-                                            alignItems: 'center'
-                                        }}>
-                                            <Box sx={{
-                                                display: 'flex',
-                                                gap: 1,
-                                                minWidth: '200px'
-                                            }}>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {race.RaceName}
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    ({race.ClassId})
-                                                </Typography>
-                                            </Box>
-                                            <Typography variant="body2">
-                                                {formatDate(race.StartTime)}
-                                            </Typography>
-                                        </Box>
-                                    ))}
-                                </Stack>
+                                <TableContainer component={Paper}>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>
+                                                    <TableSortLabel
+                                                        active={raceSort === 'raceName'}
+                                                        direction={raceSort === 'raceName' ? raceSortDir : 'asc'}
+                                                        onClick={() => handleRaceSort('raceName')}
+                                                    >
+                                                        Race Name
+                                                    </TableSortLabel>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TableSortLabel
+                                                        active={raceSort === 'class'}
+                                                        direction={raceSort === 'class' ? raceSortDir : 'asc'}
+                                                        onClick={() => handleRaceSort('class')}
+                                                    >
+                                                        Class
+                                                    </TableSortLabel>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TableSortLabel
+                                                        active={raceSort === 'startTime'}
+                                                        direction={raceSort === 'startTime' ? raceSortDir : 'asc'}
+                                                        onClick={() => handleRaceSort('startTime')}
+                                                    >
+                                                        Start Time
+                                                    </TableSortLabel>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {sortedRaces.map((race) => {
+                                                const cls = fileData.classes.find(c => c.ClassId === race.ClassId);
+                                                return (
+                                                    <TableRow key={race.RaceId}>
+                                                        <TableCell>{race.RaceName}</TableCell>
+                                                        <TableCell>{cls ? cls.ClassName : race.ClassId}</TableCell>
+                                                        <TableCell>{formatDate(race.StartTime)}</TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
                             </Paper>
 
                             <Paper sx={{ p: 2 }}>
@@ -431,22 +608,115 @@ export const ViewFile: React.FC = () => {
                                         Fleet
                                     </Typography>
                                     <Box sx={{ display: 'flex', gap: 1 }}>
-                                        <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setImportWizardOpen(true)} size="small">Import from CSV</Button>
-                                        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAddBoatsOpen(true)} size="small">Add Boats</Button>
+                                        <Button
+                                            variant="outlined"
+                                            startIcon={<AddIcon />}
+                                            onClick={() => setAddBoatsOpen(true)}
+                                            size="small"
+                                            title="Add Boats"
+                                            sx={{ borderRadius: 2, minHeight: 40, px: 2 }}
+                                        />
+                                        <Button
+                                            variant="outlined"
+                                            startIcon={<><AddIcon /><CsvIcon /></>}
+                                            onClick={() => setImportWizardOpen(true)}
+                                            size="small"
+                                            title="Import from CSV"
+                                            sx={{ borderRadius: 2, minHeight: 40, px: 2 }}
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<><AddIcon /><img src={OrcLogoImg} alt="ORC" style={{ width: 24, height: 24, marginLeft: 4, borderRadius: '50%', background: '#fff' }} /></>}
+                                            color="secondary"
+                                            onClick={() => setOrcDbDialogOpen(true)}
+                                            size="small"
+                                            title="Add from ORC DB"
+                                            sx={{ borderRadius: 2, minHeight: 40, px: 2 }}
+                                        />
                                     </Box>
                                 </Box>
-                                <Stack spacing={2}>
-                                    {fileData.fleet.map((boat) => (
-                                        <Box key={boat.YID} sx={{ display: 'flex', gap: 1 }}>
-                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
-                                                {boat.YachtName}:
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                Sail No: {boat.SailNo || 'Not specified'}
-                                            </Typography>
-                                        </Box>
-                                    ))}
-                                </Stack>
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    sx={{ mb: 2 }}
+                                    disabled={selectedBoatIndices.length === 0}
+                                    onClick={() => {
+                                        setBoatsToAssign(selectedBoats);
+                                        setEditBoatIndex(null);
+                                        setAssignDialogOpen(true);
+                                    }}
+                                >
+                                    Change Class for Selected
+                                </Button>
+                                <TableContainer component={Paper} sx={{ mb: 2 }}>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                        indeterminate={selectedBoatIndices.length > 0 && selectedBoatIndices.length < sortedFleet.length}
+                                                        checked={selectedBoatIndices.length === sortedFleet.length && sortedFleet.length > 0}
+                                                        onChange={e => handleSelectAllBoats(e.target.checked)}
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TableSortLabel
+                                                        active={fleetSort === 'yachtName'}
+                                                        direction={fleetSort === 'yachtName' ? fleetSortDir : 'asc'}
+                                                        onClick={() => handleSort('yachtName')}
+                                                    >
+                                                        Yacht Name
+                                                    </TableSortLabel>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TableSortLabel
+                                                        active={fleetSort === 'sailNo'}
+                                                        direction={fleetSort === 'sailNo' ? fleetSortDir : 'asc'}
+                                                        onClick={() => handleSort('sailNo')}
+                                                    >
+                                                        Sail Number
+                                                    </TableSortLabel>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TableSortLabel
+                                                        active={fleetSort === 'class'}
+                                                        direction={fleetSort === 'class' ? fleetSortDir : 'asc'}
+                                                        onClick={() => handleSort('class')}
+                                                    >
+                                                        Class
+                                                    </TableSortLabel>
+                                                </TableCell>
+                                                <TableCell>Actions</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {sortedFleet.map((boat, idx) => {
+                                                const cls = fileData.classes.find(c => c.ClassId === boat.ClassId);
+                                                return (
+                                                    <TableRow key={boat.YID}>
+                                                        <TableCell padding="checkbox">
+                                                            <Checkbox
+                                                                checked={selectedBoatIndices.includes(idx)}
+                                                                onChange={() => handleSelectBoat(idx)}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell>{boat.YachtName}</TableCell>
+                                                        <TableCell>{boat.SailNo || 'Not specified'}</TableCell>
+                                                        <TableCell
+                                                            sx={{ cursor: 'pointer', textDecoration: 'underline', '&:hover': { color: 'primary.main' } }}
+                                                            onClick={() => { setBoatsToAssign([boat]); setEditBoatIndex(idx); setAssignDialogOpen(true); }}
+                                                        >
+                                                            {cls ? cls.ClassName : (boat.ClassId || 'Not assigned')}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {/* Removed Change Class button */}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
                             </Paper>
 
                             <AddRacesDialog
@@ -477,6 +747,52 @@ export const ViewFile: React.FC = () => {
                 open={addClassOpen}
                 onClose={() => setAddClassOpen(false)}
                 onAdd={handleAddClass}
+            />
+            {fileData && (
+                <OrcDbDialog
+                    open={orcDbDialogOpen}
+                    onClose={() => setOrcDbDialogOpen(false)}
+                    onSuccess={async (selectedBoats) => {
+                        // Do not add boats yet, just open assign dialog
+                        setBoatsToAssign(selectedBoats);
+                        setAssignDialogOpen(true);
+                        setOrcDbDialogOpen(false);
+                    }}
+                    fileData={fileData}
+                />
+            )}
+            <AssignClassesDialog
+                open={assignDialogOpen}
+                boats={boatsToAssign}
+                classes={fileData?.classes || []}
+                onAssign={async (assignments: { [index: number]: string }) => {
+                    if (!filePath) return;
+                    if (boatsToAssign.length === 1 && boatsToAssign[0].YID) {
+                        // Single boat edit: update class
+                        await orcscApi.updateBoat(filePath, {
+                            YID: boatsToAssign[0].YID,
+                            classId: assignments[0] || '',
+                            yachtName: boatsToAssign[0].YachtName,
+                            sailNo: boatsToAssign[0].SailNo
+                        });
+                    } else {
+                        // Multi-boat edit: update class for each selected boat
+                        await Promise.all(boatsToAssign.map((boat, i) =>
+                            orcscApi.updateBoat(filePath, {
+                                YID: boat.YID,
+                                classId: assignments[i] || '',
+                                yachtName: boat.YachtName,
+                                sailNo: boat.SailNo
+                            })
+                        ));
+                    }
+                    await fetchFile();
+                    setAssignDialogOpen(false);
+                    setBoatsToAssign([]);
+                    setEditBoatIndex(null);
+                    setSelectedBoatIndices([]);
+                }}
+                onClose={() => { setAssignDialogOpen(false); setEditBoatIndex(null); }}
             />
         </Box>
     );
