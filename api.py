@@ -84,9 +84,9 @@ class RestoreBackupRequest(BaseModel):
 
 class UpdateBoatRequest(BaseModel):
     YID: int
-    YachtName: str
+    YachtName: Optional[str] = None
     SailNo: Optional[str] = None
-    ClassId: str
+    ClassId: Optional[str] = None
 
 @app.get("/api/files")
 async def list_orcsc_files():
@@ -465,16 +465,19 @@ async def update_boat_in_file(file_path: str, request: UpdateBoatRequest):
             logger.error(f"File not found: {abs_path}")
             raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
 
-        # Create FleetRow for update
+        # Create FleetRow for update, only set fields if provided
         fleet_row = FleetRow("ROW")
         fleet_row.YID = request.YID
-        fleet_row.YachtName = request.YachtName
-        fleet_row.SailNo = request.SailNo
-        fleet_row.ClassId = request.ClassId
+        if request.YachtName is not None:
+            fleet_row.YachtName = request.YachtName
+        if request.SailNo is not None:
+            fleet_row.SailNo = request.SailNo
+        if request.ClassId is not None:
+            fleet_row.ClassId = request.ClassId
 
         # Update the fleet entry
         orcsc_update_fleet(abs_path, abs_path, fleet_row)
-        change_summary = f"Updated boat: {request.YachtName} (YID={request.YID})"
+        change_summary = f"Updated boat: {request.YachtName or ''} (YID={request.YID})"
         file_history.create_backup(abs_path, change_summary)
 
         logger.info(f"Successfully updated boat YID={request.YID} in {file_path}")

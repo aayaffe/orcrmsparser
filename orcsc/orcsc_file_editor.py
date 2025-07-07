@@ -230,6 +230,7 @@ def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", out
 def update_fleet(input_file, output_file, updated_fleet: FleetRow):
     """
     Update an existing fleet entry in the XML file based on YID.
+    Only update fields provided (non-None) in updated_fleet, retain all other data.
     """
     tree = ET.parse(input_file)
     Fleet = tree.getroot().find('./Fleet')
@@ -237,9 +238,16 @@ def update_fleet(input_file, output_file, updated_fleet: FleetRow):
     for fleet_elem in Fleet.findall('./ROW'):
         yid_elem = fleet_elem.find('YID')
         if yid_elem is not None and int(yid_elem.text) == int(updated_fleet.YID):
+            # Convert XML element to FleetRow
+            existing_row = FleetRow.from_element(fleet_elem)
+            # Update only fields that are not None in updated_fleet
+            for field in vars(updated_fleet):
+                value = getattr(updated_fleet, field)
+                if value is not None and field != "_tag":
+                    setattr(existing_row, field, value)
             # Replace the fleet element with the updated one
             Fleet.remove(fleet_elem)
-            Fleet.append(updated_fleet.to_element())
+            Fleet.append(existing_row.to_element())
             updated = True
             break
     if not updated:
