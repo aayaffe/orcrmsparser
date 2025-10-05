@@ -6,11 +6,11 @@ from orcsc.model.cls_row import ClsRow
 from orcsc.model.fleet_row import FleetRow
 from orcsc.model.race_row import RaceRow
 from orcsc.model.scoring_codes_enum import ScoringCode
-from orcsc.orcsc_file_editor import create_new_scoring_file
+from orcsc.orcsc_file_editor import create_new_scoring_file, add_fleets
 
-scoring_file = "F:\odrive\Google Drive\שיט\קהילת שייטים כרמל\שיוטים ואירועים\\2025\ליגת החורף 2025\\results.orcsc"
+scoring_file = "C:\programing\orcrmsparser\orcsc\output\b4bcd745-9e28-418d-a85b-f73f51a22510.orcsc"
 
-test_file = r"test_files\test.orcsc"
+# test_file = r"test_files\test.orcsc"
 
 start_time = datetime(2025, 4, 5, 10, 35, 0)
 scoring_code = ScoringCode.TOT_Triple_Number_Windward_Leeward_High
@@ -44,11 +44,24 @@ def get_boats_from_registration_csv(csv_file, class_id, class_name=None, class_c
 
 
 # csv_file = r"C:\Users\aayaffe\Downloads\!temp\רישום לשיוט אמיר רוסו 2025.csv"
-# boats = get_boats_from_registration_csv(csv_file, "Z", yacht_name_column='boat-name')
-
+boats = get_boats_from_registration_csv(csv_file, "Z", class_column='class', yacht_name_column='boat-name')
+add_fleets(scoring_file, scoring_file, boats)
 
 #TODO: Add ORC from list
-#Todo: Add races to existing file
+# I need to add the option to add boats from the orc certificates API.
+# 1. Add a button to add new boats from ORC DB
+# 2. After pushing the button add option to select country.
+# 3. Country list should be downloaded from the ORC API
+# 4. Then show a searchable list of boats from that country. the list should contain all the certificates of that country
+# of all types (Regular, double handed, no spinnaker, etc.)
+# 5. The list should be searchable by name and by sail number.
+# 6. The list should show also date of certificate and certificate type. for boats with more than one certificates
+# all the certificates should be shown
+# 7. After selecting all relevant certificates, the boats should be added to the file according to the orcsc file schema
+# Including assigning correct YID.
+# 8. After adding all the boats there should be an option to assign boats to classes.
+# 9. this option should allow adding multiple boats simultaneously to a class.
+# 10. There should be an option to remove boats.
 
 
 # create_new_scoring_file("Amir Russo Memorial Regatta",

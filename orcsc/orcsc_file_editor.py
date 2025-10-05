@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 import os
 import logging
+import json
 
 from orcsc.model.class_enum import YachtClass
 from orcsc.model.cls_row import ClsRow
@@ -161,6 +162,8 @@ def add_fleets(input_file, output_file, new_fleets):
     pass
 
 
+
+
 def get_fleets(input_file):
     tree = ET.parse(input_file)
     fleets = tree.getroot().find('./Fleet')
@@ -222,3 +225,207 @@ def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", out
     if boats is not None:
         add_fleets(output_file, output_file, boats)
         logging.info("Added boats to output file")
+
+
+def update_fleet(input_file, output_file, updated_fleet: FleetRow):
+    """
+    Update an existing fleet entry in the XML file based on YID.
+    Only update fields provided (non-None) in updated_fleet, retain all other data.
+    """
+    tree = ET.parse(input_file)
+    Fleet = tree.getroot().find('./Fleet')
+    updated = False
+    for fleet_elem in Fleet.findall('./ROW'):
+        yid_elem = fleet_elem.find('YID')
+        if yid_elem is not None and int(yid_elem.text) == int(updated_fleet.YID):
+            # Convert XML element to FleetRow
+            existing_row = FleetRow.from_element(fleet_elem)
+            # Update only fields that are not None in updated_fleet
+            for field in vars(updated_fleet):
+                value = getattr(updated_fleet, field)
+                if value is not None and field != "_tag":
+                    setattr(existing_row, field, value)
+            # Replace the fleet element with the updated one
+            Fleet.remove(fleet_elem)
+            Fleet.append(existing_row.to_element())
+            updated = True
+            break
+    if not updated:
+        raise ValueError(f"Fleet with YID {updated_fleet.YID} not found.")
+    ET.indent(tree, space="\t", level=0)
+    tree.write(output_file, encoding='utf-8', xml_declaration=False)
+
+
+def add_fleet_from_orc_json(input_file, output_file, orc_json, class_id=None):
+    """
+    Add a fleet (boat) entry from ORC API JSON to the XML file.
+    """
+    tree = ET.parse(input_file)
+    Fleet = tree.getroot().find('./Fleet')
+    # Determine next YID
+    yids = get_yids(get_fleets(input_file))
+    next_yid = max(yids) + 1 if yids else 1
+
+    # Map JSON fields to FleetRow fields
+    fleet_row = FleetRow("ROW")
+    fleet_row.YID = next_yid
+    fleet_row.SailNo = orc_json.get("SailNo")
+    fleet_row.YachtName = orc_json.get("YachtName")
+    fleet_row.BowNo = ""
+    fleet_row.ClassId = class_id or orc_json.get("ClassId") or ""
+    fleet_row.DivId = ""
+    fleet_row.changeHeatNo = ""
+    fleet_row.LOA = orc_json.get("LOA")
+    fleet_row.CDL = orc_json.get("CDL")
+    fleet_row.GPH = orc_json.get("GPH")
+    fleet_row.APHD = orc_json.get("APHD")
+    fleet_row.CTOD = ""
+    fleet_row.CTOT = ""
+    fleet_row.YClass = orc_json.get("Class")
+    fleet_row.Owner = ""
+    fleet_row.Skipper = ""
+    fleet_row.Sponsor = ""
+    fleet_row.Club = ""
+    fleet_row.Nation = orc_json.get("NatAuth")
+    fleet_row.EMail = ""
+    fleet_row.Phone = ""
+    fleet_row.CertType = orc_json.get("C_Type")
+    fleet_row.IssueDate = orc_json.get("IssueDate")
+    fleet_row.NatAuth = orc_json.get("NatAuth")
+    fleet_row.BIN = orc_json.get("BIN")
+    fleet_row.RefNo = orc_json.get("RefNo")
+    fleet_row.RMS2 = ""
+    fleet_row.Family = orc_json.get("Family")
+    fleet_row.Points = ""
+    fleet_row.Position = ""
+    fleet_row.PtsHash = ""
+    fleet_row.PtsHash2 = ""
+    fleet_row.RMS = json.dumps(orc_json, separators=(',', ':'))
+    fleet_row.SNInt = None
+    fleet_row.HeatNo = ""
+    fleet_row.ILCWA = orc_json.get("ILCWA")
+    fleet_row.TMF_Inshore = orc_json.get("TMF_Inshore")
+    fleet_row.APHT = orc_json.get("APHT")
+    fleet_row.MHRD = orc_json.get("MHRD", 0)
+    fleet_row.MHRT = orc_json.get("MHRT", 0)
+    fleet_row.OSN = orc_json.get("OSN")
+    fleet_row.TMF_Offshore = orc_json.get("TMF_Offshore")
+    fleet_row.TND_Offshore_Low = orc_json.get("TND_Offshore_Low")
+    fleet_row.TN_Offshore_Low = orc_json.get("TN_Offshore_Low")
+    fleet_row.TND_Offshore_Medium = orc_json.get("TND_Offshore_Medium")
+    fleet_row.TN_Offshore_Medium = orc_json.get("TN_Offshore_Medium")
+    fleet_row.TND_Offshore_High = orc_json.get("TND_Offshore_High")
+    fleet_row.TN_Offshore_High = orc_json.get("TN_Offshore_High")
+    fleet_row.TND_Inshore_Low = orc_json.get("TND_Inshore_Low")
+    fleet_row.TN_Inshore_Low = orc_json.get("TN_Inshore_Low")
+    fleet_row.TND_Inshore_Medium = orc_json.get("TND_Inshore_Medium")
+    fleet_row.TN_Inshore_Medium = orc_json.get("TN_Inshore_Medium")
+    fleet_row.TND_Inshore_High = orc_json.get("TND_Inshore_High")
+    fleet_row.TN_Inshore_High = orc_json.get("TN_Inshore_High")
+    fleet_row.Pred_Up_TOD = orc_json.get("Pred_Up_TOD")
+    fleet_row.Pred_Up_TOT = orc_json.get("Pred_Up_TOT")
+    fleet_row.Pred_Down_TOD = orc_json.get("Pred_Down_TOD")
+    fleet_row.Pred_Down_TOT = orc_json.get("Pred_Down_TOT")
+    fleet_row.US_PREDUP_TOD = orc_json.get("US_PREDUP_TOD")
+    fleet_row.US_PREDUP_TOT = orc_json.get("US_PREDUP_TOT")
+    fleet_row.US_PREDRC_TOD = orc_json.get("US_PREDRC_TOD")
+    fleet_row.US_PREDRC_TOT = orc_json.get("US_PREDRC_TOT")
+    fleet_row.US_PREDDN_TOD = orc_json.get("US_PREDDN_TOD")
+    fleet_row.US_PREDDN_TOT = orc_json.get("US_PREDDN_TOT")
+    fleet_row.US_PREDUP_L_TOD = orc_json.get("US_PREDUP_L_TOD")
+    fleet_row.US_PREDUP_L_TOT = orc_json.get("US_PREDUP_L_TOT")
+    fleet_row.US_PREDUP_LM_TOD = orc_json.get("US_PREDUP_LM_TOD")
+    fleet_row.US_PREDUP_LM_TOT = orc_json.get("US_PREDUP_LM_TOT")
+    fleet_row.US_PREDUP_M_TOD = orc_json.get("US_PREDUP_M_TOD")
+    fleet_row.US_PREDUP_M_TOT = orc_json.get("US_PREDUP_M_TOT")
+    fleet_row.US_PREDUP_MH_TOD = orc_json.get("US_PREDUP_MH_TOD")
+    fleet_row.US_PREDUP_MH_TOT = orc_json.get("US_PREDUP_MH_TOT")
+    fleet_row.US_PREDUP_H_TOD = orc_json.get("US_PREDUP_H_TOD")
+    fleet_row.US_PREDUP_H_TOT = orc_json.get("US_PREDUP_H_TOT")
+    fleet_row.US_PREDDN_L_TOD = orc_json.get("US_PREDDN_L_TOD")
+    fleet_row.US_PREDDN_L_TOT = orc_json.get("US_PREDDN_L_TOT")
+    fleet_row.US_PREDDN_LM_TOD = orc_json.get("US_PREDDN_LM_TOD")
+    fleet_row.US_PREDDN_LM_TOT = orc_json.get("US_PREDDN_LM_TOT")
+    fleet_row.US_PREDDN_M_TOD = orc_json.get("US_PREDDN_M_TOD")
+    fleet_row.US_PREDDN_M_TOT = orc_json.get("US_PREDDN_M_TOT")
+    fleet_row.US_PREDDN_MH_TOD = orc_json.get("US_PREDDN_MH_TOD")
+    fleet_row.US_PREDDN_MH_TOT = orc_json.get("US_PREDDN_MH_TOT")
+    fleet_row.US_PREDDN_H_TOD = orc_json.get("US_PREDDN_H_TOD")
+    fleet_row.US_PREDDN_H_TOT = orc_json.get("US_PREDDN_H_TOT")
+    fleet_row.US_PREDRC_L_TOD = orc_json.get("US_PREDRC_L_TOD")
+    fleet_row.US_PREDRC_L_TOT = orc_json.get("US_PREDRC_L_TOT")
+    fleet_row.US_PREDRC_LM_TOD = orc_json.get("US_PREDRC_LM_TOD")
+    fleet_row.US_PREDRC_LM_TOT = orc_json.get("US_PREDRC_LM_TOT")
+    fleet_row.US_PREDRC_M_TOD = orc_json.get("US_PREDRC_M_TOD")
+    fleet_row.US_PREDRC_M_TOT = orc_json.get("US_PREDRC_M_TOT")
+    fleet_row.US_PREDRC_MH_TOD = orc_json.get("US_PREDRC_MH_TOD")
+    fleet_row.US_PREDRC_MH_TOT = orc_json.get("US_PREDRC_MH_TOT")
+    fleet_row.US_PREDRC_H_TOD = orc_json.get("US_PREDRC_H_TOD")
+    fleet_row.US_PREDRC_H_TOT = orc_json.get("US_PREDRC_H_TOT")
+    fleet_row.US_CHIMAC_UP_TOT = orc_json.get("US_CHIMAC_UP_TOT")
+    fleet_row.US_CHIMAC_AP_TOT = orc_json.get("US_CHIMAC_AP_TOT")
+    fleet_row.US_CHIMAC_DN_TOT = orc_json.get("US_CHIMAC_DN_TOT")
+    fleet_row.US_BAYMAC_CV_TOT = orc_json.get("US_BAYMAC_CV_TOT")
+    fleet_row.US_BAYMAC_SH_TOT = orc_json.get("US_BAYMAC_SH_TOT")
+    fleet_row.US_HARVMOON_TOD = orc_json.get("US_HARVMOON_TOD")
+    fleet_row.US_HARVMOON_TOT = orc_json.get("US_HARVMOON_TOT")
+    fleet_row.US_VICMAUI_TOT = orc_json.get("US_VICMAUI_TOT")
+    fleet_row.US_5B_L_TOD = orc_json.get("US_5B_L_TOD")
+    fleet_row.US_5B_L_TOT = orc_json.get("US_5B_L_TOT")
+    fleet_row.US_5B_LM_TOD = orc_json.get("US_5B_LM_TOD")
+    fleet_row.US_5B_LM_TOT = orc_json.get("US_5B_LM_TOT")
+    fleet_row.US_5B_M_TOD = orc_json.get("US_5B_M_TOD")
+    fleet_row.US_5B_M_TOT = orc_json.get("US_5B_M_TOT")
+    fleet_row.US_5B_MH_TOD = orc_json.get("US_5B_MH_TOD")
+    fleet_row.US_5B_MH_TOT = orc_json.get("US_5B_MH_TOT")
+    fleet_row.US_5B_H_TOD = orc_json.get("US_5B_H_TOD")
+    fleet_row.US_5B_H_TOT = orc_json.get("US_5B_H_TOT")
+    fleet_row.US_AP_L_TOD = orc_json.get("US_AP_L_TOD")
+    fleet_row.US_AP_L_TOT = orc_json.get("US_AP_L_TOT")
+    fleet_row.US_AP_LM_TOD = orc_json.get("US_AP_LM_TOD")
+    fleet_row.US_AP_LM_TOT = orc_json.get("US_AP_LM_TOT")
+    fleet_row.US_AP_M_TOD = orc_json.get("US_AP_M_TOD")
+    fleet_row.US_AP_M_TOT = orc_json.get("US_AP_M_TOT")
+    fleet_row.US_AP_MH_TOD = orc_json.get("US_AP_MH_TOD")
+    fleet_row.US_AP_MH_TOT = orc_json.get("US_AP_MH_TOT")
+    fleet_row.US_AP_H_TOD = orc_json.get("US_AP_H_TOD")
+    fleet_row.US_AP_H_TOT = orc_json.get("US_AP_H_TOT")
+    fleet_row.US_TNAP_L_TOD = orc_json.get("US_TNAP_L_TOD")
+    fleet_row.US_TNAP_L_TOT = orc_json.get("US_TNAP_L_TOT")
+    fleet_row.US_TNAP_M_TOD = orc_json.get("US_TNAP_M_TOD")
+    fleet_row.US_TNAP_M_TOT = orc_json.get("US_TNAP_M_TOT")
+    fleet_row.US_TNAP_H_TOD = orc_json.get("US_TNAP_H_TOD")
+    fleet_row.US_TNAP_H_TOT = orc_json.get("US_TNAP_H_TOT")
+    fleet_row.US_SFBay_L_TOD = orc_json.get("US_SFBay_L_TOD")
+    fleet_row.US_SFBay_L_TOT = orc_json.get("US_SFBay_L_TOT")
+    fleet_row.US_SFBay_LM_TOD = orc_json.get("US_SFBay_LM_TOD")
+    fleet_row.US_SFBay_LM_TOT = orc_json.get("US_SFBay_LM_TOT")
+    fleet_row.US_SFBay_M_TOD = orc_json.get("US_SFBay_M_TOD")
+    fleet_row.US_SFBay_M_TOT = orc_json.get("US_SFBay_M_TOT")
+    fleet_row.US_SFBay_MH_TOD = orc_json.get("US_SFBay_MH_TOD")
+    fleet_row.US_SFBay_MH_TOT = orc_json.get("US_SFBay_MH_TOT")
+    fleet_row.US_SFBay_H_TOD = orc_json.get("US_SFBay_H_TOD")
+    fleet_row.US_SFBay_H_TOT = orc_json.get("US_SFBay_H_TOT")
+    fleet_row.US_WL6040_L_TOD = orc_json.get("US_WL6040_L_TOD")
+    fleet_row.US_WL6040_L_TOT = orc_json.get("US_WL6040_L_TOT")
+    fleet_row.US_WL6040_LM_TOD = orc_json.get("US_WL6040_LM_TOD")
+    fleet_row.US_WL6040_LM_TOT = orc_json.get("US_WL6040_LM_TOT")
+    fleet_row.US_WL6040_M_TOD = orc_json.get("US_WL6040_M_TOD")
+    fleet_row.US_WL6040_M_TOT = orc_json.get("US_WL6040_M_TOT")
+    fleet_row.US_WL6040_MH_TOD = orc_json.get("US_WL6040_MH_TOD")
+    fleet_row.US_WL6040_MH_TOT = orc_json.get("US_WL6040_MH_TOT")
+    fleet_row.US_WL6040_H_TOD = orc_json.get("US_WL6040_H_TOD")
+    fleet_row.US_WL6040_H_TOT = orc_json.get("US_WL6040_H_TOT")
+    fleet_row.KR_PREDR_TOD = orc_json.get("KR_PREDR_TOD")
+    fleet_row.RSA_CD_INS_TOD = orc_json.get("RSA_CD_INS_TOD")
+    fleet_row.RSA_CD_INS_TOT = orc_json.get("RSA_CD_INS_TOT")
+    fleet_row.RSA_CD_OFF_TOD = orc_json.get("RSA_CD_OFF_TOD")
+    fleet_row.RSA_CD_OFF_TOT = orc_json.get("RSA_CD_OFF_TOT")
+    fleet_row.BRA_ALL_UP_TOT = orc_json.get("BRA_ALL_UP_TOT")
+    fleet_row.BRA_ALL_DN_TOT = orc_json.get("BRA_ALL_DN_TOT")
+    fleet_row.BRA_7030_TOT = orc_json.get("BRA_7030_TOT")
+    fleet_row.BRA_3070_TOT = orc_json.get("BRA_3070_TOT")
+    logging.info(f"Adding fleet from ORC JSON: {fleet_row}")
+    Fleet.append(fleet_row.to_element())
+    ET.indent(tree, space="\t", level=0)
+    tree.write(output_file, encoding='utf-8', xml_declaration=False)

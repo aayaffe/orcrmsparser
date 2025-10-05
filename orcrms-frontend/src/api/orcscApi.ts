@@ -114,6 +114,13 @@ export const orcscApi = {
     return response.data;
   },
 
+  addBoatFromOrcJson: async (filePath: string, orcJson: object, classId?: string) => {
+    const response = await api.post(`/api/files/${encodeURIComponent(filePath)}/boats/orcjson`, orcJson, {
+      params: classId ? { class_id: classId } : undefined
+    });
+    return response.data;
+  },
+
   addClass: async (filePath: string, classData: {
     ClassId: string;
     ClassName: string;
@@ -157,7 +164,7 @@ export const orcscApi = {
 
     // Extract just the filename from the path
     const filename = filePath.split(/[\\/]/).pop() || 'file.orcsc';
-    
+
     try {
       const response = await api.get(`/api/files/download/${filename}`, {
         responseType: 'blob',
@@ -186,19 +193,19 @@ export const orcscApi = {
   createFromTemplate: async (templatePath: string, newFileName: string): Promise<void> => {
     // Ensure the new file name has .orcsc extension
     if (!newFileName.endsWith('.orcsc')) {
-        newFileName += '.orcsc';
+      newFileName += '.orcsc';
     }
-    
+
     // Construct the full path in the output directory
     const newFilePath = `orcsc/output/${newFileName}`;
-    
+
     await api.post('/api/files', {
-        template_path: templatePath,
-        new_file_path: newFilePath
+      template_path: templatePath,
+      new_file_path: newFilePath
     }, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   },
 
@@ -222,5 +229,15 @@ export const orcscApi = {
     if (!response.ok) {
       throw new Error(`Failed to restore from backup: ${response.statusText}`);
     }
+  },
+
+  updateBoat: async (filePath: string, boat: { YID: string; classId: string; yachtName: string; sailNo?: string }) => {
+    const response = await api.post(`/api/files/${encodeURIComponent(filePath)}/boats/update`, {
+      YID: boat.YID || '',
+      ClassId: boat.classId,
+      YachtName: boat.yachtName,
+      SailNo: boat.sailNo || ''
+    });
+    return response.data;
   }
 }; 

@@ -1,20 +1,22 @@
+import logging
+import os
+import re
+import shutil
+import uuid
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from typing import List, Optional
+
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional
-from datetime import datetime
-import xml.etree.ElementTree as ET
-import os
-import logging
-import shutil
-import re
-from orcsc.orcsc_file_editor import add_races as orcsc_add_races, add_fleets as orcsc_add_fleets
-from orcsc.model.race_row import RaceRow
-from orcsc.model.fleet_row import FleetRow
 from fastapi.responses import FileResponse
-from pathlib import Path
+from pydantic import BaseModel
+
 from orcsc.file_history import FileHistory
-import uuid
+from orcsc.model.fleet_row import FleetRow
+from orcsc.model.race_row import RaceRow
+from orcsc.orcsc_file_editor import add_races as orcsc_add_races, add_fleets as orcsc_add_fleets
+from orcsc.orcsc_file_editor import update_fleet as orcsc_update_fleet
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -25,7 +27,7 @@ app = FastAPI()
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # React dev server and production
+    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],  # React dev server and production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -79,6 +81,12 @@ class AddBoatsRequest(BaseModel):
 
 class RestoreBackupRequest(BaseModel):
     backup_path: str
+
+class UpdateBoatRequest(BaseModel):
+    YID: int
+    YachtName: Optional[str] = None
+    SailNo: Optional[str] = None
+    ClassId: Optional[str] = None
 
 @app.get("/api/files")
 async def list_orcsc_files():
@@ -445,6 +453,42 @@ async def add_boats_to_file(file_path: str, request: AddBoatsRequest):
         logger.error(f"Error adding boats: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to add boats: {str(e)}")
 
+@app.post("/api/files/{file_path:path}/boats/update")
+async def update_boat_in_file(file_path: str, request: UpdateBoatRequest):
+    """Update a boat (fleet entry) in an existing ORCSC file by YID"""
+    try:
+        logger.info(f"Updating boat in file: {file_path} (YID={request.YID})")
+        abs_path = os.path.abspath(file_path)
+        logger.info(f"Absolute path: {abs_path}")
+
+        if not os.path.exists(abs_path):
+            logger.error(f"File not found: {abs_path}")
+            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+
+        # Create FleetRow for update, only set fields if provided
+        fleet_row = FleetRow("ROW")
+        fleet_row.YID = request.YID
+        if request.YachtName is not None:
+            fleet_row.YachtName = request.YachtName
+        if request.SailNo is not None:
+            fleet_row.SailNo = request.SailNo
+        if request.ClassId is not None:
+            fleet_row.ClassId = request.ClassId
+
+        # Update the fleet entry
+        orcsc_update_fleet(abs_path, abs_path, fleet_row)
+        change_summary = f"Updated boat: {request.YachtName or ''} (YID={request.YID})"
+        file_history.create_backup(abs_path, change_summary)
+
+        logger.info(f"Successfully updated boat YID={request.YID} in {file_path}")
+        return {"message": f"Successfully updated boat YID={request.YID}"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating boat: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to update boat: {str(e)}")
+
 @app.get("/api/files/{file_path:path}/history")
 async def get_file_history(file_path: str):
     """Get the history of backups for a file."""
@@ -503,6 +547,42 @@ async def restore_from_backup(file_path: str, request: RestoreBackupRequest):
         logger.error(f"Error restoring from backup: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
+from orcsc.orcsc_file_editor import add_fleet_from_orc_json
+from fastapi import Body
+
+@app.post("/api/files/{file_path:path}/boats/orcjson")
+async def add_boat_from_orc_json(
+    file_path: str,
+    orc_json: dict = Body(...),
+    class_id: Optional[str] = None
+):
+    """
+    Add a boat (fleet) from a JSON object as retrieved from the ORC API.
+    Optionally override ClassId.
+    """
+    try:
+        logger.info(f"Adding ORC JSON boat to file: {file_path}")
+        abs_path = os.path.abspath(file_path)
+        logger.info(f"Absolute path: {abs_path}")
+
+        if not os.path.exists(abs_path):
+            logger.error(f"File not found: {abs_path}")
+            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        logger.info(f"Received ORC JSON: {orc_json}")
+        add_fleet_from_orc_json(abs_path, abs_path, orc_json, class_id=class_id)
+        yacht_name = orc_json.get("YachtName", "")
+        sail_no = orc_json.get("SailNo", "")
+        change_summary = f"Added ORC boat: {yacht_name} ({sail_no})"
+        file_history.create_backup(abs_path, change_summary)
+
+        logger.info(f"Successfully added ORC boat {yacht_name} ({sail_no}) to {file_path}")
+        return {"message": f"Successfully added ORC boat {yacht_name} ({sail_no})"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding ORC boat: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to add ORC boat: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
