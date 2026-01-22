@@ -300,7 +300,7 @@ def add_fleet_from_orc_json(input_file, output_file, orc_json, class_id=None):
     fleet_row.Position = ""
     fleet_row.PtsHash = ""
     fleet_row.PtsHash2 = ""
-    fleet_row.RMS = json.dumps(orc_json, separators=(',', ':'))
+    fleet_row.RMS = ""#json.dumps(orc_json, separators=(',', ':'))
     fleet_row.SNInt = None
     fleet_row.HeatNo = ""
     fleet_row.ILCWA = orc_json.get("ILCWA")
