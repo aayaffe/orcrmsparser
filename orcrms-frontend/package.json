@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "frontend": "vite",
-    "backend": "cd .. && .venv\\Scripts\\Activate.ps1 && uvicorn api:app --reload",
+    "backend": "cd .. && .venv\\Scripts\\Activate.bat && uvicorn api:app --reload",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
