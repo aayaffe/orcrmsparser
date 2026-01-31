@@ -83,6 +83,14 @@ docker-compose -f docker-compose.prod.yml pull
 mkdir -p orcsc/{output,templates}
 sudo chown -R 1000:1000 orcsc || true
 
+# Ensure template exists in host volume (mount hides image templates)
+if [ ! -f orcsc/templates/template.orcsc ]; then
+  echo 'Copying template.orcsc from backend image...'
+  TMP_CONTAINER=$(docker create $DOCKERHUB_USER/$PROJECT_NAME-backend:$TAG)
+  docker cp "$TMP_CONTAINER:/app/orcsc/templates/template.orcsc" "orcsc/templates/template.orcsc" || true
+  docker rm "$TMP_CONTAINER" >/dev/null
+fi
+
 echo 'Stopping old containers...'
 docker-compose -f docker-compose.prod.yml down --remove-orphans || true
 

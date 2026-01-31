@@ -45,7 +45,7 @@ export const orcscApi = {
     filename?: string;
   }) => {
     const response = await api.post('/api/files', {
-      template_path: "orcsc/template.orcsc",
+      template_path: "orcsc/templates/template.orcsc",
       event_data: {
         EventTitle: data.title,
         StartDate: data.startDate,
