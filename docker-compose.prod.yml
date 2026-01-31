@@ -1,0 +1,28 @@
+services:
+  backend:
+    image: aayaffe/orcrmsparser-backend:latest
+    container_name: orcrmsparser-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./orcsc/output:/app/orcsc/output
+      - ./orcsc/templates:/app/orcsc/templates
+    environment:
+      - CORS_ORIGINS=http://localhost:3000
+    command: ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    image: aayaffe/orcrmsparser-frontend:latest
+    container_name: orcrmsparser-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
