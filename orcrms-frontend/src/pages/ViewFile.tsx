@@ -229,7 +229,7 @@ export const ViewFile: React.FC = () => {
     const [orcDbDialogOpen, setOrcDbDialogOpen] = useState(false);
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
     const [boatsToAssign, setBoatsToAssign] = useState<AssignBoat[]>([]);
-    const [fleetSort, setFleetSort] = useState<'yachtName' | 'sailNo' | 'class' | 'rating'>('yachtName');
+    const [fleetSort, setFleetSort] = useState<'yachtName' | 'sailNo' | 'class' | 'rating' | 'CDL'>('yachtName');
     const [fleetSortDir, setFleetSortDir] = useState<'asc' | 'desc'>('asc');
     const [selectedBoatIndices, setSelectedBoatIndices] = useState<number[]>([]);
     const [bulkRating, setBulkRating] = useState('');
@@ -463,7 +463,7 @@ export const ViewFile: React.FC = () => {
         return String(raw);
     };
 
-    const handleSort = (col: 'yachtName' | 'sailNo' | 'class' | 'rating') => {
+    const handleSort = (col: 'yachtName' | 'sailNo' | 'class' | 'rating' | 'CDL') => {
         if (fleetSort === col) {
             setFleetSortDir(d => d === 'asc' ? 'desc' : 'asc');
         } else {
@@ -491,6 +491,10 @@ export const ViewFile: React.FC = () => {
             cmp = (a.SailNo || '').localeCompare(b.SailNo || '');
         } else if (fleetSort === 'class') {
             cmp = (a.ClassId || '').localeCompare(b.ClassId || '');
+        } else if (fleetSort === 'CDL') {
+            const aVal = a.CDL || 0;
+            const bVal = b.CDL || 0;
+            cmp = aVal - bVal;
         } else if (fleetSort === 'rating' && bulkRating) {
             const aVal = (a as Record<string, unknown>)[bulkRating];
             const bVal = (b as Record<string, unknown>)[bulkRating];
@@ -773,7 +777,7 @@ export const ViewFile: React.FC = () => {
                                             onChange={(e) => {
                                                 setBulkRating(e.target.value);
                                                 setFleetSort('rating');
-                                                setFleetSortDir('asc');
+                                                setFleetSortDir('desc');
                                             }}
                                             displayEmpty
                                             sx={{ minWidth: 200 }}
@@ -872,7 +876,15 @@ export const ViewFile: React.FC = () => {
                                                         Class
                                                     </TableSortLabel>
                                                 </TableCell>
-                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>CDL</TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
+                                                    <TableSortLabel
+                                                        active={fleetSort === 'CDL'}
+                                                        direction={fleetSort === 'CDL' ? fleetSortDir : 'asc'}
+                                                        onClick={() => handleSort('CDL')}
+                                                    >
+                                                        CDL
+                                                    </TableSortLabel>
+                                                </TableCell>
                                                 <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <TableSortLabel
                                                         active={fleetSort === 'rating'}
@@ -897,7 +909,7 @@ export const ViewFile: React.FC = () => {
                                                             />
                                                         </TableCell>
                                                         <TableCell>{boat.YachtName}</TableCell>
-                                                        <TableCell>{boat.SailNo || 'Not specified'}</TableCell>
+                                                        <TableCell>{boat.SailNo || '---'}</TableCell>
                                                         <TableCell
                                                             sx={{ cursor: 'pointer', textDecoration: 'underline', '&:hover': { color: 'primary.main' } }}
                                                             onClick={() => { setBoatsToAssign([boat]); setAssignDialogOpen(true); }}
