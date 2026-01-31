@@ -147,6 +147,19 @@ export const orcscApi = {
   },
 
   uploadFile: async (file: File): Promise<{ filename: string; path: string }> => {
+    // Validate file type - only allow .orcsc files
+    const allowedExtensions = ['.orcsc'];
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+      throw new Error(`Invalid file type. Only ${allowedExtensions.join(', ')} files are allowed.`);
+    }
+
+    // Validate file size (e.g., max 50MB)
+    const maxFileSize = 50 * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      throw new Error(`File size exceeds maximum limit of 50MB.`);
+    }
+
     const formData = new FormData();
     formData.append('file', file);
     const response = await api.post('/api/files/upload', formData, {
@@ -191,13 +204,22 @@ export const orcscApi = {
   },
 
   createFromTemplate: async (templatePath: string, newFileName: string): Promise<void> => {
+    // Sanitize filename - remove path traversal attempts and special characters
+    const sanitizedFileName = newFileName.replace(/\.\./g, '').replace(/[\/\\]/g, '').trim();
+    if (!sanitizedFileName) {
+      throw new Error('Invalid filename provided.');
+    }
+
     // Ensure the new file name has .orcsc extension
-    if (!newFileName.endsWith('.orcsc')) {
-      newFileName += '.orcsc';
+    const finalFileName = sanitizedFileName.endsWith('.orcsc') ? sanitizedFileName : sanitizedFileName + '.orcsc';
+
+    // Validate template path - must not contain path traversal
+    if (templatePath.includes('..') || templatePath.includes('\\')) {
+      throw new Error('Invalid template path.');
     }
 
     // Construct the full path in the output directory
-    const newFilePath = `orcsc/output/${newFileName}`;
+    const newFilePath = `orcsc/output/${finalFileName}`;
 
     await api.post('/api/files', {
       template_path: templatePath,
@@ -210,7 +232,10 @@ export const orcscApi = {
   },
 
   getFileHistory: async (filePath: string): Promise<BackupInfo[]> => {
-    const response = await fetch(`${API_BASE_URL}/api/files/${filePath}/history`);
+    if (!filePath) {
+      throw new Error('File path is required');
+    }
+    const response = await fetch(`${API_BASE_URL}/api/files/${encodeURIComponent(filePath)}/history`);
     if (!response.ok) {
       throw new Error(`Failed to get file history: ${response.statusText}`);
     }
@@ -219,7 +244,10 @@ export const orcscApi = {
   },
 
   restoreFromBackup: async (filePath: string, backupPath: string): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/api/files/${filePath}/history/restore`, {
+    if (!filePath || !backupPath) {
+      throw new Error('File path and backup path are required');
+    }
+    const response = await fetch(`${API_BASE_URL}/api/files/${encodeURIComponent(filePath)}/history/restore`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

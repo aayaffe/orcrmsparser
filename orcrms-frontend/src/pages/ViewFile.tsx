@@ -193,14 +193,6 @@ const AssignClassesDialog = ({ open, boats, classes, onAssign, onClose }: any) =
     );
 };
 
-// Add a placeholder ORC logo SVG component
-const OrcLogo = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle' }}>
-        <circle cx="12" cy="12" r="10" fill="#1976d2" />
-        <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#fff" fontFamily="Arial" fontWeight="bold">ORC</text>
-    </svg>
-);
-
 export const ViewFile: React.FC = () => {
     const { filePath } = useParams<{ filePath: string }>();
     const [fileData, setFileData] = useState<OrcscFile | null>(null);
@@ -218,7 +210,6 @@ export const ViewFile: React.FC = () => {
     const [orcDbDialogOpen, setOrcDbDialogOpen] = useState(false);
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
     const [boatsToAssign, setBoatsToAssign] = useState<any[]>([]);
-    const [editBoatIndex, setEditBoatIndex] = useState<number | null>(null);
     const [fleetSort, setFleetSort] = useState<'yachtName' | 'sailNo' | 'class'>('yachtName');
     const [fleetSortDir, setFleetSortDir] = useState<'asc' | 'desc'>('asc');
     const [selectedBoatIndices, setSelectedBoatIndices] = useState<number[]>([]);
@@ -642,7 +633,6 @@ export const ViewFile: React.FC = () => {
                                     disabled={selectedBoatIndices.length === 0}
                                     onClick={() => {
                                         setBoatsToAssign(selectedBoats);
-                                        setEditBoatIndex(null);
                                         setAssignDialogOpen(true);
                                     }}
                                 >
@@ -704,7 +694,7 @@ export const ViewFile: React.FC = () => {
                                                         <TableCell>{boat.SailNo || 'Not specified'}</TableCell>
                                                         <TableCell
                                                             sx={{ cursor: 'pointer', textDecoration: 'underline', '&:hover': { color: 'primary.main' } }}
-                                                            onClick={() => { setBoatsToAssign([boat]); setEditBoatIndex(idx); setAssignDialogOpen(true); }}
+                                                            onClick={() => { setBoatsToAssign([boat]); setAssignDialogOpen(true); }}
                                                         >
                                                             {cls ? cls.ClassName : (boat.ClassId || 'Not assigned')}
                                                         </TableCell>
@@ -784,10 +774,9 @@ export const ViewFile: React.FC = () => {
                     await fetchFile();
                     setAssignDialogOpen(false);
                     setBoatsToAssign([]);
-                    setEditBoatIndex(null);
                     setSelectedBoatIndices([]);
                 }}
-                onClose={() => { setAssignDialogOpen(false); setEditBoatIndex(null); }}
+                onClose={() => { setAssignDialogOpen(false); }}
             />
         </Box>
     );

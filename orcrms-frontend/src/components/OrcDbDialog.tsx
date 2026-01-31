@@ -19,9 +19,10 @@ interface BoatCertificate {
     SailNo: string;
     CertDate: string;
     CertType: string; // ORC, NS, DH
+    _original?: BoatCertificate;
 }
 
-export const OrcDbDialog: React.FC<OrcDbDialogProps> = ({ open, onClose, onSuccess, fileData }) => {
+export const OrcDbDialog: React.FC<OrcDbDialogProps> = ({ open, onClose, onSuccess }) => {
     const [countries, setCountries] = useState<Country[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState<string>('');
@@ -57,7 +58,7 @@ export const OrcDbDialog: React.FC<OrcDbDialogProps> = ({ open, onClose, onSucce
                     setCountries(countryList);
                     setLoading(false);
                 })
-                .catch((err) => {
+                .catch(() => {
                     setError('Failed to fetch country list');
                     setLoading(false);
                 });

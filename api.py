@@ -1,9 +1,9 @@
 import logging
 import os
 import re
-import shutil
 import uuid
 import xml.etree.ElementTree as ET
+from defusedxml import ElementTree as DefusedET
 from pathlib import Path
 from typing import List, Optional
 
@@ -24,18 +24,58 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# Enable CORS
+# Security: Path validation helper to prevent directory traversal
+def validate_file_path(file_path: str, base_dir: str = "orcsc/output") -> str:
+    """
+    Validate and resolve a file path to ensure it stays within the base directory.
+    Prevents directory traversal attacks. Handles cross-platform paths.
+    """
+    if not file_path:
+        raise ValueError("File path cannot be empty")
+    
+    # Normalize input: convert backslashes to forward slashes for consistency
+    file_path = file_path.replace("\\", "/")
+    
+    # Extract just the filename if full path is provided
+    if "/" in file_path:
+        # Get the last component (filename)
+        filename = file_path.split("/")[-1]
+    else:
+        filename = file_path
+    
+    # Validate filename format (no path traversal attempts)
+    if ".." in filename or "/" in filename or "\\" in filename:
+        raise ValueError(f"Invalid file path: path traversal detected")
+    
+    # Use Path for cross-platform handling
+    base_path = Path(base_dir).resolve()
+    full_path = (base_path / filename).resolve()
+    
+    # Ensure the resolved path is within the base directory
+    try:
+        full_path.relative_to(base_path)
+    except ValueError:
+        raise ValueError(f"Invalid file path: path traversal detected")
+    
+    # Return as string with forward slashes for consistency
+    return str(full_path)
+
+# Enable CORS - restrict to specific methods and origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],  # React dev server and production
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly allow only needed methods
+    allow_headers=["Content-Type", "Authorization"],  # Restrict allowed headers
 )
 
 # Ensure output directory exists
 OUTPUT_DIR = os.path.join("orcsc", "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Security: File size limits
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+MAX_UPLOAD_FILE_SIZE = 10 * 1024 * 1024  # 10MB for uploads
 
 # Initialize file history
 file_history = FileHistory("orcsc/output")
@@ -93,110 +133,166 @@ async def list_orcsc_files():
     """List all .orcsc files in the output directory"""
     try:
         files = []
-        for file in os.listdir(OUTPUT_DIR):
+        try:
+            file_list = os.listdir(OUTPUT_DIR)
+        except OSError as e:
+            logger.error(f"Error reading directory: {str(e)}")
+            raise HTTPException(status_code=500, detail="Failed to list files")
+        
+        for file in file_list:
             if file.endswith('.orcsc'):
                 file_path = os.path.join(OUTPUT_DIR, file)
-                files.append({
-                    "name": file,
-                    "path": file_path,
-                    "size": os.path.getsize(file_path),
-                    "modified": os.path.getmtime(file_path)
-                })
+                try:
+                    files.append({
+                        "name": file,
+                        "path": file_path,
+                        "size": os.path.getsize(file_path),
+                        "modified": os.path.getmtime(file_path)
+                    })
+                except OSError:
+                    logger.warning(f"Could not stat file: {file}")
+                    continue
         return {"files": files}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error listing files: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to list files")
 
 @app.post("/api/files/upload")
 async def upload_file(file: UploadFile = File(...)):
     """Upload a new ORCSC file"""
     try:
-        if not file.filename.endswith('.orcsc'):
+        if not file.filename or not file.filename.endswith('.orcsc'):
             raise HTTPException(status_code=400, detail="Only .orcsc files are allowed")
         
-        # Generate a new UUID for the filename
+        # Validate file size
+        if file.size and file.size > MAX_UPLOAD_FILE_SIZE:
+            raise HTTPException(status_code=413, detail=f"File size exceeds maximum limit of {MAX_UPLOAD_FILE_SIZE / (1024*1024):.0f}MB")
+        
+        # Generate a new UUID for the filename to prevent name-based attacks
         file_uuid = str(uuid.uuid4())
         new_filename = f"{file_uuid}.orcsc"
         file_path = os.path.join(OUTPUT_DIR, new_filename)
         
-        # Save the uploaded file
+        # Save the uploaded file with size limit check during write
+        bytes_written = 0
         with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            while True:
+                chunk = await file.read(8192)  # Read in 8KB chunks
+                if not chunk:
+                    break
+                bytes_written += len(chunk)
+                if bytes_written > MAX_UPLOAD_FILE_SIZE:
+                    os.remove(file_path)  # Clean up partial file
+                    raise HTTPException(status_code=413, detail=f"File size exceeds maximum limit of {MAX_UPLOAD_FILE_SIZE / (1024*1024):.0f}MB")
+                buffer.write(chunk)
+        
+        # Verify the uploaded file is valid XML
+        try:
+            DefusedET.parse(file_path)
+        except ET.ParseError as e:
+            os.remove(file_path)  # Clean up invalid file
+            logger.warning(f"Invalid XML uploaded: {str(e)}")
+            raise HTTPException(status_code=400, detail="Uploaded file is not valid XML")
         
         # Create initial backup with summary
         change_summary = f"Initial file upload: {file.filename} (renamed to {new_filename})"
         file_history.create_backup(file_path, change_summary)
-            
+        logger.info(f"File uploaded successfully: {new_filename}")
         return {"filename": new_filename, "path": file_path}
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error uploading file: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to upload file")
 
 @app.get("/api/files/get/{file_path:path}")
 async def get_orcsc_file(file_path: str):
     try:
-        logger.info(f"Received request for file: {file_path}")
+        logger.info(f"Processing file request")
         
-        # Convert the file path to absolute path
-        abs_path = os.path.abspath(file_path)
-        logger.info(f"Absolute path: {abs_path}")
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path request: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
         
         # Check if file exists
         if not os.path.exists(abs_path):
-            logger.error(f"File not found: {abs_path}")
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
-            
-        # Parse the XML file
+            logger.warning(f"File not found: {file_path}")
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Check file size
+        if os.path.getsize(abs_path) > MAX_FILE_SIZE:
+            logger.warning(f"File too large: {file_path}")
+            raise HTTPException(status_code=413, detail="File size exceeds maximum limit")
+        
+        # Parse the XML file with XXE protection
         try:
-            tree = ET.parse(abs_path)
+            tree = DefusedET.parse(abs_path)
             root = tree.getroot()
         except ET.ParseError as e:
             logger.error(f"Failed to parse XML file: {e}")
-            raise HTTPException(status_code=400, detail=f"Invalid XML file: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file format")
         
         # Extract event data
         event = root.find('./Event/ROW')
         if event is None:
-            raise HTTPException(status_code=400, detail="Invalid ORCSC file: missing Event data")
+            raise HTTPException(status_code=400, detail="Invalid file format")
+        
+        # Safely extract text with null checks
+        def get_text(element, tag: str, default: str = ""):
+            child = element.find(tag)
+            return child.text if child is not None and child.text else default
             
         event_data = {
-            "EventTitle": event.find('EventTitle').text,
-            "StartDate": event.find('StartDate').text,
-            "EndDate": event.find('EndDate').text,
-            "Venue": event.find('Venue').text,
-            "Organizer": event.find('Organizer').text
+            "EventTitle": get_text(event, 'EventTitle'),
+            "StartDate": get_text(event, 'StartDate'),
+            "EndDate": get_text(event, 'EndDate'),
+            "Venue": get_text(event, 'Venue'),
+            "Organizer": get_text(event, 'Organizer')
         }
         
         # Extract classes
         classes = []
         for cls in root.findall('./Cls/ROW'):
             classes.append({
-                "ClassId": cls.find('ClassId').text,
-                "ClassName": cls.find('ClassName').text,
-                "YachtClass": cls.find('YachtClass').text if cls.find('YachtClass') is not None else "Unknown"
+                "ClassId": get_text(cls, 'ClassId'),
+                "ClassName": get_text(cls, 'ClassName'),
+                "YachtClass": get_text(cls, 'YachtClass', "Unknown")
             })
             
         # Extract races
         races = []
         for race in root.findall('./Race/ROW'):
+            race_id_text = get_text(race, 'RaceId', '0')
+            try:
+                race_id = int(race_id_text) if race_id_text else 0
+            except ValueError:
+                race_id = 0
             races.append({
-                "RaceId": int(race.find('RaceId').text),
-                "RaceName": race.find('RaceName').text,
-                "StartTime": race.find('StartTime').text,
-                "ClassId": race.find('ClassId').text,
-                "ScoringType": race.find('ScoringType').text
+                "RaceId": race_id,
+                "RaceName": get_text(race, 'RaceName'),
+                "StartTime": get_text(race, 'StartTime'),
+                "ClassId": get_text(race, 'ClassId'),
+                "ScoringType": get_text(race, 'ScoringType')
             })
             
         # Extract fleet
         fleet = []
         for boat in root.findall('./Fleet/ROW'):
+            yid_text = get_text(boat, 'YID', '0')
+            try:
+                yid = int(yid_text) if yid_text else 0
+            except ValueError:
+                yid = 0
             fleet.append({
-                "YID": int(boat.find('YID').text),
-                "YachtName": boat.find('YachtName').text,
-                "SailNo": boat.find('SailNo').text if boat.find('SailNo') is not None else None,
-                "ClassId": boat.find('ClassId').text
+                "YID": yid,
+                "YachtName": get_text(boat, 'YachtName'),
+                "SailNo": get_text(boat, 'SailNo'),
+                "ClassId": get_text(boat, 'ClassId')
             })
             
         response_data = {
@@ -212,27 +308,36 @@ async def get_orcsc_file(file_path: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        logger.error(f"Unexpected error processing file: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to process file")
 
 @app.post("/api/files/{file_path:path}/races")
 async def add_races_to_file(file_path: str, request: AddRacesRequest):
     """Add races to an existing ORCSC file"""
     try:
-        logger.info(f"Adding races to file: {file_path}")
+        logger.info(f"Adding races to file")
         
-        # Convert the file path to absolute path
-        abs_path = os.path.abspath(file_path)
-        logger.info(f"Absolute path: {abs_path}")
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
         
         # Check if file exists
         if not os.path.exists(abs_path):
-            logger.error(f"File not found: {abs_path}")
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+            logger.warning(f"File not found")
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Validate races data
+        if not request.races or len(request.races) == 0:
+            raise HTTPException(status_code=400, detail="No races provided")
         
         # Convert races to RaceRow objects
         races = []
         for race in request.races:
+            if not race.RaceName or not race.ClassId:
+                raise HTTPException(status_code=400, detail="Race name and class ID are required")
             race_row = RaceRow("ROW")
             race_row.RaceName = race.RaceName
             race_row.ClassId = race.ClassId
@@ -242,42 +347,49 @@ async def add_races_to_file(file_path: str, request: AddRacesRequest):
         
         # Add races to the file
         orcsc_add_races(abs_path, abs_path, races)
-        # Create backup after  modifying
+        # Create backup after modifying
         race_names = [race.RaceName for race in request.races]
         change_summary = f"Added races: {', '.join(race_names)}"
         file_history.create_backup(abs_path, change_summary)
 
-        logger.info(f"Successfully added {len(races)} races to {file_path}")
+        logger.info(f"Successfully added {len(races)} races")
         return {"message": f"Successfully added {len(races)} races"}
         
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error adding races: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to add races: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to add races")
 
 @app.get("/api/files/download/{filename}")
 async def download_orcsc_file(filename: str):
     """Download an ORCSC file"""
     try:
-        logger.info(f"Downloading file: {filename}")
+        logger.info(f"Download requested")
         
-        # Ensure the filename has the .orcsc extension
-        if not filename.endswith('.orcsc'):
-            filename += '.orcsc'
-            
+        # Validate filename - only alphanumeric, hyphens, and dots
+        if not re.match(r'^[a-zA-Z0-9._-]+\.orcsc$', filename):
+            logger.warning(f"Invalid filename format requested")
+            raise HTTPException(status_code=400, detail="Invalid filename format")
+        
         # Construct the full path using the output directory
         full_path = os.path.join(OUTPUT_DIR, filename)
-        logger.info(f"Full path: {full_path}")
+        
+        # Validate path to ensure it's within OUTPUT_DIR
+        try:
+            validated_path = validate_file_path(full_path, OUTPUT_DIR)
+        except ValueError as e:
+            logger.warning(f"Path validation failed: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
         
         # Check if file exists
-        if not os.path.exists(full_path):
-            logger.error(f"File not found: {full_path}")
-            raise HTTPException(status_code=404, detail=f"File not found: {filename}")
-            
+        if not os.path.exists(validated_path):
+            logger.warning(f"File not found: {filename}")
+            raise HTTPException(status_code=404, detail="File not found")
+        
         # Return the file
         return FileResponse(
-            full_path,
+            validated_path,
             media_type="application/xml",
             filename=filename
         )
@@ -286,7 +398,7 @@ async def download_orcsc_file(filename: str):
         raise
     except Exception as e:
         logger.error(f"Error downloading file: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to download file: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to download file")
 
 def get_template_files() -> List[str]:
     """Get list of available template files."""
@@ -304,7 +416,7 @@ async def get_templates():
         templates = get_template_files()
         return templates
     except Exception as e:
-        logging.error(f"Error getting templates: {str(e)}")
+        logger.error(f"Error getting templates: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to get templates")
 
 def sanitize_filename(filename: str) -> str:
@@ -323,9 +435,29 @@ def sanitize_filename(filename: str) -> str:
 @app.post("/api/files")
 async def create_file_from_template(request: CreateFileRequest):
     try:
-        # Validate paths
-        if not request.template_path.startswith("orcsc/"):
-            raise HTTPException(status_code=400, detail="Template path must be within orcsc directory")
+        logger.info(f"Creating file from template")
+        
+        # Validate template path - must be within orcsc directory and no path traversal
+        if not request.template_path:
+            raise HTTPException(status_code=400, detail="Template path is required")
+        
+        # Normalize path: convert backslashes to forward slashes
+        template_path = request.template_path.replace("\\", "/")
+        
+        # Check for path traversal
+        if ".." in template_path:
+            raise HTTPException(status_code=400, detail="Invalid template path")
+        
+        if not template_path.startswith("orcsc/"):
+            # Try without leading slash
+            if "orcsc/" not in template_path:
+                raise HTTPException(status_code=400, detail="Template path must be within orcsc directory")
+        
+        # Verify template file exists - convert back to OS-specific path for file check
+        template_file_path = template_path.replace("/", os.sep)
+        if not os.path.exists(template_file_path):
+            logger.warning(f"Template not found: {template_file_path}")
+            raise HTTPException(status_code=400, detail="Template file not found")
         
         # Extract event data from the request
         event_data = request.event_data or {}
@@ -335,17 +467,24 @@ async def create_file_from_template(request: CreateFileRequest):
         start_date = event_data.get("StartDate")
         end_date = event_data.get("EndDate")
         classes = event_data.get("Classes", [])
+        
+        # Validate event data
+        if not isinstance(event_title, str) or not event_title.strip():
+            raise HTTPException(status_code=400, detail="Invalid event title")
+        
         # Convert classes to ClsRow objects
         from orcsc.model.cls_row import ClsRow
         class_rows = []
         for cls in classes:
+            if not isinstance(cls, dict) or not cls.get("ClassId") or not cls.get("ClassName"):
+                raise HTTPException(status_code=400, detail="Invalid class data")
             class_row = ClsRow("ROW")
             class_row.ClassId = cls.get("ClassId")
             class_row.ClassName = cls.get("ClassName")
-            class_row._class_enum = cls.get("YachtClass")
+            class_row._class_enum = cls.get("YachtClass", "")
             class_rows.append(class_row)
-        classes = class_rows
-        logger.info(f"Creating file from template: {event_title}, {venue}, {organizer}, {start_date}, {end_date}, {classes}")
+        
+        logger.info(f"Creating file from template with event data")
         
         # Generate a new UUID for the filename
         file_uuid = str(uuid.uuid4())
@@ -361,32 +500,42 @@ async def create_file_from_template(request: CreateFileRequest):
             output_file=output_file,
             start_date=start_date,
             end_date=end_date,
-            classes=classes
+            classes=class_rows
         )
-        change_summary = f"Created from template: {request.template_path}"
+        change_summary = f"Created from template"
         if request.event_data:
             change_summary += " with custom event data"
         file_history.create_backup(output_file, change_summary)
+        logger.info(f"File created successfully")
         
         return {"file_path": output_file}
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error creating file: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error creating file: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to create file")
 
 @app.post("/api/files/{file_path:path}/classes")
 async def add_class_to_file(file_path: str, request: AddClassRequest):
     """Add a class to an existing ORCSC file"""
     try:
-        logger.info(f"Adding class to file: {file_path}")
+        logger.info(f"Adding class to file")
         
-        # Convert the file path to absolute path
-        abs_path = os.path.abspath(file_path)
-        logger.info(f"Absolute path: {abs_path}")
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
         
         # Check if file exists
         if not os.path.exists(abs_path):
-            logger.error(f"File not found: {abs_path}")
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+            logger.warning(f"File not found")
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Validate class data
+        if not request.class_data.ClassId or not request.class_data.ClassName:
+            raise HTTPException(status_code=400, detail="Class ID and name are required")
         
         # Convert the request class to the format expected by orcsc_file_editor
         from orcsc.model.cls_row import ClsRow
@@ -403,33 +552,42 @@ async def add_class_to_file(file_path: str, request: AddClassRequest):
         change_summary = f"Added class: {request.class_data.ClassName} ({request.class_data.ClassId})"
         file_history.create_backup(abs_path, change_summary)
 
-        logger.info(f"Successfully added class {request.class_data.ClassId} to {file_path}")
+        logger.info(f"Successfully added class {request.class_data.ClassId}")
         return {"message": f"Successfully added class {request.class_data.ClassId}"}
         
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error adding class: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to add class: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to add class")
 
 @app.post("/api/files/{file_path:path}/boats")
 async def add_boats_to_file(file_path: str, request: AddBoatsRequest):
     """Add boats to an existing ORCSC file"""
     try:
-        logger.info(f"Adding boats to file: {file_path}")
+        logger.info(f"Adding boats to file")
         
-        # Convert the file path to absolute path
-        abs_path = os.path.abspath(file_path)
-        logger.info(f"Absolute path: {abs_path}")
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
         
         # Check if file exists
         if not os.path.exists(abs_path):
-            logger.error(f"File not found: {abs_path}")
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+            logger.warning(f"File not found")
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Validate boats data
+        if not request.boats or len(request.boats) == 0:
+            raise HTTPException(status_code=400, detail="No boats provided")
         
         # Convert boats to FleetRow objects
         fleet_rows = []
         for boat in request.boats:
+            if not boat.YachtName or not boat.ClassId:
+                raise HTTPException(status_code=400, detail="Yacht name and class ID are required")
             fleet_row = FleetRow("ROW")
             fleet_row.YachtName = boat.YachtName
             fleet_row.SailNo = boat.SailNo
@@ -444,70 +602,85 @@ async def add_boats_to_file(file_path: str, request: AddBoatsRequest):
         change_summary = f"Added boats: {', '.join(boat_names)}"
         file_history.create_backup(abs_path, change_summary)
         
-        logger.info(f"Successfully added {len(fleet_rows)} boats to {file_path}")
+        logger.info(f"Successfully added {len(fleet_rows)} boats")
         return {"message": f"Successfully added {len(fleet_rows)} boats"}
         
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error adding boats: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to add boats: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to add boats")
 
 @app.post("/api/files/{file_path:path}/boats/update")
 async def update_boat_in_file(file_path: str, request: UpdateBoatRequest):
     """Update a boat (fleet entry) in an existing ORCSC file by YID"""
     try:
-        logger.info(f"Updating boat in file: {file_path} (YID={request.YID})")
-        abs_path = os.path.abspath(file_path)
-        logger.info(f"Absolute path: {abs_path}")
+        logger.info(f"Updating boat in file")
+        
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
+        
+        # Validate request
+        if request.YID <= 0:
+            raise HTTPException(status_code=400, detail="Invalid yacht ID")
 
         if not os.path.exists(abs_path):
-            logger.error(f"File not found: {abs_path}")
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+            logger.warning(f"File not found")
+            raise HTTPException(status_code=404, detail="File not found")
 
         # Create FleetRow for update, only set fields if provided
         fleet_row = FleetRow("ROW")
         fleet_row.YID = request.YID
-        if request.YachtName is not None:
+        if request.YachtName is not None and request.YachtName.strip():
             fleet_row.YachtName = request.YachtName
-        if request.SailNo is not None:
+        if request.SailNo is not None and request.SailNo.strip():
             fleet_row.SailNo = request.SailNo
-        if request.ClassId is not None:
+        if request.ClassId is not None and request.ClassId.strip():
             fleet_row.ClassId = request.ClassId
 
         # Update the fleet entry
         orcsc_update_fleet(abs_path, abs_path, fleet_row)
-        change_summary = f"Updated boat: {request.YachtName or ''} (YID={request.YID})"
+        change_summary = f"Updated boat: {request.YachtName or 'unknown'} (YID={request.YID})"
         file_history.create_backup(abs_path, change_summary)
 
-        logger.info(f"Successfully updated boat YID={request.YID} in {file_path}")
+        logger.info(f"Successfully updated boat YID={request.YID}")
         return {"message": f"Successfully updated boat YID={request.YID}"}
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error updating boat: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to update boat: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update boat")
 
 @app.get("/api/files/{file_path:path}/history")
 async def get_file_history(file_path: str):
     """Get the history of backups for a file."""
     try:
-        logger.info(f"Getting history for file: {file_path}")
+        logger.info(f"Getting file history")
         
-        # Ensure the file path is within the output directory
-        if not file_path.startswith("orcsc/output/"):
-            file_path = os.path.join("orcsc", "output", file_path)
+        # Validate and resolve the file path
+        try:
+            if not file_path.startswith("orcsc/output/"):
+                file_path = os.path.join("orcsc", "output", file_path)
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
         
         # Check if the file exists
-        if not os.path.exists(file_path):
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        if not os.path.exists(abs_path):
+            logger.warning(f"File not found")
+            raise HTTPException(status_code=404, detail="File not found")
         
         # Get the backups
-        backups = file_history.list_backups(file_path)
+        backups = file_history.list_backups(abs_path)
         
         if not backups:
-            logger.warning(f"No backups found for file: {file_path}")
+            logger.info(f"No backups found")
             return {"backups": []}
             
         return {"backups": backups}
@@ -515,37 +688,48 @@ async def get_file_history(file_path: str):
         raise
     except Exception as e:
         logger.error(f"Error getting file history: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to get file history")
 
 @app.post("/api/files/{file_path:path}/history/restore")
 async def restore_from_backup(file_path: str, request: RestoreBackupRequest):
     """Restore a file from a backup."""
     try:
-        logger.info(f"Restoring file {file_path} from backup: {request.backup_path}")
+        logger.info(f"Restoring file from backup")
         
-        # Ensure the file path is within the output directory
-        if not file_path.startswith("orcsc/output/"):
-            file_path = os.path.join("orcsc", "output", file_path)
+        # Validate and resolve the file path
+        try:
+            if not file_path.startswith("orcsc/output/"):
+                file_path = os.path.join("orcsc", "output", file_path)
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
+        
+        # Validate backup path
+        if not request.backup_path or ".." in request.backup_path:
+            raise HTTPException(status_code=400, detail="Invalid backup path")
         
         # Check if the file exists
-        if not os.path.exists(file_path):
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
+        if not os.path.exists(abs_path):
+            logger.warning(f"File not found")
+            raise HTTPException(status_code=404, detail="File not found")
         
         # Restore from backup
         restored_path = file_history.restore_backup(request.backup_path)
         
         if not restored_path:
+            logger.warning(f"Failed to restore from backup")
             raise HTTPException(status_code=404, detail="Failed to restore from backup")
             
-        return {"message": f"File restored from backup: {restored_path}"}
+        return {"message": f"File restored successfully"}
     except HTTPException:
         raise
     except FileNotFoundError as e:
-        logger.error(f"Backup not found: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=404, detail=str(e))
+        logger.warning(f"Backup not found: {str(e)}")
+        raise HTTPException(status_code=404, detail="Backup not found")
     except Exception as e:
         logger.error(f"Error restoring from backup: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to restore from backup")
 
 from orcsc.orcsc_file_editor import add_fleet_from_orc_json
 from fastapi import Body
@@ -561,27 +745,37 @@ async def add_boat_from_orc_json(
     Optionally override ClassId.
     """
     try:
-        logger.info(f"Adding ORC JSON boat to file: {file_path}")
-        abs_path = os.path.abspath(file_path)
-        logger.info(f"Absolute path: {abs_path}")
+        logger.info(f"Adding ORC JSON boat to file")
+        
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
 
         if not os.path.exists(abs_path):
-            logger.error(f"File not found: {abs_path}")
-            raise HTTPException(status_code=404, detail=f"File not found: {file_path}")
-        logger.info(f"Received ORC JSON: {orc_json}")
+            logger.warning(f"File not found")
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Validate ORC JSON has required fields
+        if not orc_json.get("YachtName"):
+            raise HTTPException(status_code=400, detail="Yacht name is required")
+        
+        logger.info(f"Processing ORC JSON boat")
         add_fleet_from_orc_json(abs_path, abs_path, orc_json, class_id=class_id)
         yacht_name = orc_json.get("YachtName", "")
         sail_no = orc_json.get("SailNo", "")
         change_summary = f"Added ORC boat: {yacht_name} ({sail_no})"
         file_history.create_backup(abs_path, change_summary)
 
-        logger.info(f"Successfully added ORC boat {yacht_name} ({sail_no}) to {file_path}")
+        logger.info(f"Successfully added ORC boat")
         return {"message": f"Successfully added ORC boat {yacht_name} ({sail_no})"}
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error adding ORC boat: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to add ORC boat: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to add ORC boat")
 
 if __name__ == "__main__":
     import uvicorn
