@@ -208,9 +208,9 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
                             <Box sx={{ mt: 2, overflow: 'auto', maxHeight: '300px' }}>
                                 <TableContainer component={Paper}>
                                     <Table stickyHeader size="small">
-                                        <TableHead>
+                                        <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                             <TableRow>
-                                                <TableCell padding="checkbox">
+                                                <TableCell padding="checkbox" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <Checkbox
                                                         indeterminate={isIndeterminate}
                                                         checked={isAllSelected}
@@ -218,7 +218,7 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
                                                     />
                                                 </TableCell>
                                                 {csvData.meta.fields?.map((field, i) => (
-                                                    <TableCell key={i}>{field}</TableCell>
+                                                    <TableCell key={i} sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>{field}</TableCell>
                                                 ))}
                                             </TableRow>
                                         </TableHead>
@@ -247,11 +247,11 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
                         <Typography variant="subtitle1">Import Summary (Boats to be Imported):</Typography>
                         <TableContainer component={Paper} sx={{ mt: 1, overflow: 'auto', maxHeight: '200px' }}>
                             <Table stickyHeader size="small">
-                                <TableHead>
+                                <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                     <TableRow>
-                                        <TableCell>Yacht Name</TableCell>
-                                        <TableCell>Sail Number (Optional)</TableCell>
-                                        <TableCell>Class</TableCell>
+                                        <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Yacht Name</TableCell>
+                                        <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Sail Number (Optional)</TableCell>
+                                        <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Class</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

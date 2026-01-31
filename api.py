@@ -139,6 +139,7 @@ class UpdateBoatRequest(BaseModel):
     YachtName: Optional[str] = None
     SailNo: Optional[str] = None
     ClassId: Optional[str] = None
+    Rating: Optional[str] = None
 
 @app.get("/api/files")
 async def list_orcsc_files():
@@ -383,11 +384,40 @@ async def get_orcsc_file(file_path: str):
                 yid = int(yid_text) if yid_text else 0
             except ValueError:
                 yid = 0
+
+            def parse_float(tag: str):
+                text = get_text(boat, tag)
+                try:
+                    return float(text) if text else None
+                except ValueError:
+                    return None
+
+            cdl_text = get_text(boat, 'CDL')
+            try:
+                cdl = float(cdl_text) if cdl_text else None
+            except ValueError:
+                cdl = None
+
             fleet.append({
                 "YID": yid,
                 "YachtName": get_text(boat, 'YachtName'),
                 "SailNo": get_text(boat, 'SailNo'),
-                "ClassId": get_text(boat, 'ClassId')
+                "ClassId": get_text(boat, 'ClassId'),
+                "CDL": cdl,
+                "Rating": get_text(boat, 'Rating'),
+                "GPH": parse_float('GPH'),
+                "TN_Inshore_Low": parse_float('TN_Inshore_Low'),
+                "TN_Inshore_Medium": parse_float('TN_Inshore_Medium'),
+                "TN_Inshore_High": parse_float('TN_Inshore_High'),
+                "TN_Offshore_Low": parse_float('TN_Offshore_Low'),
+                "TN_Offshore_Medium": parse_float('TN_Offshore_Medium'),
+                "TN_Offshore_High": parse_float('TN_Offshore_High'),
+                "TND_Inshore_Low": parse_float('TND_Inshore_Low'),
+                "TND_Inshore_Medium": parse_float('TND_Inshore_Medium'),
+                "TND_Inshore_High": parse_float('TND_Inshore_High'),
+                "TND_Offshore_Low": parse_float('TND_Offshore_Low'),
+                "TND_Offshore_Medium": parse_float('TND_Offshore_Medium'),
+                "TND_Offshore_High": parse_float('TND_Offshore_High')
             })
             
         response_data = {
@@ -737,6 +767,8 @@ async def update_boat_in_file(file_path: str, request: UpdateBoatRequest):
             fleet_row.SailNo = request.SailNo
         if request.ClassId is not None and request.ClassId.strip():
             fleet_row.ClassId = request.ClassId
+            if request.Rating is not None:
+                fleet_row.Rating = request.Rating if request.Rating.strip() else None
 
         # Update the fleet entry
         orcsc_update_fleet(abs_path, abs_path, fleet_row)

@@ -298,12 +298,13 @@ export const orcscApi = {
     }
   },
 
-  updateBoat: async (filePath: string, boat: { YID: string; classId: string; yachtName: string; sailNo?: string }) => {
+  updateBoat: async (filePath: string, boat: { YID: string; classId: string; yachtName: string; sailNo?: string; rating?: string }) => {
     const response = await api.post(`/api/files/${encodeURIComponent(filePath)}/boats/update`, {
       YID: boat.YID || '',
       ClassId: boat.classId,
       YachtName: boat.yachtName,
-      SailNo: boat.sailNo || ''
+      SailNo: boat.sailNo || '',
+      Rating: boat.rating
     });
     return response.data;
   },

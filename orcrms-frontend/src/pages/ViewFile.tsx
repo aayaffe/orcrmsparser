@@ -229,9 +229,10 @@ export const ViewFile: React.FC = () => {
     const [orcDbDialogOpen, setOrcDbDialogOpen] = useState(false);
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
     const [boatsToAssign, setBoatsToAssign] = useState<AssignBoat[]>([]);
-    const [fleetSort, setFleetSort] = useState<'yachtName' | 'sailNo' | 'class'>('yachtName');
+    const [fleetSort, setFleetSort] = useState<'yachtName' | 'sailNo' | 'class' | 'rating'>('yachtName');
     const [fleetSortDir, setFleetSortDir] = useState<'asc' | 'desc'>('asc');
     const [selectedBoatIndices, setSelectedBoatIndices] = useState<number[]>([]);
+    const [bulkRating, setBulkRating] = useState('');
     const [raceSort, setRaceSort] = useState<'raceName' | 'class' | 'startTime'>('raceName');
     const [raceSortDir, setRaceSortDir] = useState<'asc' | 'desc'>('asc');
     const handleRaceSort = (col: 'raceName' | 'class' | 'startTime') => {
@@ -454,7 +455,15 @@ export const ViewFile: React.FC = () => {
         }
     };
 
-    const handleSort = (col: 'yachtName' | 'sailNo' | 'class') => {
+    const getBoatRatingValue = (boat: OrcscFile['fleet'][number]) => {
+        if (!bulkRating) return null;
+        const raw = (boat as Record<string, unknown>)[bulkRating];
+        if (raw === null || raw === undefined || raw === '') return null;
+        if (typeof raw === 'number') return raw.toFixed(4);
+        return String(raw);
+    };
+
+    const handleSort = (col: 'yachtName' | 'sailNo' | 'class' | 'rating') => {
         if (fleetSort === col) {
             setFleetSortDir(d => d === 'asc' ? 'desc' : 'asc');
         } else {
@@ -482,6 +491,12 @@ export const ViewFile: React.FC = () => {
             cmp = (a.SailNo || '').localeCompare(b.SailNo || '');
         } else if (fleetSort === 'class') {
             cmp = (a.ClassId || '').localeCompare(b.ClassId || '');
+        } else if (fleetSort === 'rating' && bulkRating) {
+            const aVal = (a as Record<string, unknown>)[bulkRating];
+            const bVal = (b as Record<string, unknown>)[bulkRating];
+            const aNum = typeof aVal === 'number' ? aVal : 0;
+            const bNum = typeof bVal === 'number' ? bVal : 0;
+            cmp = aNum - bNum;
         }
         return fleetSortDir === 'asc' ? cmp : -cmp;
     }) : [];
@@ -562,27 +577,29 @@ export const ViewFile: React.FC = () => {
                         <Alert severity="error">{error}</Alert>
                     ) : fileData ? (
                         <Box>
-                            <Typography variant="h4" gutterBottom>
-                                {fileData.event.EventTitle}
-                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                                <Box>
+                                    <Typography variant="h4" gutterBottom>
+                                        {fileData.event.EventTitle}
+                                    </Typography>
+                                </Box>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    onClick={() => versionInputRef.current?.click()}
+                                >
+                                    Upload New Version
+                                </Button>
+                            </Box>
                             <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
                                 {fileData.event.Venue}{(fileData.event.Venue && fileData.event.Organizer) ? (" - ") : ("")}{fileData.event.Organizer}
                             </Typography>
 
                             <Paper sx={{ p: 2, mb: 2 }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                    <Box>
-                                        <Typography variant="h6" gutterBottom>
-                                            Event Details
-                                        </Typography>
-                                    </Box>
-                                    <Button
-                                        variant="outlined"
-                                        size="small"
-                                        onClick={() => versionInputRef.current?.click()}
-                                    >
-                                        Upload New Version
-                                    </Button>
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Event Details
+                                    </Typography>
                                 </Box>
                                 <Stack spacing={2}>
                                     <Stack direction="row" spacing={2}>
@@ -686,9 +703,9 @@ export const ViewFile: React.FC = () => {
                                 </Box>
                                 <TableContainer component={Paper}>
                                     <Table size="small">
-                                        <TableHead>
+                                        <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                             <TableRow>
-                                                <TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <TableSortLabel
                                                         active={raceSort === 'raceName'}
                                                         direction={raceSort === 'raceName' ? raceSortDir : 'asc'}
@@ -697,7 +714,7 @@ export const ViewFile: React.FC = () => {
                                                         Race Name
                                                     </TableSortLabel>
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <TableSortLabel
                                                         active={raceSort === 'class'}
                                                         direction={raceSort === 'class' ? raceSortDir : 'asc'}
@@ -706,7 +723,7 @@ export const ViewFile: React.FC = () => {
                                                         Class
                                                     </TableSortLabel>
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <TableSortLabel
                                                         active={raceSort === 'startTime'}
                                                         direction={raceSort === 'startTime' ? raceSortDir : 'asc'}
@@ -715,7 +732,7 @@ export const ViewFile: React.FC = () => {
                                                         Start Time
                                                     </TableSortLabel>
                                                 </TableCell>
-                                                <TableCell>Actions</TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -746,9 +763,37 @@ export const ViewFile: React.FC = () => {
 
                             <Paper sx={{ p: 2 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" gutterBottom>
-                                        Fleet
-                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <Typography variant="h6" gutterBottom sx={{ m: 0 }}>
+                                            Fleet
+                                        </Typography>
+                                        <Select
+                                            size="small"
+                                            value={bulkRating}
+                                            onChange={(e) => {
+                                                setBulkRating(e.target.value);
+                                                setFleetSort('rating');
+                                                setFleetSortDir('asc');
+                                            }}
+                                            displayEmpty
+                                            sx={{ minWidth: 200 }}
+                                        >
+                                            <MenuItem value="">Select rating...</MenuItem>
+                                            <MenuItem value="TN_Inshore_Low">TOT Inshore Low</MenuItem>
+                                            <MenuItem value="TN_Inshore_Medium">TOT Inshore Medium</MenuItem>
+                                            <MenuItem value="TN_Inshore_High">TOT Inshore High</MenuItem>
+                                            <MenuItem value="TN_Offshore_Low">TOT Offshore Low</MenuItem>
+                                            <MenuItem value="TN_Offshore_Medium">TOT Offshore Medium</MenuItem>
+                                            <MenuItem value="TN_Offshore_High">TOT Offshore High</MenuItem>
+                                            <MenuItem value="TND_Inshore_Low">TOD Inshore Low</MenuItem>
+                                            <MenuItem value="TND_Inshore_Medium">TOD Inshore Medium</MenuItem>
+                                            <MenuItem value="TND_Inshore_High">TOD Inshore High</MenuItem>
+                                            <MenuItem value="TND_Offshore_Low">TOD Offshore Low</MenuItem>
+                                            <MenuItem value="TND_Offshore_Medium">TOD Offshore Medium</MenuItem>
+                                            <MenuItem value="TND_Offshore_High">TOD Offshore High</MenuItem>
+                                            <MenuItem value="GPH">GPH</MenuItem>
+                                        </Select>
+                                    </Box>
                                     <Box sx={{ display: 'flex', gap: 1 }}>
                                         <Button
                                             variant="outlined"
@@ -791,16 +836,16 @@ export const ViewFile: React.FC = () => {
                                 </Button>
                                 <TableContainer component={Paper} sx={{ mb: 2 }}>
                                     <Table size="small">
-                                        <TableHead>
+                                        <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                             <TableRow>
-                                                <TableCell padding="checkbox">
+                                                <TableCell padding="checkbox" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <Checkbox
                                                         indeterminate={selectedBoatIndices.length > 0 && selectedBoatIndices.length < sortedFleet.length}
                                                         checked={selectedBoatIndices.length === sortedFleet.length && sortedFleet.length > 0}
                                                         onChange={e => handleSelectAllBoats(e.target.checked)}
                                                     />
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <TableSortLabel
                                                         active={fleetSort === 'yachtName'}
                                                         direction={fleetSort === 'yachtName' ? fleetSortDir : 'asc'}
@@ -809,7 +854,7 @@ export const ViewFile: React.FC = () => {
                                                         Yacht Name
                                                     </TableSortLabel>
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <TableSortLabel
                                                         active={fleetSort === 'sailNo'}
                                                         direction={fleetSort === 'sailNo' ? fleetSortDir : 'asc'}
@@ -818,7 +863,7 @@ export const ViewFile: React.FC = () => {
                                                         Sail Number
                                                     </TableSortLabel>
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
                                                     <TableSortLabel
                                                         active={fleetSort === 'class'}
                                                         direction={fleetSort === 'class' ? fleetSortDir : 'asc'}
@@ -827,7 +872,17 @@ export const ViewFile: React.FC = () => {
                                                         Class
                                                     </TableSortLabel>
                                                 </TableCell>
-                                                <TableCell>Actions</TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>CDL</TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
+                                                    <TableSortLabel
+                                                        active={fleetSort === 'rating'}
+                                                        direction={fleetSort === 'rating' ? fleetSortDir : 'asc'}
+                                                        onClick={() => handleSort('rating')}
+                                                    >
+                                                        Rating
+                                                    </TableSortLabel>
+                                                </TableCell>
+                                                <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -849,6 +904,8 @@ export const ViewFile: React.FC = () => {
                                                         >
                                                             {cls ? cls.ClassName : (boat.ClassId || 'Not assigned')}
                                                         </TableCell>
+                                                        <TableCell>{boat.CDL?.toFixed(3) || 'N/A'}</TableCell>
+                                                        <TableCell>{getBoatRatingValue(boat) || '—'}</TableCell>
                                                         <TableCell>
                                                             <IconButton
                                                                 size="small"

@@ -238,12 +238,12 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
                         </Box>
                         <TableContainer component={Paper} sx={{ maxWidth: '500px' }}>
                             <Table size="small">
-                                <TableHead>
+                                <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                     <TableRow>
-                                        <TableCell width="80px">Class ID</TableCell>
-                                        <TableCell width="200px">Class Name</TableCell>
-                                        <TableCell width="120px">Yacht Class</TableCell>
-                                        <TableCell width="40px" align="right">Actions</TableCell>
+                                        <TableCell width="80px" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Class ID</TableCell>
+                                        <TableCell width="200px" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Class Name</TableCell>
+                                        <TableCell width="120px" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Yacht Class</TableCell>
+                                        <TableCell width="40px" align="right" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

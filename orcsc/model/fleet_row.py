@@ -11,6 +11,7 @@ class FleetRow(XmlElement):
     YachtName: str = None
     BowNo: str = None
     ClassId: str = None
+    Rating: str = None
     DivId: str = None
     LOA: float = None
     CDL: float = None

@@ -35,6 +35,21 @@ export interface FleetData {
   YachtName: string;
   SailNo: string | null;
   ClassId: string;
+  CDL?: number | null;
+  Rating?: string | null;
+  GPH?: number | null;
+  TN_Inshore_Low?: number | null;
+  TN_Inshore_Medium?: number | null;
+  TN_Inshore_High?: number | null;
+  TN_Offshore_Low?: number | null;
+  TN_Offshore_Medium?: number | null;
+  TN_Offshore_High?: number | null;
+  TND_Inshore_Low?: number | null;
+  TND_Inshore_Medium?: number | null;
+  TND_Inshore_High?: number | null;
+  TND_Offshore_Low?: number | null;
+  TND_Offshore_Medium?: number | null;
+  TND_Offshore_High?: number | null;
 }
 
 export interface OrcscFile {
@@ -64,6 +79,21 @@ export interface OrcscFile {
     YachtName: string;
     SailNo: string;
     ClassId: string;
+    CDL: number | null;
+    Rating: string | null;
+    GPH: number | null;
+    TN_Inshore_Low: number | null;
+    TN_Inshore_Medium: number | null;
+    TN_Inshore_High: number | null;
+    TN_Offshore_Low: number | null;
+    TN_Offshore_Medium: number | null;
+    TN_Offshore_High: number | null;
+    TND_Inshore_Low: number | null;
+    TND_Inshore_Medium: number | null;
+    TND_Inshore_High: number | null;
+    TND_Offshore_Low: number | null;
+    TND_Offshore_Medium: number | null;
+    TND_Offshore_High: number | null;
     HelmName: string;
     CrewName: string;
     ClubName: string;
