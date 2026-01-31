@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { FleetRow, OrcscFile } from '../types/orcsc';
 
-const DEFAULT_API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000`;
+// Use same origin for API calls to work with reverse proxy
+// The backend is accessible at /api/ through Nginx reverse proxy
+const DEFAULT_API_BASE_URL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
 const api = axios.create({

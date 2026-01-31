@@ -38,37 +38,19 @@ if [ -z "$PUBLIC_IP" ]; then
   PUBLIC_IP=$(hostname -I | awk '{print $1}')
 fi
 
-# Create docker-compose.prod.yml (always overwrite to update CORS)
-cat > docker-compose.prod.yml << DOCKER_COMPOSE
-services:
-  backend:
-    image: DOCKERHUB_USER_PLACEHOLDER/PROJECT_NAME_PLACEHOLDER-backend:TAG_PLACEHOLDER
-    container_name: orcrmsparser-backend
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./orcsc/output:/app/orcsc/output
-      - ./orcsc/templates:/app/orcsc/templates
-    environment:
-      - CORS_ORIGINS=http://$PUBLIC_IP:3000
-    command: ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+# Create self-signed certificate if not exists
+if [ ! -f "nginx/certs/cert.pem" ]; then
+  echo 'Creating self-signed SSL certificate...'
+  mkdir -p nginx/certs
+  openssl req -x509 -newkey rsa:4096 -keyout nginx/certs/key.pem -out nginx/certs/cert.pem -days 365 -nodes \
+    -subj "/C=US/ST=State/L=City/O=Organization/CN=orc.avimarine.in"
+fi
 
-  frontend:
-    image: DOCKERHUB_USER_PLACEHOLDER/PROJECT_NAME_PLACEHOLDER-frontend:TAG_PLACEHOLDER
-    container_name: orcrmsparser-frontend
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
-    restart: unless-stopped
-DOCKER_COMPOSE
+# Create docker-compose.prod.yml with variable substitution
+cp docker-compose.prod.yml docker-compose.prod.yml.tmp
+sed -i "s|aayaffe/orcrmsparser-backend:latest|$DOCKERHUB_USER/$PROJECT_NAME-backend:$TAG|g" docker-compose.prod.yml.tmp
+sed -i "s|aayaffe/orcrmsparser-frontend:latest|$DOCKERHUB_USER/$PROJECT_NAME-frontend:$TAG|g" docker-compose.prod.yml.tmp
+mv docker-compose.prod.yml.tmp docker-compose.prod.yml
 
 # Install docker-compose if needed
 if ! command -v docker-compose &> /dev/null; then
@@ -139,14 +121,54 @@ if ($LASTEXITCODE -ne 0) { Write-Host "ERROR: Deployment failed"; exit 1 }
 Remove-Item $tempFile -Force
 Write-Host "`nSUCCESS! App deployed to $Instance" -ForegroundColor Green
 
-# Setup firewall
-Write-Host "Setting up firewall..." -ForegroundColor Yellow
+# Setup firewall rules (only if not already set up)
+Write-Host "Setting up firewall rules..." -ForegroundColor Yellow
 $proj = if ($Project) { $Project } else { gcloud config get-value project 2>&1 }
-gcloud compute firewall-rules create allow-app --allow="tcp:3000,tcp:8000" --source-ranges="0.0.0.0/0" --project=$proj 2>&1 | Out-Null
+
+# Check if firewall rules already exist
+$existingRules = gcloud compute firewall-rules list --filter="name:(allow-http OR allow-https OR allow-app)" --project=$proj --format="value(name)" 2>&1
+
+# Create HTTP rule if it doesn't exist
+if (-not ($existingRules -contains "allow-http")) {
+    Write-Host "Creating allow-http firewall rule..." -ForegroundColor Yellow
+    gcloud compute firewall-rules create allow-http `
+        --allow="tcp:80" `
+        --source-ranges="0.0.0.0/0" `
+        --project=$proj 2>&1 | Out-Null
+} else {
+    Write-Host "Firewall rule 'allow-http' already exists, skipping..." -ForegroundColor Gray
+}
+
+# Create HTTPS rule if it doesn't exist
+if (-not ($existingRules -contains "allow-https")) {
+    Write-Host "Creating allow-https firewall rule..." -ForegroundColor Yellow
+    gcloud compute firewall-rules create allow-https `
+        --allow="tcp:443" `
+        --source-ranges="0.0.0.0/0" `
+        --project=$proj 2>&1 | Out-Null
+} else {
+    Write-Host "Firewall rule 'allow-https' already exists, skipping..." -ForegroundColor Gray
+}
+
+# Create allow-app rule if it doesn't exist (for direct access to ports 3000 and 8000)
+if (-not ($existingRules -contains "allow-app")) {
+    Write-Host "Creating allow-app firewall rule..." -ForegroundColor Yellow
+    gcloud compute firewall-rules create allow-app `
+        --allow="tcp:3000,tcp:8000,tcp:8080" `
+        --source-ranges="0.0.0.0/0" `
+        --project=$proj 2>&1 | Out-Null
+} else {
+    Write-Host "Firewall rule 'allow-app' already exists, skipping..." -ForegroundColor Gray
+}
 
 Write-Host "`nTo access:" -ForegroundColor Cyan
-Write-Host "  Get external IP: gcloud compute instances describe $Instance --zone=$Zone --format='get(networkInterfaces[0].accessConfigs[0].natIP)'"
-Write-Host "  Frontend: http://<EXTERNAL_IP>:3000"
+Write-Host "  Domain: https://orc.avimarine.in (requires DNS configuration)" -ForegroundColor Cyan
+Write-Host "  Get external IP: gcloud compute instances describe $Instance --zone=$Zone --format='get(networkInterfaces[0].accessConfigs[0].natIP)'" -ForegroundColor Cyan
+Write-Host "`nDirect access (for troubleshooting):" -ForegroundColor Cyan
+Write-Host "  Frontend: http://<EXTERNAL_IP>:3000" -ForegroundColor Cyan
+Write-Host "  Backend:  http://<EXTERNAL_IP>:8000" -ForegroundColor Cyan
+Write-Host "  Nginx Health: http://<EXTERNAL_IP>:8080/health" -ForegroundColor Cyan
+Write-Host "`nNote: Ensure DNS 'orc.avimarine.in' points to your external IP." -ForegroundColor Yellow
 Write-Host "`nTo SSH: gcloud compute ssh $Instance --zone=$Zone"
 Write-Host "To view logs: docker logs orcrmsparser-backend"
 Write-Host "To stop: docker-compose -f docker-compose.prod.yml down`n" -ForegroundColor Cyan
