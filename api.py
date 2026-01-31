@@ -164,6 +164,34 @@ async def list_orcsc_files():
         logger.error(f"Error listing files: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to list files")
 
+@app.delete("/api/files/{file_path:path}")
+async def delete_orcsc_file(file_path: str):
+    """Delete an ORCSC file"""
+    try:
+        logger.info("Deleting file")
+
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
+
+        if not os.path.exists(abs_path):
+            logger.warning("File not found")
+            raise HTTPException(status_code=404, detail="File not found")
+
+        # Backup before delete
+        file_history.create_backup(abs_path, "Deleted file")
+
+        os.remove(abs_path)
+        logger.info("File deleted successfully")
+        return {"message": "File deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting file: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to delete file")
+
 @app.post("/api/files/upload")
 async def upload_file(file: UploadFile = File(...)):
     """Upload a new ORCSC file"""

@@ -295,6 +295,20 @@ export const ViewFile: React.FC = () => {
         }
     };
 
+    const handleDelete = async (path: string) => {
+        const filename = path.split(/[\\/]/).pop() || path;
+        const confirmed = window.confirm(`Delete ${filename}? This cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await orcscApi.deleteFile(path);
+            await fetchFiles();
+            navigate('/');
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+    };
+
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -414,6 +428,7 @@ export const ViewFile: React.FC = () => {
                 onNewFile={() => setNewFileOpen(true)}
                 onDownload={handleDownload}
                 onFileSelect={handleFileSelect}
+                onDelete={handleDelete}
                 onHome={handleHome}
                 files={files}
                 selectedFile={filePath}

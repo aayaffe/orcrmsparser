@@ -199,6 +199,13 @@ export const orcscApi = {
     }
   },
 
+  deleteFile: async (filePath: string): Promise<void> => {
+    if (!filePath) {
+      throw new Error('File path is required');
+    }
+    await api.delete(`/api/files/${encodeURIComponent(filePath)}`);
+  },
+
   getTemplates: async (): Promise<string[]> => {
     const response = await api.get('/api/templates');
     return response.data;

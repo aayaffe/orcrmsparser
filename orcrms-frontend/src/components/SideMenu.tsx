@@ -15,7 +15,8 @@ import {
     Download as DownloadIcon,
     Sailing as SailingIcon,
     Add as AddIcon,
-    Home as HomeIcon
+    Home as HomeIcon,
+    Delete as DeleteIcon
 } from '@mui/icons-material';
 import { ChangeEvent } from 'react';
 
@@ -26,6 +27,7 @@ interface SideMenuProps {
     onNewFile: () => void;
     onDownload: () => Promise<void>;
     onFileSelect: (path: string) => void;
+    onDelete: (path: string) => void;
     onHome?: () => void;
     files: { path: string; eventName: string }[];
     selectedFile?: string;
@@ -39,6 +41,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
     onNewFile,
     onDownload,
     onFileSelect,
+    onDelete,
     onHome,
     files,
     selectedFile,
@@ -115,19 +118,33 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                             key={file.path}
                             disablePadding
                         >
-                            <ListItemButton
-                                selected={selectedFile === file.path}
-                                onClick={() => onFileSelect(file.path)}
-                            >
-                                <Tooltip title={file.path.split(/[\\/]/).pop()} placement="right">
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <ListItemIcon sx={{ minWidth: '40px' }}>
-                                            <SailingIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={file.eventName} />
-                                    </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                <ListItemButton
+                                    selected={selectedFile === file.path}
+                                    onClick={() => onFileSelect(file.path)}
+                                    sx={{ flexGrow: 1 }}
+                                >
+                                    <Tooltip title={file.path.split(/[\\/]/).pop()} placement="right">
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <ListItemIcon sx={{ minWidth: '40px' }}>
+                                                <SailingIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary={file.eventName} />
+                                        </Box>
+                                    </Tooltip>
+                                </ListItemButton>
+                                <Tooltip title="Delete file">
+                                    <ListItemIcon sx={{ minWidth: '40px', justifyContent: 'center' }}>
+                                        <DeleteIcon
+                                            sx={{ cursor: 'pointer' }}
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                onDelete(file.path);
+                                            }}
+                                        />
+                                    </ListItemIcon>
                                 </Tooltip>
-                            </ListItemButton>
+                            </Box>
                         </ListItem>
                     ))}
                 </List>

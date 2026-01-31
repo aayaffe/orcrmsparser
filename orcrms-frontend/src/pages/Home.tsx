@@ -21,7 +21,7 @@ interface FileInfo {
 
 export const Home: React.FC = () => {
     const [files, setFiles] = useState<FileInfo[]>([]);
-    const [selectedFile, _setSelectedFile] = useState<FileInfo | null>(null);
+    const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(true);
     const [newFileOpen, setNewFileOpen] = useState(false);
     const navigate = useNavigate();
@@ -54,6 +54,8 @@ export const Home: React.FC = () => {
     };
 
     const handleFileSelect = (path: string) => {
+        const file = files.find((f) => f.path === path) || null;
+        setSelectedFile(file);
         navigate(`/view/${encodeURIComponent(path)}`);
     };
 
@@ -77,6 +79,22 @@ export const Home: React.FC = () => {
             await orcscApi.downloadFile(selectedFile.path);
         } catch (error) {
             console.error('Error downloading file:', error);
+        }
+    };
+
+    const handleDelete = async (path: string) => {
+        const filename = path.split(/[\\/]/).pop() || path;
+        const confirmed = window.confirm(`Delete ${filename}? This cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await orcscApi.deleteFile(path);
+            if (selectedFile?.path === path) {
+                setSelectedFile(null);
+            }
+            await fetchFiles();
+        } catch (error) {
+            console.error('Error deleting file:', error);
         }
     };
 
@@ -111,6 +129,7 @@ export const Home: React.FC = () => {
                 onNewFile={() => setNewFileOpen(true)}
                 onDownload={handleDownload}
                 onFileSelect={handleFileSelect}
+                onDelete={handleDelete}
                 files={files}
                 selectedFile={selectedFile?.path}
             />
