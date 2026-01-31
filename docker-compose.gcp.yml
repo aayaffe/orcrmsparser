@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: orcrmsparser-backend
+    hostname: backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - orcsc_output:/app/orcsc/output
+      - orcsc_templates:/app/orcsc/templates
+    environment:
+      - CORS_ORIGINS=http://localhost:3000
+      - LOG_LEVEL=INFO
+      - WORKERS=4
+    restart: unless-stopped
+    networks:
+      - orcms-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  frontend:
+    build:
+      context: ./orcrms-frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8000
+    container_name: orcrmsparser-frontend
+    hostname: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - orcms-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+volumes:
+  orcsc_output:
+    driver: local
+  orcsc_templates:
+    driver: local
+
+networks:
+  orcms-network:
+    driver: bridge

@@ -1,18 +1,24 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
-# Copy package files
+# Accept build arguments
+ARG VITE_API_URL=http://localhost:8000
+
+# Set environment variables
+ENV VITE_API_URL=$VITE_API_URL
+
+# Copy package files only (for layer caching)
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies (npm install includes lock file generation)
 RUN npm install
 
 # Copy the rest of the application
 COPY . .
 
-# Build the application
+# Build the application with environment variables
 RUN npm run build
 
 # Production stage

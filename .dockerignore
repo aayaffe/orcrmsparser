@@ -34,6 +34,17 @@ Dockerfile*
 docker-compose*
 .dockerignore
 
+# Large data directories (not needed in container - use volumes instead)
+jsons/
+jsons_history/
+orcsc/output/
+boats/
+
 # Misc
 .DS_Store
-*.log 
+*.log
+README.MD
+BUILD_OPTIMIZATION.md
+GCP_DEPLOYMENT.md
+QUICK_START_GCP.md
+*.md 
