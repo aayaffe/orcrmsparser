@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Box,
@@ -34,7 +34,8 @@ import {
     Menu as MenuIcon,
     Add as AddIcon,
     History as HistoryIcon,
-    Description as CsvIcon
+    Description as CsvIcon,
+    Delete as DeleteIcon
 } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import type { OrcscFile, YachtClass } from '../types/orcsc';
@@ -126,28 +127,45 @@ const formatDateOnly = (dateString: string | number): string => {
     }
 };
 
+type AssignBoat = {
+    YID?: string;
+    YachtName: string;
+    SailNo?: string | null;
+    ClassId?: string;
+};
+
+type AssignClassesDialogProps = {
+    open: boolean;
+    boats: AssignBoat[];
+    classes: Array<{ ClassId: string; ClassName: string }>;
+    onAssign: (assignments: { [index: number]: string }) => void;
+    onClose: () => void;
+};
+
 // AssignClassesDialog placeholder
-const AssignClassesDialog = ({ open, boats, classes, onAssign, onClose }: any) => {
+const AssignClassesDialog = ({ open, boats, classes, onAssign, onClose }: AssignClassesDialogProps) => {
     // If multiple boats, use a single class selector
     const [singleClass, setSingleClass] = useState('');
     const [assignments, setAssignments] = useState<{ [index: number]: string }>({});
-    useEffect(() => {
-        if (boats.length > 1) setAssignments({});
-    }, [boats.length]);
     const handleChange = (i: number, classId: string) => {
         setAssignments(prev => ({ ...prev, [i]: classId }));
     };
     const handleAssign = () => {
         if (boats.length > 1) {
             // Assign the same class to all
-            const all = Object.fromEntries(boats.map((_: any, i: number) => [i, singleClass]));
+            const all = Object.fromEntries(boats.map((_, i) => [i, singleClass]));
             onAssign(all);
         } else {
             onAssign(assignments);
         }
     };
+    const handleClose = () => {
+        setSingleClass('');
+        setAssignments({});
+        onClose();
+    };
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+        <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
             <DialogTitle>Assign Classes to {boats.length > 1 ? 'Selected Boats' : 'Imported Boat'}</DialogTitle>
             <DialogContent>
                 <Stack spacing={2}>
@@ -159,13 +177,13 @@ const AssignClassesDialog = ({ open, boats, classes, onAssign, onClose }: any) =
                                 label="Class"
                                 onChange={e => setSingleClass(e.target.value)}
                             >
-                                {classes.map((cls: any) => (
+                                {classes.map((cls) => (
                                     <MenuItem key={cls.ClassId} value={cls.ClassId}>{cls.ClassName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
                     ) : (
-                        boats.map((boat: any, i: number) => (
+                        boats.map((boat, i) => (
                             <Box key={i} sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                                 <Typography sx={{ minWidth: 200 }}>{boat.YachtName} ({boat.SailNo})</Typography>
                                 <FormControl fullWidth>
@@ -175,7 +193,7 @@ const AssignClassesDialog = ({ open, boats, classes, onAssign, onClose }: any) =
                                         label="Class"
                                         onChange={e => handleChange(i, e.target.value)}
                                     >
-                                        {classes.map((cls: any) => (
+                                        {classes.map((cls) => (
                                             <MenuItem key={cls.ClassId} value={cls.ClassId}>{cls.ClassName}</MenuItem>
                                         ))}
                                     </Select>
@@ -186,7 +204,7 @@ const AssignClassesDialog = ({ open, boats, classes, onAssign, onClose }: any) =
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={handleClose}>Cancel</Button>
                 <Button variant="contained" onClick={handleAssign} disabled={boats.length > 1 && !singleClass}>Assign</Button>
             </DialogActions>
         </Dialog>
@@ -209,7 +227,7 @@ export const ViewFile: React.FC = () => {
     const [importWizardOpen, setImportWizardOpen] = useState(false);
     const [orcDbDialogOpen, setOrcDbDialogOpen] = useState(false);
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
-    const [boatsToAssign, setBoatsToAssign] = useState<any[]>([]);
+    const [boatsToAssign, setBoatsToAssign] = useState<AssignBoat[]>([]);
     const [fleetSort, setFleetSort] = useState<'yachtName' | 'sailNo' | 'class'>('yachtName');
     const [fleetSortDir, setFleetSortDir] = useState<'asc' | 'desc'>('asc');
     const [selectedBoatIndices, setSelectedBoatIndices] = useState<number[]>([]);
@@ -235,14 +253,7 @@ export const ViewFile: React.FC = () => {
         return raceSortDir === 'asc' ? cmp : -cmp;
     }) : [];
 
-    useEffect(() => {
-        if (filePath) {
-            fetchFile();
-            fetchFiles();
-        }
-    }, [filePath]);
-
-    const fetchFile = async () => {
+    const fetchFile = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -255,9 +266,9 @@ export const ViewFile: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filePath]);
 
-    const fetchFiles = async () => {
+    const fetchFiles = useCallback(async () => {
         try {
             const fileList = await orcscApi.listFiles();
             const fileData = await Promise.all(
@@ -278,7 +289,14 @@ export const ViewFile: React.FC = () => {
         } catch (error) {
             console.error('Error fetching files:', error);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        if (filePath) {
+            fetchFile();
+            fetchFiles();
+        }
+    }, [filePath, fetchFile, fetchFiles]);
 
     const handleAddRacesSuccess = () => {
         setAddRacesOpen(false);
@@ -356,6 +374,45 @@ export const ViewFile: React.FC = () => {
 
     const handleRestoreSuccess = () => {
         fetchFile();
+    };
+
+    const handleDeleteClass = async (classId: string, className: string) => {
+        const confirmed = window.confirm(`Delete class "${className}" (${classId})? This cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await orcscApi.deleteClass(filePath!, classId);
+            fetchFile();
+        } catch (error) {
+            console.error('Error deleting class:', error);
+            alert('Failed to delete class');
+        }
+    };
+
+    const handleDeleteRace = async (raceId: string, raceName: string) => {
+        const confirmed = window.confirm(`Delete race "${raceName}"? This cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await orcscApi.deleteRace(filePath!, raceId);
+            fetchFile();
+        } catch (error) {
+            console.error('Error deleting race:', error);
+            alert('Failed to delete race');
+        }
+    };
+
+    const handleDeleteBoat = async (yid: string, yachtName: string) => {
+        const confirmed = window.confirm(`Delete boat "${yachtName}"? This cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await orcscApi.deleteBoat(filePath!, yid);
+            fetchFile();
+        } catch (error) {
+            console.error('Error deleting boat:', error);
+            alert('Failed to delete boat');
+        }
     };
 
     const handleSort = (col: 'yachtName' | 'sailNo' | 'class') => {
@@ -533,13 +590,23 @@ export const ViewFile: React.FC = () => {
                                 </Box>
                                 <Stack spacing={2}>
                                     {fileData.classes.map((cls) => (
-                                        <Box key={cls.ClassId} sx={{ display: 'flex', gap: 1 }}>
-                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
-                                                {cls.ClassId}:
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                {cls.ClassName}
-                                            </Typography>
+                                        <Box key={cls.ClassId} sx={{ display: 'flex', gap: 1, justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                                <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
+                                                    {cls.ClassId}:
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    {cls.ClassName}
+                                                </Typography>
+                                            </Box>
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => handleDeleteClass(cls.ClassId, cls.ClassName)}
+                                                color="error"
+                                                title="Delete class"
+                                            >
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
                                         </Box>
                                     ))}
                                 </Stack>
@@ -590,6 +657,7 @@ export const ViewFile: React.FC = () => {
                                                         Start Time
                                                     </TableSortLabel>
                                                 </TableCell>
+                                                <TableCell>Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -600,6 +668,16 @@ export const ViewFile: React.FC = () => {
                                                         <TableCell>{race.RaceName}</TableCell>
                                                         <TableCell>{cls ? cls.ClassName : race.ClassId}</TableCell>
                                                         <TableCell>{formatDate(race.StartTime)}</TableCell>
+                                                        <TableCell>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleDeleteRace(race.RaceId, race.RaceName)}
+                                                                color="error"
+                                                                title="Delete race"
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -714,7 +792,14 @@ export const ViewFile: React.FC = () => {
                                                             {cls ? cls.ClassName : (boat.ClassId || 'Not assigned')}
                                                         </TableCell>
                                                         <TableCell>
-                                                            {/* Removed Change Class button */}
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleDeleteBoat(boat.YID || '', boat.YachtName)}
+                                                                color="error"
+                                                                title="Delete boat"
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
                                                         </TableCell>
                                                     </TableRow>
                                                 );

@@ -19,11 +19,15 @@ import {
     IconButton,
     FormControl,
     Select,
-    MenuItem
+    MenuItem,
+    Checkbox,
+    ListItemText,
+    OutlinedInput
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { orcscApi } from '../api/orcscApi';
 import { YachtClass } from '../types/orcsc';
+import { quickClasses } from '../config/quickClasses';
 
 interface NewFileDialogProps {
     open: boolean;
@@ -46,6 +50,7 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
         endDate: new Date().toISOString().split('T')[0],
         classes: [] as ClassData[]
     });
+    const [selectedQuickClassIds, setSelectedQuickClassIds] = useState<string[]>([]);
 
     const handleAddClass = () => {
         setNewFileData(prev => ({
@@ -68,6 +73,24 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
                 i === index ? { ...cls, [field]: value } : cls
             )
         }));
+    };
+
+    const handleAddQuickClasses = () => {
+        setNewFileData(prev => {
+            const existingIds = new Set(prev.classes.map(cls => cls.classId));
+            const toAdd = quickClasses
+                .filter(cls => selectedQuickClassIds.includes(cls.classId) && !existingIds.has(cls.classId))
+                .map(cls => ({
+                    classId: cls.classId,
+                    className: cls.className,
+                    yachtClass: cls.yachtClass
+                }));
+            return {
+                ...prev,
+                classes: [...prev.classes, ...toAdd]
+            };
+        });
+        setSelectedQuickClassIds([]);
     };
 
     const handleCreateNewFile = async () => {
@@ -103,6 +126,7 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
                 endDate: new Date().toISOString().split('T')[0],
                 classes: []
             });
+            setSelectedQuickClassIds([]);
             onSuccess(response.file_path);
         } catch (error) {
             console.error('Error creating new file:', error);
@@ -166,6 +190,47 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
                         <Typography variant="h6" gutterBottom>
                             Classes
                         </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+                            <FormControl fullWidth size="small">
+                                <Select
+                                    multiple
+                                    displayEmpty
+                                    value={selectedQuickClassIds}
+                                    onChange={(e) => setSelectedQuickClassIds(e.target.value as string[])}
+                                    input={<OutlinedInput />}
+                                    renderValue={(selected) => {
+                                        if (selected.length === 0) {
+                                            return 'Select quick classes';
+                                        }
+                                        return selected
+                                            .map((id) => {
+                                                const cls = quickClasses.find(qc => qc.classId === id);
+                                                return cls ? `${cls.classId} ${cls.className}` : id;
+                                            })
+                                            .join(', ');
+                                    }}
+                                >
+                                    {quickClasses.map((cls) => (
+                                        <MenuItem key={cls.classId} value={cls.classId}>
+                                            <Checkbox checked={selectedQuickClassIds.includes(cls.classId)} />
+                                            <ListItemText
+                                                primary={`${cls.classId} ${cls.className}`}
+                                                secondary={cls.yachtClass === YachtClass.ORC ? 'ORC' : 'One Design'}
+                                            />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={handleAddQuickClasses}
+                                disabled={selectedQuickClassIds.length === 0}
+                                sx={{ alignSelf: 'flex-start' }}
+                            >
+                                Add Selected Classes
+                            </Button>
+                        </Box>
                         <TableContainer component={Paper} sx={{ maxWidth: '500px' }}>
                             <Table size="small">
                                 <TableHead>

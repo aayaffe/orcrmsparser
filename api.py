@@ -6,8 +6,9 @@ import xml.etree.ElementTree as ET
 from defusedxml import ElementTree as DefusedET
 from pathlib import Path
 from typing import List, Optional
+from urllib.parse import unquote
 
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -17,6 +18,7 @@ from orcsc.model.fleet_row import FleetRow
 from orcsc.model.race_row import RaceRow
 from orcsc.orcsc_file_editor import add_races as orcsc_add_races, add_fleets as orcsc_add_fleets
 from orcsc.orcsc_file_editor import update_fleet as orcsc_update_fleet
+from orcsc.orcsc_file_editor import delete_class as orcsc_delete_class, delete_race as orcsc_delete_race, delete_boat as orcsc_delete_boat
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -51,6 +53,8 @@ def validate_file_path(file_path: str, base_dir: str = "orcsc/output") -> str:
     base_path = Path(base_dir).resolve()
     full_path = (base_path / filename).resolve()
     
+    logger.info(f"validate_file_path: input={file_path}, filename={filename}, base_path={base_path}, full_path={full_path}")
+    
     # Ensure the resolved path is within the base directory
     try:
         full_path.relative_to(base_path)
@@ -77,6 +81,8 @@ app.add_middleware(
 # Ensure output directory exists
 OUTPUT_DIR = os.path.join("orcsc", "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+logger.info(f"Working directory: {os.getcwd()}")
+logger.info(f"Output directory: {os.path.abspath(OUTPUT_DIR)}")
 
 # Security: File size limits
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
@@ -809,6 +815,120 @@ async def add_boat_from_orc_json(
     except Exception as e:
         logger.error(f"Error adding ORC boat: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to add ORC boat")
+
+
+@app.delete("/api/classes")
+async def delete_class(file_path: str = Query(...), class_id: str = Query(...)):
+    """Delete a class from the file."""
+    try:
+        # Decode URL-encoded path
+        file_path = unquote(file_path)
+        logger.info(f"Delete class: received file_path={file_path}")
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+            logger.info(f"Delete class: validated path={abs_path}")
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
+
+        if not os.path.exists(abs_path):
+            logger.warning(f"File not found at path: {abs_path}")
+            raise HTTPException(status_code=404, detail="File not found")
+
+        # Create a backup before deleting
+        change_summary = f"Deleted class: {class_id}"
+        file_history.create_backup(abs_path, change_summary)
+
+        # Delete the class
+        orcsc_delete_class(abs_path, abs_path, class_id)
+
+        logger.info(f"Successfully deleted class {class_id}")
+        return {"message": f"Successfully deleted class {class_id}"}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        logger.warning(f"Error deleting class: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error deleting class: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to delete class")
+
+
+@app.delete("/api/races")
+async def delete_race(file_path: str = Query(...), race_id: str = Query(...)):
+    """Delete a race from the file."""
+    try:
+        # Decode URL-encoded path
+        file_path = unquote(file_path)
+        logger.info(f"Delete race: received file_path={file_path}")
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+            logger.info(f"Delete race: validated path={abs_path}")
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
+
+        if not os.path.exists(abs_path):
+            logger.warning(f"File not found at path: {abs_path}")
+            raise HTTPException(status_code=404, detail="File not found")
+
+        # Create a backup before deleting
+        change_summary = f"Deleted race: {race_id}"
+        file_history.create_backup(abs_path, change_summary)
+
+        # Delete the race
+        orcsc_delete_race(abs_path, abs_path, race_id)
+
+        logger.info(f"Successfully deleted race {race_id}")
+        return {"message": f"Successfully deleted race {race_id}"}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        logger.warning(f"Error deleting race: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error deleting race: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to delete race")
+
+
+@app.delete("/api/boats")
+async def delete_boat(file_path: str = Query(...), boat_id: str = Query(...)):
+    """Delete a boat from the fleet."""
+    try:
+        # Decode URL-encoded path
+        file_path = unquote(file_path)
+        logger.info(f"Delete boat: received file_path={file_path}")
+        # Validate and resolve the file path
+        try:
+            abs_path = validate_file_path(file_path)
+            logger.info(f"Delete boat: validated path={abs_path}")
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
+
+        if not os.path.exists(abs_path):
+            logger.warning(f"File not found at path: {abs_path}")
+            raise HTTPException(status_code=404, detail="File not found")
+
+        # Create a backup before deleting
+        change_summary = f"Deleted boat: {boat_id}"
+        file_history.create_backup(abs_path, change_summary)
+
+        # Delete the boat
+        orcsc_delete_boat(abs_path, abs_path, boat_id)
+
+        logger.info(f"Successfully deleted boat {boat_id}")
+        return {"message": f"Successfully deleted boat {boat_id}"}
+    except HTTPException:
+        raise
+    except ValueError as e:
+        logger.warning(f"Error deleting boat: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error deleting boat: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to delete boat")
 
 if __name__ == "__main__":
     import uvicorn

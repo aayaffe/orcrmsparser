@@ -429,3 +429,72 @@ def add_fleet_from_orc_json(input_file, output_file, orc_json, class_id=None):
     Fleet.append(fleet_row.to_element())
     ET.indent(tree, space="\t", level=0)
     tree.write(output_file, encoding='utf-8', xml_declaration=False)
+
+
+def delete_class(input_file, output_file, class_id: str):
+    """Delete a class by ClassId from the file."""
+    tree = ET.parse(input_file)
+    Cls = tree.getroot().find('./Cls')
+    if Cls is None:
+        raise ValueError("No Cls element found in file")
+    
+    # Find and remove the class with matching ClassId
+    found = False
+    for row in Cls.findall('./ROW'):
+        if row.find('ClassId') is not None and row.find('ClassId').text == class_id:
+            Cls.remove(row)
+            found = True
+            break
+    
+    if not found:
+        raise ValueError(f"Class with ID '{class_id}' not found")
+    
+    ET.indent(tree, space="\t", level=0)
+    tree.write(output_file, encoding='utf-8', xml_declaration=False)
+    logging.info(f"Deleted class: {class_id}")
+
+
+def delete_race(input_file, output_file, race_id: str):
+    """Delete a race by RaceId from the file."""
+    tree = ET.parse(input_file)
+    Races = tree.getroot().find('./Races')
+    if Races is None:
+        raise ValueError("No Races element found in file")
+    
+    # Find and remove the race with matching RaceId
+    found = False
+    for row in Races.findall('./ROW'):
+        if row.find('RaceId') is not None and row.find('RaceId').text == race_id:
+            Races.remove(row)
+            found = True
+            break
+    
+    if not found:
+        raise ValueError(f"Race with ID '{race_id}' not found")
+    
+    ET.indent(tree, space="\t", level=0)
+    tree.write(output_file, encoding='utf-8', xml_declaration=False)
+    logging.info(f"Deleted race: {race_id}")
+
+
+def delete_boat(input_file, output_file, boat_id: str):
+    """Delete a boat by YID from the Fleet."""
+    tree = ET.parse(input_file)
+    Fleet = tree.getroot().find('./Fleet')
+    if Fleet is None:
+        raise ValueError("No Fleet element found in file")
+    
+    # Find and remove the boat with matching YID
+    found = False
+    for row in Fleet.findall('./ROW'):
+        if row.find('YID') is not None and row.find('YID').text == boat_id:
+            Fleet.remove(row)
+            found = True
+            break
+    
+    if not found:
+        raise ValueError(f"Boat with ID '{boat_id}' not found")
+    
+    ET.indent(tree, space="\t", level=0)
+    tree.write(output_file, encoding='utf-8', xml_declaration=False)
+    logging.info(f"Deleted boat: {boat_id}")

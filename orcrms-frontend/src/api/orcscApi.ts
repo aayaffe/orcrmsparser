@@ -275,5 +275,29 @@ export const orcscApi = {
       SailNo: boat.sailNo || ''
     });
     return response.data;
+  },
+
+  deleteClass: async (filePath: string, classId: string): Promise<void> => {
+    if (!filePath || !classId) {
+      throw new Error('File path and class ID are required');
+    }
+    const normalizedPath = filePath.replace(/\\/g, '/');
+    await api.delete(`/api/classes?file_path=${encodeURIComponent(normalizedPath)}&class_id=${encodeURIComponent(classId)}`);
+  },
+
+  deleteRace: async (filePath: string, raceId: string): Promise<void> => {
+    if (!filePath || !raceId) {
+      throw new Error('File path and race ID are required');
+    }
+    const normalizedPath = filePath.replace(/\\/g, '/');
+    await api.delete(`/api/races?file_path=${encodeURIComponent(normalizedPath)}&race_id=${encodeURIComponent(raceId)}`);
+  },
+
+  deleteBoat: async (filePath: string, boatId: string): Promise<void> => {
+    if (!filePath || !boatId) {
+      throw new Error('File path and boat ID are required');
+    }
+    const normalizedPath = filePath.replace(/\\/g, '/');
+    await api.delete(`/api/boats?file_path=${encodeURIComponent(normalizedPath)}&boat_id=${encodeURIComponent(boatId)}`);
   }
 }; 
