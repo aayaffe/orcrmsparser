@@ -247,6 +247,61 @@ async def upload_file(file: UploadFile = File(...)):
         logger.error(f"Error uploading file: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to upload file")
 
+@app.post("/api/files/update")
+async def update_file(file_path: str = Query(...), file: UploadFile = File(...)):
+    """Update an existing ORCSC file and save the previous version to history"""
+    try:
+        if not file.filename or not file.filename.endswith('.orcsc'):
+            raise HTTPException(status_code=400, detail="Only .orcsc files are allowed")
+        
+        # Validate file size
+        if file.size and file.size > MAX_UPLOAD_FILE_SIZE:
+            raise HTTPException(status_code=413, detail=f"File size exceeds maximum limit of {MAX_UPLOAD_FILE_SIZE / (1024*1024):.0f}MB")
+        
+        # Decode and validate the file path
+        file_path = unquote(file_path)
+        try:
+            abs_path = validate_file_path(file_path)
+        except ValueError as e:
+            logger.warning(f"Invalid file path: {str(e)}")
+            raise HTTPException(status_code=400, detail="Invalid file path")
+        
+        # Check if file exists
+        if not os.path.exists(abs_path):
+            logger.warning(f"File not found: {abs_path}")
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Create backup of the existing file before updating
+        change_summary = f"File updated with new version of {file.filename}"
+        file_history.create_backup(abs_path, change_summary)
+        
+        # Read the new file and write it to replace the existing one
+        bytes_written = 0
+        with open(abs_path, "wb") as buffer:
+            while True:
+                chunk = await file.read(8192)  # Read in 8KB chunks
+                if not chunk:
+                    break
+                bytes_written += len(chunk)
+                if bytes_written > MAX_UPLOAD_FILE_SIZE:
+                    raise HTTPException(status_code=413, detail=f"File size exceeds maximum limit of {MAX_UPLOAD_FILE_SIZE / (1024*1024):.0f}MB")
+                buffer.write(chunk)
+        
+        # Verify the updated file is valid XML
+        try:
+            DefusedET.parse(abs_path)
+        except ET.ParseError as e:
+            logger.warning(f"Invalid XML uploaded for update: {str(e)}")
+            raise HTTPException(status_code=400, detail="Uploaded file is not valid XML")
+        
+        logger.info(f"File updated successfully: {abs_path}")
+        return {"filename": os.path.basename(abs_path), "path": abs_path}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating file: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to update file")
+
 @app.get("/api/files/get/{file_path:path}")
 async def get_orcsc_file(file_path: str):
     try:

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Box,
@@ -218,6 +218,7 @@ export const ViewFile: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [addRacesOpen, setAddRacesOpen] = useState(false);
     const [files, setFiles] = useState<{ path: string; eventName: string }[]>([]);
+    const versionInputRef = useRef<HTMLInputElement>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(true);
     const navigate = useNavigate();
     const [newFileOpen, setNewFileOpen] = useState(false);
@@ -331,13 +332,51 @@ export const ViewFile: React.FC = () => {
         const file = event.target.files?.[0];
         if (file) {
             try {
-                await orcscApi.uploadFile(file);
-                await fetchFiles();
+                // Check if file with same name already exists
+                const filename = file.name;
+                const existingFile = files.find(f => f.path.endsWith(filename));
+                
+                if (existingFile) {
+                    // File exists, ask user if they want to update
+                    const shouldUpdate = window.confirm(
+                        `A file named "${filename}" already exists. Do you want to replace it? The old version will be saved to history.`
+                    );
+                    if (shouldUpdate) {
+                        await orcscApi.updateFileVersion(existingFile.path, file);
+                        await fetchFiles();
+                        if (filePath === existingFile.path) {
+                            await fetchFile();
+                        }
+                    }
+                } else {
+                    // New file, upload normally
+                    await orcscApi.uploadFile(file);
+                    await fetchFiles();
+                }
             } catch (error) {
                 console.error('Error uploading file:', error);
+                alert('Error uploading file');
             }
         }
     };
+
+    const handleUploadNewVersion = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file && filePath) {
+            try {
+                await orcscApi.updateFileVersion(filePath, file);
+                await fetchFile();
+                alert('File updated successfully. The previous version has been saved to history.');
+                // Reset the input so the same file can be selected again
+                if (versionInputRef.current) {
+                    versionInputRef.current.value = '';
+                }
+            } catch (error) {
+                console.error('Error updating file:', error);
+                alert('Error updating file');
+            }
+        }
+    }, [filePath, fetchFile]);
 
     const handleFileSelect = (file: string) => {
         navigate(`/view/${encodeURIComponent(file)}`);
@@ -531,9 +570,20 @@ export const ViewFile: React.FC = () => {
                             </Typography>
 
                             <Paper sx={{ p: 2, mb: 2 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Event Details
-                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                    <Box>
+                                        <Typography variant="h6" gutterBottom>
+                                            Event Details
+                                        </Typography>
+                                    </Box>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        onClick={() => versionInputRef.current?.click()}
+                                    >
+                                        Upload New Version
+                                    </Button>
+                                </Box>
                                 <Stack spacing={2}>
                                     <Stack direction="row" spacing={2}>
                                         <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
@@ -573,6 +623,14 @@ export const ViewFile: React.FC = () => {
                                     </Stack>
                                 </Stack>
                             </Paper>
+
+                            <input
+                                type="file"
+                                ref={versionInputRef}
+                                onChange={handleUploadNewVersion}
+                                accept=".orcsc"
+                                style={{ display: 'none' }}
+                            />
 
                             <Paper sx={{ p: 2, mb: 2 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -857,22 +915,23 @@ export const ViewFile: React.FC = () => {
                 classes={fileData?.classes || []}
                 onAssign={async (assignments: { [index: number]: string }) => {
                     if (!filePath) return;
+                    const currentFilePath = filePath; // Narrow type for TypeScript
                     const allExisting = boatsToAssign.length > 0 && boatsToAssign.every((boat) => boat.YID);
                     if (allExisting) {
                         await Promise.all(
                             boatsToAssign.map((boat, i) =>
-                                orcscApi.updateBoat(filePath, {
-                                    YID: boat.YID || '',
+                                orcscApi.updateBoat(currentFilePath, {
+                                    YID: boat.YID as string,
                                     classId: assignments[i] || '',
                                     yachtName: boat.YachtName,
-                                    sailNo: boat.SailNo
+                                    sailNo: boat.SailNo || undefined
                                 })
                             )
                         );
                     } else {
                         await Promise.all(
                             boatsToAssign.map((boat, i) =>
-                                orcscApi.addBoatFromOrcJson(filePath, boat, assignments[i] || '')
+                                orcscApi.addBoatFromOrcJson(currentFilePath, boat, assignments[i] || '')
                             )
                         );
                     }

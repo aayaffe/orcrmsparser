@@ -173,6 +173,35 @@ export const orcscApi = {
     return response.data;
   },
 
+  updateFileVersion: async (filePath: string, file: File): Promise<{ filename: string; path: string }> => {
+    if (!filePath) {
+      throw new Error('File path is required');
+    }
+
+    // Validate file type - only allow .orcsc files
+    const allowedExtensions = ['.orcsc'];
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+      throw new Error(`Invalid file type. Only ${allowedExtensions.join(', ')} files are allowed.`);
+    }
+
+    // Validate file size (e.g., max 50MB)
+    const maxFileSize = 50 * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      throw new Error(`File size exceeds maximum limit of 50MB.`);
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    const normalizedPath = filePath.replace(/\\/g, '/');
+    const response = await api.post(`/api/files/update?file_path=${encodeURIComponent(normalizedPath)}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
   downloadFile: async (filePath: string): Promise<void> => {
     if (!filePath) {
       throw new Error('File path is required');
