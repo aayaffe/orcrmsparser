@@ -69,6 +69,16 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
         ? csvData.data.filter((row) => row[filterColumn] === filterValue)
         : (csvData ? csvData.data : []);
 
+    const isAllSelected = filteredRows.length > 0 && selectedRows.length === filteredRows.length;
+    const isIndeterminate = selectedRows.length > 0 && selectedRows.length < filteredRows.length;
+    const handleSelectAllRows = (checked: boolean) => {
+        if (checked) {
+            setSelectedRows(filteredRows.map((_, i) => i));
+        } else {
+            setSelectedRows([]);
+        }
+    };
+
     useEffect(() => {
         if (csvData && mapping.yachtName && mapping.classId) {
             const boats = selectedRows.map((i: number) => {
@@ -200,7 +210,13 @@ export const ImportBoatsWizard: React.FC<ImportBoatsWizardProps> = ({ open, onCl
                                     <Table stickyHeader size="small">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell padding="checkbox" />
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                        indeterminate={isIndeterminate}
+                                                        checked={isAllSelected}
+                                                        onChange={(e) => handleSelectAllRows(e.target.checked)}
+                                                    />
+                                                </TableCell>
                                                 {csvData.meta.fields?.map((field, i) => (
                                                     <TableCell key={i}>{field}</TableCell>
                                                 ))}
