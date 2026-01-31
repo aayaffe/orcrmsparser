@@ -60,13 +60,18 @@ def validate_file_path(file_path: str, base_dir: str = "orcsc/output") -> str:
     # Return as string with forward slashes for consistency
     return str(full_path)
 
-# Enable CORS - restrict to specific methods and origins
+default_origins = ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"]
+env_origins = os.getenv("CORS_ORIGINS")
+allow_origins = default_origins
+if env_origins:
+    allow_origins = [origin.strip() for origin in env_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],  # React dev server and production
+    allow_origins=allow_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly allow only needed methods
-    allow_headers=["Content-Type", "Authorization"],  # Restrict allowed headers
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # Ensure output directory exists

@@ -15,8 +15,8 @@ if (Test-Path $envFile) {
     Write-Host "Loading credentials from $envFile..." -ForegroundColor Yellow
     Get-Content $envFile | ForEach-Object {
         if ($_ -match "^([^=]+)=(.+)$") {
-            $name = $matches[1]
-            $value = $matches[2]
+            $name = $matches[1].Trim()
+            $value = $matches[2].Trim().Trim('"')
             [Environment]::SetEnvironmentVariable($name, $value)
         }
     }
@@ -24,7 +24,10 @@ if (Test-Path $envFile) {
     Write-Host "WARNING: $envFile not found. Using default credentials or manual input." -ForegroundColor Yellow
 }
 
-$DOCKERHUB_USER = [Environment]::GetEnvironmentVariable("DOCKER_HUB_USER") -or "aayaffe"
+$DOCKERHUB_USER = [Environment]::GetEnvironmentVariable("DOCKER_HUB_USER")
+if (-not $DOCKERHUB_USER) {
+    $DOCKERHUB_USER = "aayaffe"
+}
 $DOCKERHUB_PAT = [Environment]::GetEnvironmentVariable("DOCKER_HUB_PAT")
 
 Write-Host "Building and pushing images to Docker Hub as $DOCKERHUB_USER/$PROJECT_NAME" -ForegroundColor Cyan

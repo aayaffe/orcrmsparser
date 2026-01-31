@@ -32,9 +32,14 @@ APP_DIR="${APP_DIR/#~/$HOME}"
 
 mkdir -p "$APP_DIR" && cd "$APP_DIR"
 
-# Create docker-compose.prod.yml
-if [ ! -f docker-compose.prod.yml ]; then
-    cat > docker-compose.prod.yml << 'DOCKER_COMPOSE'
+# Determine external IP for CORS (fallback to internal IP)
+PUBLIC_IP=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip || true)
+if [ -z "$PUBLIC_IP" ]; then
+  PUBLIC_IP=$(hostname -I | awk '{print $1}')
+fi
+
+# Create docker-compose.prod.yml (always overwrite to update CORS)
+cat > docker-compose.prod.yml << DOCKER_COMPOSE
 services:
   backend:
     image: DOCKERHUB_USER_PLACEHOLDER/PROJECT_NAME_PLACEHOLDER-backend:TAG_PLACEHOLDER
@@ -45,7 +50,7 @@ services:
       - ./orcsc/output:/app/orcsc/output
       - ./orcsc/templates:/app/orcsc/templates
     environment:
-      - CORS_ORIGINS=http://localhost:3000
+      - CORS_ORIGINS=http://$PUBLIC_IP:3000
     command: ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
     restart: unless-stopped
     healthcheck:
@@ -64,7 +69,6 @@ services:
       - backend
     restart: unless-stopped
 DOCKER_COMPOSE
-fi
 
 # Install docker-compose if needed
 if ! command -v docker-compose &> /dev/null; then
@@ -77,6 +81,7 @@ fi
 echo 'Pulling images...'
 docker-compose -f docker-compose.prod.yml pull
 mkdir -p orcsc/{output,templates}
+sudo chown -R 1000:1000 orcsc || true
 
 echo 'Stopping old containers...'
 docker-compose -f docker-compose.prod.yml down --remove-orphans || true

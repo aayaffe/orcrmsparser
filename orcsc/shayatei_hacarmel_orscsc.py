@@ -8,20 +8,20 @@ from orcsc.model.race_row import RaceRow
 from orcsc.model.scoring_codes_enum import ScoringCode
 from orcsc.orcsc_file_editor import create_new_scoring_file, add_fleets
 
-scoring_file = "C:\programing\orcrmsparser\orcsc\output\b4bcd745-9e28-418d-a85b-f73f51a22510.orcsc"
+scoring_file = "C:\\programing\\orcrmsparser\\orcsc\\output\\results.orcsc"
 
 # test_file = r"test_files\test.orcsc"
 
-start_time = datetime(2025, 4, 5, 10, 35, 0)
+start_time = datetime(2025, 10, 25, 11, 5, 0)
 scoring_code = ScoringCode.TOT_Triple_Number_Windward_Leeward_High
 race_name = "Race"
 races = [
     RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="O1", ScoringType=scoring_code.value),
     RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="O2", ScoringType=scoring_code.value),
-    RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="O3", ScoringType=scoring_code.value),
-    # RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SN", ScoringType=ScoringCode.TOT_Custom.value),
-    # RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SE", ScoringType=ScoringCode.TOT_Custom.value),
-    # RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SF", ScoringType=ScoringCode.TOT_Custom.value),
+    # RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="O3", ScoringType=scoring_code.value),
+    RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SN", ScoringType=ScoringCode.TOT_Custom.value),
+    RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SE", ScoringType=ScoringCode.TOT_Custom.value),
+    RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="SF", ScoringType=ScoringCode.TOT_Custom.value),
     RaceRow("ROW", RaceName=race_name, StartTime=start_time, ClassId="Z", ScoringType=ScoringCode.TOT_Custom.value)
 ]
 
@@ -43,9 +43,13 @@ def get_boats_from_registration_csv(csv_file, class_id, class_name=None, class_c
     return boats
 
 
-# csv_file = r"C:\Users\aayaffe\Downloads\!temp\רישום לשיוט אמיר רוסו 2025.csv"
-boats = get_boats_from_registration_csv(csv_file, "Z", class_column='class', yacht_name_column='boat-name')
-add_fleets(scoring_file, scoring_file, boats)
+csv_file = r"C:\Users\aayaffe\Downloads\!temp\רישום לשיוט פלצור 2025.csv"
+boats1 = get_boats_from_registration_csv(csv_file, "Z", class_column='class', class_name="עממי", yacht_name_column='boat-name')
+boats2 = get_boats_from_registration_csv(csv_file, "SF", class_column='class', class_name="סייפן", yacht_name_column='boat-name')
+boats3 = get_boats_from_registration_csv(csv_file, "SE", class_column='class', class_name="סנונית מערך קטן", yacht_name_column='boat-name')
+boats4 = get_boats_from_registration_csv(csv_file, "SN", class_column='class', class_name="סנונית מערך גדול", yacht_name_column='boat-name')
+boats = boats1 + boats2 + boats3 + boats4
+# add_fleets(scoring_file, scoring_file, boats)
 
 #TODO: Add ORC from list
 # I need to add the option to add boats from the orc certificates API.
@@ -64,21 +68,22 @@ add_fleets(scoring_file, scoring_file, boats)
 # 10. There should be an option to remove boats.
 
 
-# create_new_scoring_file("Amir Russo Memorial Regatta",
-#                         organizer="Etgarim",
-#                         start_date=datetime(2025, 4, 5),
-#                         end_date=datetime(2025, 4, 5),
-#                         classes=[
-#                             ClsRow("ROW", ClassId="O1", ClassName="ORC1", _class_enum=YachtClass.ORC),
-#                             ClsRow("ROW", ClassId="O2", ClassName="ORC2", _class_enum=YachtClass.ORC),
-#                             ClsRow("ROW", ClassId="O3", ClassName="ORC3", _class_enum=YachtClass.ORC),
-#                             ClsRow("ROW", ClassId="SN", ClassName="Snonit", _class_enum=YachtClass.OneDesign),
-#                             ClsRow("ROW", ClassId="SE", ClassName="Snonit EDU", _class_enum=YachtClass.OneDesign),
-#                             ClsRow("ROW", ClassId="SF", ClassName="Sayfan", _class_enum=YachtClass.OneDesign),
-#                             ClsRow("ROW", ClassId="Z", ClassName="Amami", _class_enum=YachtClass.OneDesign)
-#                         ],
-#                         races=races,
-#                         boats=boats
-#                         )
+create_new_scoring_file("Palzur Memorial Regatta 2025",
+                        organizer="CYC",
+                        start_date=datetime(2025, 10, 25),
+                        end_date=datetime(2025, 10, 25),
+                        classes=[
+                            ClsRow("ROW", ClassId="O1", ClassName="ORC1", _class_enum=YachtClass.ORC),
+                            ClsRow("ROW", ClassId="O2", ClassName="ORC2", _class_enum=YachtClass.ORC),
+                            # ClsRow("ROW", ClassId="O3", ClassName="ORC3", _class_enum=YachtClass.ORC),
+                            ClsRow("ROW", ClassId="SN", ClassName="Snonit", _class_enum=YachtClass.OneDesign),
+                            ClsRow("ROW", ClassId="SE", ClassName="Snonit EDU", _class_enum=YachtClass.OneDesign),
+                            ClsRow("ROW", ClassId="SF", ClassName="Sayfan", _class_enum=YachtClass.OneDesign),
+                            ClsRow("ROW", ClassId="Z", ClassName="Amami", _class_enum=YachtClass.OneDesign)
+                        ],
+                        races=races,
+                        boats=boats,
+                        output_file=scoring_file
+                        )
 
 
