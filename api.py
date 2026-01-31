@@ -123,6 +123,7 @@ class CreateFileRequest(BaseModel):
     template_path: str
     new_file_path: Optional[str] = None
     event_data: Optional[dict] = None
+    timezone_offset_seconds: Optional[int] = None
 
 class AddClassRequest(BaseModel):
     class_data: ClassData
@@ -539,7 +540,8 @@ async def create_file_from_template(request: CreateFileRequest):
             output_file=output_file,
             start_date=start_date,
             end_date=end_date,
-            classes=class_rows
+            classes=class_rows,
+            gmt_offset_seconds=request.timezone_offset_seconds
         )
         change_summary = f"Created from template"
         if request.event_data:

@@ -28,14 +28,29 @@ def remove_namespace(doc, namespace):
             elem.tag = elem.tag[len(ns):]  # strip ns
 
 
-def add_event(input_file, output_file, event_title, start_date, end_date, venue, organizer):
+def add_event(input_file, output_file, event_title, start_date, end_date, venue, organizer, gmt_offset_seconds=None, tz_abbr=None):
     tree = ET.parse(input_file)
     Event = tree.getroot().find('./Event')
     # Remove existing event
     for item in Event.findall('./ROW'):
         Event.remove(item)
+    
+    # If GMT offset not provided, calculate from current timezone
+    if gmt_offset_seconds is None:
+        from datetime import datetime, timezone
+        # Get local timezone offset
+        local_tz = datetime.now().astimezone().tzinfo
+        gmt_offset = local_tz.utcoffset(datetime.now())
+        gmt_offset_seconds = int(gmt_offset.total_seconds())
+    
+    # If timezone abbreviation not provided, use calculated one
+    if tz_abbr is None:
+        hours = gmt_offset_seconds // 3600
+        sign = '+' if gmt_offset_seconds >= 0 else '-'
+        tz_abbr = f"GMT{sign}{abs(hours):02d}"
+    
     event_row = EventRow("ROW", EventTitle=event_title, StartDate=start_date, EndDate=end_date, Venue=venue,
-                         Organizer=organizer)
+                         Organizer=organizer, UTCOffset=gmt_offset_seconds, TZAbbr=tz_abbr)
 
     Event.append(event_row.to_element())
     ET.indent(tree, space="\t", level=0)
@@ -187,7 +202,7 @@ def add_races_existing_file(scoring_file, races):
     logging.info("Races added successfully.")
 
 
-def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", output_file=None, start_date=None, end_date=None, classes=None, races=None, boats=None):
+def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", output_file=None, start_date=None, end_date=None, classes=None, races=None, boats=None, gmt_offset_seconds=None):
     template_file = os.path.join(os.path.dirname(__file__), "templates", "template.orcsc")
     logging.info(f"Using template file: {template_file}")
     
@@ -204,7 +219,7 @@ def create_new_scoring_file(event_title, venue="Haifa Bay", organizer="CYC", out
         end_date = datetime.now()
         logging.info("Set default end date to today")
     add_event(template_file, output_file, event_title=event_title, start_date=start_date,
-              end_date=end_date, venue=venue, organizer=organizer)
+              end_date=end_date, venue=venue, organizer=organizer, gmt_offset_seconds=gmt_offset_seconds)
     logging.info("Added event to output file")
     if classes is not None:
         add_classes(output_file, output_file, classes)

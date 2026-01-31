@@ -96,6 +96,10 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
     const handleCreateNewFile = async () => {
         try {
             const uuid = uuidv4();
+            // Get user's timezone offset in seconds
+            const userTimezoneOffsetMinutes = new Date().getTimezoneOffset();
+            const userTimezoneOffsetSeconds = -userTimezoneOffsetMinutes * 60; // negate because getTimezoneOffset returns negative of UTC offset
+            
             const response = await orcscApi.createNewFile({
                 title: newFileData.eventTitle,
                 startDate: newFileData.startDate,
@@ -115,7 +119,8 @@ export const NewFileDialog: React.FC<NewFileDialogProps> = ({ open, onClose, onS
                     HeatState: null,
                     DayNo: null
                 })),
-                filename: `${uuid}.orcsc`
+                filename: `${uuid}.orcsc`,
+                timezoneOffsetSeconds: userTimezoneOffsetSeconds
             });
             onClose();
             setNewFileData({

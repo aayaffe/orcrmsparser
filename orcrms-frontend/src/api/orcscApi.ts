@@ -43,6 +43,7 @@ export const orcscApi = {
       DayNo: null;
     }>;
     filename?: string;
+    timezoneOffsetSeconds?: number;
   }) => {
     const response = await api.post('/api/files', {
       template_path: "orcsc/templates/template.orcsc",
@@ -67,7 +68,8 @@ export const orcscApi = {
           DayNo: cls.DayNo
         }))
       },
-      filename: data.filename
+      filename: data.filename,
+      timezone_offset_seconds: data.timezoneOffsetSeconds
     });
     return response.data;
   },
