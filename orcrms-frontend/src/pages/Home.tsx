@@ -144,10 +144,15 @@ export const Home: React.FC = () => {
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    p: 3,
-                    width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
-                    ml: { sm: `${DRAWER_WIDTH}px` },
-                    mt: '64px'
+                    p: { xs: 2, sm: 3 },
+                    width: '100%',
+                    ml: { xs: 0, sm: isDrawerOpen ? `${DRAWER_WIDTH}px` : 0 },
+                    mt: '64px',
+                    transition: (theme) =>
+                        theme.transitions.create('margin', {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.leavingScreen,
+                        }),
                 }}
             >
                 <Typography variant="h4" gutterBottom>

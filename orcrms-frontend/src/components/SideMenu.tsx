@@ -47,108 +47,135 @@ export const SideMenu: React.FC<SideMenuProps> = ({
     selectedFile,
     drawerWidth = 240
 }) => {
-    return (
-        <Drawer
-            variant="persistent"
-            anchor="left"
-            open={open}
-            onClose={onClose}
-            sx={{
-                width: drawerWidth,
-                flexShrink: 0,
-                '& .MuiDrawer-paper': {
-                    width: drawerWidth,
-                    boxSizing: 'border-box',
-                    marginTop: '64px'
-                },
-            }}
-        >
-            <Box sx={{ overflow: 'auto', mt: 2 }}>
-                <List>
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={onHome}>
-                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                <HomeIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Home" />
-                        </ListItemButton>
-                    </ListItem>
+    const drawerContent = (
+        <Box sx={{ overflow: 'auto', mt: 2 }}>
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={onHome}>
+                        <ListItemIcon sx={{ minWidth: '40px' }}>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Home" />
+                    </ListItemButton>
+                </ListItem>
 
-                    <ListItem disablePadding>
-                        <ListItemButton component="label">
-                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                <UploadIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Upload File" />
-                            <input
-                                type="file"
-                                hidden
-                                accept=".orcsc"
-                                onChange={onUpload}
-                            />
-                        </ListItemButton>
-                    </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton component="label">
+                        <ListItemIcon sx={{ minWidth: '40px' }}>
+                            <UploadIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Upload File" />
+                        <input
+                            type="file"
+                            hidden
+                            accept=".orcsc"
+                            onChange={onUpload}
+                        />
+                    </ListItemButton>
+                </ListItem>
 
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={onNewFile}>
-                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                <AddIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="New File" />
-                        </ListItemButton>
-                    </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={onNewFile}>
+                        <ListItemIcon sx={{ minWidth: '40px' }}>
+                            <AddIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="New File" />
+                    </ListItemButton>
+                </ListItem>
 
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={onDownload} disabled={!selectedFile}>
-                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                <DownloadIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Download File" />
-                        </ListItemButton>
-                    </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={onDownload} disabled={!selectedFile}>
+                        <ListItemIcon sx={{ minWidth: '40px' }}>
+                            <DownloadIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Download File" />
+                    </ListItemButton>
+                </ListItem>
 
-                    <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="subtitle1" sx={{ px: 2, py: 1 }}>
-                        Available Files
-                    </Typography>
+                <Typography variant="subtitle1" sx={{ px: 2, py: 1 }}>
+                    Available Files
+                </Typography>
 
-                    {files.map((file) => (
-                        <ListItem
-                            key={file.path}
-                            disablePadding
-                        >
-                            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                <ListItemButton
-                                    selected={selectedFile === file.path}
-                                    onClick={() => onFileSelect(file.path)}
-                                    sx={{ flexGrow: 1 }}
-                                >
-                                    <Tooltip title={file.path.split(/[\\/]/).pop()} placement="right">
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                                <SailingIcon />
-                                            </ListItemIcon>
-                                            <ListItemText primary={file.eventName} />
-                                        </Box>
-                                    </Tooltip>
-                                </ListItemButton>
-                                <Tooltip title="Delete file">
-                                    <ListItemIcon sx={{ minWidth: '40px', justifyContent: 'center' }}>
-                                        <DeleteIcon
-                                            sx={{ cursor: 'pointer' }}
-                                            onClick={(event) => {
-                                                event.stopPropagation();
-                                                onDelete(file.path);
-                                            }}
-                                        />
-                                    </ListItemIcon>
+                {files.map((file) => (
+                    <ListItem
+                        key={file.path}
+                        disablePadding
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <ListItemButton
+                                selected={selectedFile === file.path}
+                                onClick={() => onFileSelect(file.path)}
+                                sx={{ flexGrow: 1 }}
+                            >
+                                <Tooltip title={file.path.split(/[\\/]/).pop()} placement="right">
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <ListItemIcon sx={{ minWidth: '40px' }}>
+                                            <SailingIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={file.eventName} />
+                                    </Box>
                                 </Tooltip>
-                            </Box>
-                        </ListItem>
-                    ))}
-                </List>
-            </Box>
-        </Drawer>
+                            </ListItemButton>
+                            <Tooltip title="Delete file">
+                                <ListItemIcon sx={{ minWidth: '40px', justifyContent: 'center' }}>
+                                    <DeleteIcon
+                                        sx={{ cursor: 'pointer' }}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            onDelete(file.path);
+                                        }}
+                                    />
+                                </ListItemIcon>
+                            </Tooltip>
+                        </Box>
+                    </ListItem>
+                ))}
+            </List>
+        </Box>
+    );
+
+    return (
+        <>
+            {/* Mobile drawer - temporary */}
+            <Drawer
+                variant="temporary"
+                anchor="left"
+                open={open}
+                onClose={onClose}
+                ModalProps={{
+                    keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        marginTop: '64px'
+                    },
+                }}
+            >
+                {drawerContent}
+            </Drawer>
+            {/* Desktop drawer - persistent */}
+            <Drawer
+                variant="persistent"
+                anchor="left"
+                open={open}
+                sx={{
+                    display: { xs: 'none', sm: 'block' },
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        marginTop: '64px'
+                    },
+                }}
+            >
+                {drawerContent}
+            </Drawer>
+        </>
     );
 }; 
