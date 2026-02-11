@@ -566,13 +566,18 @@ export const ViewFile: React.FC = () => {
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    p: 2,
-                    width: { sm: `calc(100% - ${drawerWidth}px)` },
-                    ml: { sm: `${drawerWidth}px` },
-                    mt: '64px'
+                    p: { xs: 1, sm: 2 },
+                    width: '100%',
+                    ml: { xs: 0, sm: isDrawerOpen ? `${drawerWidth}px` : 0 },
+                    mt: '64px',
+                    transition: (theme) =>
+                        theme.transitions.create('margin', {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.leavingScreen,
+                        }),
                 }}
             >
-                <Container maxWidth="lg" sx={{ py: 2 }}>
+                <Container maxWidth="lg" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 } }}>
                     {loading ? (
                         <Box display="flex" justifyContent="center" p={2}>
                             <CircularProgress />
@@ -581,9 +586,16 @@ export const ViewFile: React.FC = () => {
                         <Alert severity="error">{error}</Alert>
                     ) : fileData ? (
                         <Box>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                            <Box sx={{ 
+                                display: 'flex', 
+                                flexDirection: { xs: 'column', sm: 'row' },
+                                justifyContent: 'space-between', 
+                                alignItems: { xs: 'flex-start', sm: 'center' }, 
+                                mb: 3,
+                                gap: { xs: 2, sm: 0 }
+                            }}>
                                 <Box>
-                                    <Typography variant="h4" gutterBottom>
+                                    <Typography variant="h4" gutterBottom sx={{ mb: { xs: 0, sm: 1 } }}>
                                         {fileData.event.EventTitle}
                                     </Typography>
                                 </Box>
@@ -591,6 +603,7 @@ export const ViewFile: React.FC = () => {
                                     variant="outlined"
                                     size="small"
                                     onClick={() => versionInputRef.current?.click()}
+                                    sx={{ whiteSpace: 'nowrap' }}
                                 >
                                     Upload New Version
                                 </Button>
@@ -599,14 +612,14 @@ export const ViewFile: React.FC = () => {
                                 {fileData.event.Venue}{(fileData.event.Venue && fileData.event.Organizer) ? (" - ") : ("")}{fileData.event.Organizer}
                             </Typography>
 
-                            <Paper sx={{ p: 2, mb: 2 }}>
+                            <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 2 }}>
                                 <Box sx={{ mb: 2 }}>
                                     <Typography variant="h6" gutterBottom>
                                         Event Details
                                     </Typography>
                                 </Box>
                                 <Stack spacing={2}>
-                                    <Stack direction="row" spacing={2}>
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                         <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
                                             <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
                                                 Start Date:
@@ -624,7 +637,7 @@ export const ViewFile: React.FC = () => {
                                             </Typography>
                                         </Box>
                                     </Stack>
-                                    <Stack direction="row" spacing={2}>
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                         <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
                                             <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
                                                 Venue:
@@ -653,9 +666,9 @@ export const ViewFile: React.FC = () => {
                                 style={{ display: 'none' }}
                             />
 
-                            <Paper sx={{ p: 2, mb: 2 }}>
+                            <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 2 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" gutterBottom>
+                                    <Typography variant="h6" gutterBottom sx={{ mb: 0 }}>
                                         Classes
                                     </Typography>
                                     <Button
@@ -691,9 +704,9 @@ export const ViewFile: React.FC = () => {
                                 </Stack>
                             </Paper>
 
-                            <Paper sx={{ p: 2, mb: 2 }}>
+                            <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 2 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" gutterBottom>
+                                    <Typography variant="h6" gutterBottom sx={{ mb: 0 }}>
                                         Races
                                     </Typography>
                                     <Button
@@ -705,8 +718,8 @@ export const ViewFile: React.FC = () => {
                                         Add
                                     </Button>
                                 </Box>
-                                <TableContainer component={Paper}>
-                                    <Table size="small">
+                                <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                                    <Table size="small" sx={{ minWidth: { xs: 600, sm: 'auto' } }}>
                                         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                             <TableRow>
                                                 <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
@@ -765,9 +778,16 @@ export const ViewFile: React.FC = () => {
                                 </TableContainer>
                             </Paper>
 
-                            <Paper sx={{ p: 2 }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Paper sx={{ p: { xs: 1.5, sm: 2 } }}>
+                                <Box sx={{ 
+                                    display: 'flex', 
+                                    flexDirection: { xs: 'column', sm: 'row' },
+                                    justifyContent: 'space-between', 
+                                    alignItems: { xs: 'stretch', sm: 'center' }, 
+                                    mb: 2,
+                                    gap: 2
+                                }}>
+                                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: 2 }}>
                                         <Typography variant="h6" gutterBottom sx={{ m: 0 }}>
                                             Fleet
                                         </Typography>
@@ -780,7 +800,7 @@ export const ViewFile: React.FC = () => {
                                                 setFleetSortDir('desc');
                                             }}
                                             displayEmpty
-                                            sx={{ minWidth: 200 }}
+                                            sx={{ minWidth: { xs: '100%', sm: 200 } }}
                                         >
                                             <MenuItem value="">Select rating...</MenuItem>
                                             <MenuItem value="TN_Inshore_Low">TOT Inshore Low</MenuItem>
@@ -798,14 +818,19 @@ export const ViewFile: React.FC = () => {
                                             <MenuItem value="GPH">GPH</MenuItem>
                                         </Select>
                                     </Box>
-                                    <Box sx={{ display: 'flex', gap: 1 }}>
+                                    <Box sx={{ 
+                                        display: 'flex', 
+                                        flexDirection: { xs: 'column', sm: 'row' },
+                                        gap: 1,
+                                        width: { xs: '100%', sm: 'auto' }
+                                    }}>
                                         <Button
                                             variant="outlined"
                                             startIcon={<AddIcon />}
                                             onClick={() => setAddBoatsOpen(true)}
                                             size="small"
                                             title="Add Boats"
-                                            sx={{ borderRadius: 2, minHeight: 40, px: 2 }}
+                                            sx={{ borderRadius: 2, minHeight: 40, px: 2, width: { xs: '100%', sm: 'auto' } }}
                                         />
                                         <Button
                                             variant="outlined"
@@ -813,7 +838,7 @@ export const ViewFile: React.FC = () => {
                                             onClick={() => setImportWizardOpen(true)}
                                             size="small"
                                             title="Import from CSV"
-                                            sx={{ borderRadius: 2, minHeight: 40, px: 2 }}
+                                            sx={{ borderRadius: 2, minHeight: 40, px: 2, width: { xs: '100%', sm: 'auto' } }}
                                         />
                                         <Button
                                             variant="contained"
@@ -822,7 +847,7 @@ export const ViewFile: React.FC = () => {
                                             onClick={() => setOrcDbDialogOpen(true)}
                                             size="small"
                                             title="Add from ORC DB"
-                                            sx={{ borderRadius: 2, minHeight: 40, px: 2 }}
+                                            sx={{ borderRadius: 2, minHeight: 40, px: 2, width: { xs: '100%', sm: 'auto' } }}
                                         />
                                     </Box>
                                 </Box>
@@ -838,8 +863,8 @@ export const ViewFile: React.FC = () => {
                                 >
                                     Change Class for Selected
                                 </Button>
-                                <TableContainer component={Paper} sx={{ mb: 2 }}>
-                                    <Table size="small">
+                                <TableContainer component={Paper} sx={{ mb: 2, overflowX: 'auto' }}>
+                                    <Table size="small" sx={{ minWidth: { xs: 800, sm: 'auto' } }}>
                                         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                             <TableRow>
                                                 <TableCell padding="checkbox" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
