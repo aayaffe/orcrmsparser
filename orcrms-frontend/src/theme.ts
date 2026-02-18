@@ -25,32 +25,32 @@ const marineTheme = createTheme({
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontWeight: 700,
-      fontSize: '2.5rem',
+      fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
       color: '#1a237e',
     },
     h2: {
       fontWeight: 600,
-      fontSize: '2rem',
+      fontSize: 'clamp(1.5rem, 4vw, 2rem)',
       color: '#1a237e',
     },
     h3: {
       fontWeight: 600,
-      fontSize: '1.75rem',
+      fontSize: 'clamp(1.25rem, 3.5vw, 1.75rem)',
       color: '#1a237e',
     },
     h4: {
       fontWeight: 600,
-      fontSize: '1.5rem',
+      fontSize: 'clamp(1.125rem, 3vw, 1.5rem)',
       color: '#1a237e',
     },
     h5: {
       fontWeight: 600,
-      fontSize: '1.25rem',
+      fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
       color: '#1a237e',
     },
     h6: {
       fontWeight: 600,
-      fontSize: '1rem',
+      fontSize: 'clamp(0.875rem, 2vw, 1rem)',
       color: '#1a237e',
     },
   },
