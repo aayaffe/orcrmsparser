@@ -22,7 +22,7 @@ interface FileInfo {
 export const Home: React.FC = () => {
     const [files, setFiles] = useState<FileInfo[]>([]);
     const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Default to closed on all screen sizes
     const [newFileOpen, setNewFileOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -104,9 +104,9 @@ export const Home: React.FC = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                <Toolbar>
+        <Box sx={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
+            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, width: '100%', boxSizing: 'border-box' }}>
+                <Toolbar sx={{ px: { xs: 1, sm: 2 }, minHeight: { xs: 56, sm: 64 } }}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -146,8 +146,12 @@ export const Home: React.FC = () => {
                     flexGrow: 1,
                     p: { xs: 2, sm: 3 },
                     width: '100%',
+                    height: '100vh',
+                    boxSizing: 'border-box',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
                     ml: { xs: 0, sm: isDrawerOpen ? `${DRAWER_WIDTH}px` : 0 },
-                    mt: '64px',
+                    pt: { xs: '64px', sm: '80px' },
                     transition: (theme) =>
                         theme.transitions.create('margin', {
                             easing: theme.transitions.easing.sharp,
@@ -155,7 +159,7 @@ export const Home: React.FC = () => {
                         }),
                 }}
             >
-                <Typography variant="h4" gutterBottom>
+                <Typography variant="h5" gutterBottom sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                     Welcome to ORCSC Parser
                 </Typography>
                 <Typography variant="body1" paragraph>

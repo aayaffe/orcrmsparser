@@ -106,7 +106,10 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                             <ListItemButton
                                 selected={selectedFile === file.path}
-                                onClick={() => onFileSelect(file.path)}
+                                onClick={() => {
+                                    onFileSelect(file.path);
+                                    onClose(); // Close drawer on mobile after selection
+                                }}
                                 sx={{ flexGrow: 1 }}
                             >
                                 <Tooltip title={file.path.split(/[\\/]/).pop()} placement="right">

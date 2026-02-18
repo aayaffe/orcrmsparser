@@ -511,9 +511,9 @@ export const ViewFile: React.FC = () => {
     }
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                <Toolbar>
+        <Box sx={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
+            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, width: '100%', boxSizing: 'border-box' }}>
+                <Toolbar sx={{ px: { xs: 1, sm: 2 }, minHeight: { xs: 56, sm: 64 } }}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -568,8 +568,12 @@ export const ViewFile: React.FC = () => {
                     flexGrow: 1,
                     p: { xs: 1, sm: 2 },
                     width: '100%',
+                    height: '100vh',
+                    boxSizing: 'border-box',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
                     ml: { xs: 0, sm: isDrawerOpen ? `${drawerWidth}px` : 0 },
-                    mt: '64px',
+                    pt: { xs: '64px', sm: '80px' },
                     transition: (theme) =>
                         theme.transitions.create('margin', {
                             easing: theme.transitions.easing.sharp,
@@ -577,7 +581,7 @@ export const ViewFile: React.FC = () => {
                         }),
                 }}
             >
-                <Container maxWidth="lg" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 } }}>
+                <Container maxWidth={false} disableGutters sx={{ py: { xs: 2, sm: 3 }, px: { xs: 1, sm: 3 }, width: '100%', overflow: 'hidden' }}>
                     {loading ? (
                         <Box display="flex" justifyContent="center" p={2}>
                             <CircularProgress />
@@ -595,7 +599,7 @@ export const ViewFile: React.FC = () => {
                                 gap: { xs: 2, sm: 0 }
                             }}>
                                 <Box>
-                                    <Typography variant="h4" gutterBottom sx={{ mb: { xs: 0, sm: 1 } }}>
+                                    <Typography variant="h5" gutterBottom sx={{ mb: { xs: 0, sm: 1 }, fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                                         {fileData.event.EventTitle}
                                     </Typography>
                                 </Box>
@@ -603,7 +607,7 @@ export const ViewFile: React.FC = () => {
                                     variant="outlined"
                                     size="small"
                                     onClick={() => versionInputRef.current?.click()}
-                                    sx={{ whiteSpace: 'nowrap' }}
+                                    sx={{ whiteSpace: 'nowrap', alignSelf: { xs: 'flex-start', sm: 'auto' } }}
                                 >
                                     Upload New Version
                                 </Button>
@@ -620,16 +624,16 @@ export const ViewFile: React.FC = () => {
                                 </Box>
                                 <Stack spacing={2}>
                                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                        <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
+                                        <Box sx={{ display: 'flex', gap: 1, flex: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: { xs: 'auto', sm: '100px' } }}>
                                                 Start Date:
                                             </Typography>
                                             <Typography variant="body2">
                                                 {formatDateOnly(fileData.event.StartDate)}
                                             </Typography>
                                         </Box>
-                                        <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
+                                        <Box sx={{ display: 'flex', gap: 1, flex: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: { xs: 'auto', sm: '100px' } }}>
                                                 End Date:
                                             </Typography>
                                             <Typography variant="body2">
@@ -638,16 +642,16 @@ export const ViewFile: React.FC = () => {
                                         </Box>
                                     </Stack>
                                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                        <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
+                                        <Box sx={{ display: 'flex', gap: 1, flex: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: { xs: 'auto', sm: '100px' } }}>
                                                 Venue:
                                             </Typography>
                                             <Typography variant="body2">
                                                 {fileData.event.Venue}
                                             </Typography>
                                         </Box>
-                                        <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
+                                        <Box sx={{ display: 'flex', gap: 1, flex: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                            <Typography variant="body2" color="text.secondary" sx={{ minWidth: { xs: 'auto', sm: '100px' } }}>
                                                 Organizer:
                                             </Typography>
                                             <Typography variant="body2">
@@ -682,9 +686,9 @@ export const ViewFile: React.FC = () => {
                                 </Box>
                                 <Stack spacing={2}>
                                     {fileData.classes.map((cls) => (
-                                        <Box key={cls.ClassId} sx={{ display: 'flex', gap: 1, justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Box sx={{ display: 'flex', gap: 1 }}>
-                                                <Typography variant="body2" color="text.secondary" sx={{ minWidth: '100px' }}>
+                                        <Box key={cls.ClassId} sx={{ display: 'flex', gap: 1, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, flexDirection: { xs: 'column', sm: 'row' }, width: '100%' }}>
+                                            <Box sx={{ display: 'flex', gap: 1, flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, flex: 1 }}>
+                                                <Typography variant="body2" color="text.secondary" sx={{ minWidth: { xs: 'auto', sm: '100px' } }}>
                                                     {cls.ClassId}:
                                                 </Typography>
                                                 <Typography variant="body2">
@@ -718,8 +722,8 @@ export const ViewFile: React.FC = () => {
                                         Add
                                     </Button>
                                 </Box>
-                                <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                                    <Table size="small" sx={{ minWidth: { xs: 600, sm: 'auto' } }}>
+                                <TableContainer component={Paper} sx={{ overflowX: 'auto', width: '100%', boxSizing: 'border-box' }}>
+                                    <Table size="small" sx={{ width: '100%', '& td, & th': { fontSize: { xs: '0.7rem', sm: '0.875rem' }, wordBreak: 'break-word', padding: { xs: '4px', sm: '8px' } } }}>
                                         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                             <TableRow>
                                                 <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
@@ -863,8 +867,8 @@ export const ViewFile: React.FC = () => {
                                 >
                                     Change Class for Selected
                                 </Button>
-                                <TableContainer component={Paper} sx={{ mb: 2, overflowX: 'auto' }}>
-                                    <Table size="small" sx={{ minWidth: { xs: 800, sm: 'auto' } }}>
+                                <TableContainer component={Paper} sx={{ mb: 2, overflowX: 'auto', width: '100%', boxSizing: 'border-box' }}>
+                                    <Table size="small" sx={{ width: '100%', '& td, & th': { fontSize: { xs: '0.7rem', sm: '0.875rem' }, wordBreak: 'break-word', padding: { xs: '4px', sm: '8px' } } }}>
                                         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                             <TableRow>
                                                 <TableCell padding="checkbox" sx={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
