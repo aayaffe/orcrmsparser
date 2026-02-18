@@ -116,10 +116,12 @@ export const OrcDbDialog: React.FC<OrcDbDialogProps> = ({ open, onClose, onSucce
     }, [selectedCountry]);
 
     // Filtered boats for display
-    const filteredBoats = boats.filter(boat =>
-        (!searchName || boat.YachtName.toLowerCase().includes(searchName.toLowerCase())) &&
-        (!searchSailNo || boat.SailNo.toLowerCase().includes(searchSailNo.toLowerCase()))
-    );
+    const filteredBoats = boats
+        .filter(boat =>
+            (!searchName || boat.YachtName.toLowerCase().includes(searchName.toLowerCase())) &&
+            (!searchSailNo || boat.SailNo.toLowerCase().includes(searchSailNo.toLowerCase()))
+        )
+        .sort((a, b) => a.YachtName.localeCompare(b.YachtName));
 
     // Handle select all
     const allFilteredIndices = filteredBoats.map((_, i) => i);
